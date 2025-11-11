@@ -2,11 +2,16 @@ import TypewriterText from './components/HandwritingText';
 import ScrollAnimatedIcon from './components/ScrollAnimatedIcon';
 import BackgroundTrees from './components/BackgroundTrees';
 import EnvelopeWithText from './components/EnvelopeWithText';
+import WriteTree from './components/WriteTree';
+import DiamondBranches from './components/DiamondBranches';
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-gradient-hero text-white relative">
       <BackgroundTrees />
+      <div className="fixed top-0 left-0 z-20 pointer-events-none">
+        <WriteTree size={192} bg="transparent" />
+      </div>
       {/* Hero Section */}
       <section className="px-6 py-24 md:py-32 lg:py-40 max-w-4xl mx-auto text-center relative z-10">
         <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl mb-8 text-white leading-tight">
@@ -39,117 +44,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* What's Inside - Value Stack */}
+      {/* Purpose Transformation - Diamond Branches */}
       <section className="px-6 py-24 relative z-10">
         <div className="max-w-6xl mx-auto">
-          <h2 className="font-heading text-4xl md:text-5xl font-black text-center mb-16 text-white">
-            What's Inside
+          <h2 className="font-heading text-4xl md:text-5xl font-black text-center mb-8 text-white">
+            Purpose Transformation
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Instinctive Breathwork */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={0}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle className="icon-path" cx="12" cy="12" r="10" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">Instinctive Breathwork</h3>
-              <p className="text-sm text-white/70">Master the art of conscious breathing for clarity and focus.</p>
-            </div>
-
-            {/* Personality Test */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={100}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                    <rect className="icon-path" x="4" y="4" width="8" height="8" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">Personality Test</h3>
-              <p className="text-sm text-white/70">Discover your unique traits and how they shape your purpose.</p>
-            </div>
-
-            {/* Purpose Paradox */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={200}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line className="icon-path" x1="4" y1="4" x2="28" y2="28" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">Purpose Paradox</h3>
-              <p className="text-sm text-white/70">Navigate the contradictions that lead to true purpose.</p>
-            </div>
-
-            {/* Goal Setting Workbook */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={300}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect className="icon-path" x="4" y="4" width="16" height="16" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">Goal Setting Workbook</h3>
-              <p className="text-sm text-white/70">Structure your aspirations into actionable steps.</p>
-            </div>
-
-            {/* Life Reboot Bundle */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={400}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect className="icon-path" x="4" y="4" width="16" height="16" transform="rotate(45 12 12)" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">Life Reboot Bundle</h3>
-              <p className="text-sm text-white/70">Complete system for resetting and realigning your life.</p>
-            </div>
-
-            {/* 10-Minute Progress Book */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={500}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-8 h-8" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line className="icon-path" x1="4" y1="16" x2="28" y2="16" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">10-Minute Progress Book</h3>
-              <p className="text-sm text-white/70">Quick daily practices for consistent forward movement.</p>
-            </div>
-
-            {/* Placeholder 1 */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={600}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line className="icon-path" x1="4" y1="12" x2="20" y2="12" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">Module 7</h3>
-              <p className="text-sm text-white/70">Additional transformative content included.</p>
-            </div>
-
-            {/* Placeholder 2 */}
-            <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue hover:border-dark-brown transition-colors shadow-lg">
-              <ScrollAnimatedIcon delay={700}>
-                <div className="w-12 h-12 mb-6 border-2 border-deep-blue flex items-center justify-center icon-wrapper">
-                  <svg className="w-1 h-6" viewBox="0 0 4 24" fill="currentColor">
-                    <rect className="icon-path" x="0" y="0" width="4" height="24" />
-                  </svg>
-                </div>
-              </ScrollAnimatedIcon>
-              <h3 className="font-heading text-xl font-bold mb-3 text-white">Module 8</h3>
-              <p className="text-sm text-white/70">Additional transformative content included.</p>
-            </div>
-          </div>
+          <DiamondBranches />
         </div>
       </section>
 
