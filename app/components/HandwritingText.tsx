@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface TypewriterTextProps {
   text: string;
@@ -70,20 +71,41 @@ export default function TypewriterText({
 
   const fontClass = fontStyle === 'mono' ? 'font-mono' : 'font-handwritten';
   
-  // Render text with line breaks preserved
+  // Render text with line breaks preserved and replace P with logo
   const renderText = () => {
     // Remove any newline characters and split by them to create line breaks
     // Also handle any literal backslash-n sequences just in case
     let processedText = displayedText.replace(/\\n/g, '\n'); // Convert literal \n to newline
     processedText = processedText.replace(/\n/g, '|NEWLINE|'); // Replace newlines with marker
-    const parts = processedText.split('|NEWLINE|');
     
-    return parts.map((part, index) => (
-      <span key={index}>
-        {part}
-        {index < parts.length - 1 && <br />}
-      </span>
-    ));
+    // Replace only the first P in "Find Purpose" (not in other instances)
+    // Match "Find Purpose" specifically and replace only that P
+    processedText = processedText.replace(/Find Purpose/, (match) => {
+      return 'Find |LOGO|urpose'; // Replace P with logo marker
+    });
+    
+    const parts = processedText.split(/(\|NEWLINE\||\|LOGO\|)/);
+    
+    return parts.map((part, index) => {
+      if (part === '|NEWLINE|') {
+        return <br key={index} />;
+      } else if (part === '|LOGO|') {
+        return (
+          <span key={index} className="inline-block align-middle mx-1">
+            <Image
+              src="/polarity-systems-logo.png"
+              alt="P"
+              width={60}
+              height={60}
+              className="inline-block filter brightness-0 invert"
+              style={{ verticalAlign: 'middle', height: '1em', width: 'auto' }}
+            />
+          </span>
+        );
+      } else {
+        return <span key={index}>{part}</span>;
+      }
+    });
   };
 
   return (
