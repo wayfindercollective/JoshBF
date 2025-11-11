@@ -23,6 +23,7 @@ export default function DiamondBranches() {
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredWeekIndex, setHoveredWeekIndex] = useState<number | null>(null);
   const [branchProgress, setBranchProgress] = useState<number[]>(new Array(weeks.length).fill(0));
+  const [labelVisible, setLabelVisible] = useState<boolean[]>(new Array(weeks.length).fill(false));
   const svgRef = useRef<SVGSVGElement>(null);
   const branchAnimationRef = useRef<number>();
 
@@ -30,6 +31,7 @@ export default function DiamondBranches() {
   useEffect(() => {
     if (!isHovered) {
       setBranchProgress(new Array(weeks.length).fill(0));
+      setLabelVisible(new Array(weeks.length).fill(false));
       return;
     }
 
@@ -53,6 +55,17 @@ export default function DiamondBranches() {
         if (progress < 1) {
           branchAnimationRef.current = requestAnimationFrame(animate);
         } else {
+          // Branch animation complete - show label after a short delay
+          // Capture the current branch index before incrementing
+          const completedBranchIndex = currentBranch;
+          setTimeout(() => {
+            setLabelVisible((prev) => {
+              const newVisible = [...prev];
+              newVisible[completedBranchIndex] = true;
+              return newVisible;
+            });
+          }, 100); // 100ms delay after line completes
+          
           currentBranch++;
           if (currentBranch < weeks.length) {
             setTimeout(() => {
@@ -87,21 +100,27 @@ export default function DiamondBranches() {
 
   const getLineEndPosition = (angle: number, distance: number, logoRadius: number) => {
     const rad = (angle * Math.PI) / 180;
-    // Line should reach the edge of the logo (logo center - radius toward center)
-    // Extend significantly to ensure visual connection with the logo edge
-    // Week One (angle 270) needs one extra pixel
-    const extraOffset = angle === 270 ? 1 : 0;
-    const lineDistance = distance - logoRadius + 18 + extraOffset;
+    // Adjust offset based on angle - weeks 1, 2, 3 (270, 315, 0) need more offset
+    // Other angles need less to avoid going into the logo
+    let offset = 55;
+    if (angle === 270) {
+      offset = 56; // Week One - top
+    } else if (angle === 315 || angle === 0) {
+      offset = 55; // Week Two and Three - top-right and right
+    } else {
+      // Week Four through Eight - reduce offset to prevent overlap
+      offset = 50;
+    }
+    const lineDistance = distance - logoRadius + offset;
     const x = Math.cos(rad) * lineDistance;
     const y = Math.sin(rad) * lineDistance;
     return { x: 500 + x, y: 500 + y };
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[640px] pt-8 pb-24">
+    <div className="flex items-center justify-center min-h-[640px] pt-8 pb-24 px-4 md:px-0 overflow-hidden">
       <div
-        className="relative cursor-pointer w-full max-w-5xl"
-        style={{ transform: 'scale(0.8)' }}
+        className="relative cursor-pointer w-full max-w-5xl scale-[1.2] md:scale-[0.8] mx-auto flex justify-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -109,16 +128,17 @@ export default function DiamondBranches() {
       >
         <svg
           ref={svgRef}
-          viewBox="0 0 1000 1000"
+          viewBox="-200 -50 1400 1100"
           width="100%"
           height="auto"
           className="transition-all duration-300"
-          style={{ minHeight: "640px" }}
+          style={{ minHeight: "640px", maxWidth: "100%" }}
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Animated branches */}
           {weeks.map((week, index) => {
             const endPos = getPosition(week.angle, week.distance);
-            const logoRadius = 30; // Half of logo width/height (60px / 2)
+            const logoRadius = 60; // Half of logo width/height (120px / 2) - doubled from 30
             const lineEndPos = getLineEndPosition(week.angle, week.distance, logoRadius);
             const progress = branchProgress[index] || 0;
             const isHoveredDot = hoveredWeekIndex === index;
@@ -137,24 +157,33 @@ export default function DiamondBranches() {
                   className="transition-all duration-300 ease-out"
                   strokeLinecap="round"
                 />
-                {/* Week label - only show if hovered */}
-                {progress > 0.8 && isHoveredDot && (
+                {/* Week label - show automatically when animation completes */}
+                {labelVisible[index] && (
                   <g>
                     {/* Calculate text offset based on angle to position it nicely relative to the dot */}
                     {(() => {
                       // Position text at the end of the line, extending beyond the logo
-                      const logoRadius = 30;
-                      const textDistance = week.distance + logoRadius + 40; // Extend beyond logo
+                      const logoRadius = 60;
+                      // Adjust textDistance for Week Seven (left side) to ensure full visibility
+                      const baseTextDistance = week.distance + logoRadius + 40;
+                      const textDistance = week.angle === 180 ? baseTextDistance - 20 : baseTextDistance;
                       const textRad = (week.angle * Math.PI) / 180;
                       const textX = 500 + Math.cos(textRad) * textDistance;
                       const textY = 500 + Math.sin(textRad) * textDistance;
                       
                       // Determine text rotation based on angle
                       let textAngle = 0;
+                      let textAnchor: "start" | "middle" | "end" = "middle";
                       if (week.angle === 315 || week.angle === 135) {
                         textAngle = 45;
                       } else if (week.angle === 45 || week.angle === 225) {
                         textAngle = -45;
+                      } else if (week.angle === 180) {
+                        // Week Seven - left side, use "end" anchor to prevent cutoff
+                        textAnchor = "end";
+                      } else if (week.angle === 0) {
+                        // Week Three - right side, use "start" anchor
+                        textAnchor = "start";
                       }
                       
                       return (
@@ -162,16 +191,16 @@ export default function DiamondBranches() {
                           x={textX}
                           y={textY}
                           fill="#ffffff"
-                          fontSize="24"
+                          fontSize="28.8"
                           fontWeight="bold"
-                          textAnchor="middle"
-                          className="font-heading transition-all duration-300"
-                          opacity={progress}
+                          textAnchor={textAnchor}
+                          className="font-heading transition-opacity duration-300"
+                          opacity={labelVisible[index] ? 1 : 0}
                           dominantBaseline="middle"
                           transform={textAngle !== 0 ? `rotate(${textAngle} ${textX} ${textY})` : ""}
                         >
                           <tspan x={textX} dy="0">{getWeekNumber(index)}</tspan>
-                          <tspan x={textX} dy="28">{week.label}</tspan>
+                          <tspan x={textX} dy="34">{week.label}</tspan>
                         </text>
                       );
                     })()}
@@ -190,17 +219,17 @@ export default function DiamondBranches() {
                     >
                       <image
                         href="/YingYangLogo.png"
-                        x={-30}
-                        y={-30}
-                        width={60}
-                        height={60}
+                        x={-60}
+                        y={-60}
+                        width={120}
+                        height={120}
                       />
                     </g>
                     {/* Invisible larger hoverable area */}
                     <circle
                       cx={endPos.x}
                       cy={endPos.y}
-                      r={35}
+                      r={70}
                       fill="transparent"
                       className="cursor-pointer"
                       onMouseEnter={() => setHoveredWeekIndex(index)}

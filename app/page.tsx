@@ -61,11 +61,11 @@ export default function Home() {
 
       {/* Purpose Transformation - Diamond Branches */}
       <section className="px-6 py-24 relative z-10">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-8">
               <TitleWithBorder padding="px-6 py-4">
-                <h2 className="font-heading text-4xl md:text-5xl font-black text-white">
+                <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-white text-center">
                   <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
                 </h2>
               </TitleWithBorder>

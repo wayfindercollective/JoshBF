@@ -49,6 +49,7 @@ export default function TitleWithBorder({
     const timeoutId1 = setTimeout(updateDimensions, 200);
     const timeoutId2 = setTimeout(updateDimensions, 600);
     const timeoutId3 = setTimeout(updateDimensions, 1000);
+    const timeoutId4 = setTimeout(updateDimensions, 1500); // Extra delay for CharacterPopIn animations
     
     // Use ResizeObserver to catch any late content changes
     const resizeObserver = new ResizeObserver(() => {
@@ -73,6 +74,7 @@ export default function TitleWithBorder({
       clearTimeout(timeoutId1);
       clearTimeout(timeoutId2);
       clearTimeout(timeoutId3);
+      clearTimeout(timeoutId4);
       resizeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
     };
