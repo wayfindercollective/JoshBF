@@ -1,6 +1,6 @@
 'use client';
 
-import AnimatedTree from './AnimatedTree';
+import Image from 'next/image';
 
 export default function BackgroundTrees() {
   // Two trees positioned strategically
@@ -26,22 +26,23 @@ export default function BackgroundTrees() {
       {trees.map((tree) => (
         <div
           key={tree.id}
-          className="absolute opacity-60"
+          className="absolute opacity-20"
           style={{
             left: `${tree.x}%`,
             top: `${tree.y}%`,
             transform: `translate(-50%, -50%) rotate(${tree.rotation}deg) scale(${tree.scale})`,
           }}
         >
-          <AnimatedTree
-            lineWidth={2}
-            totalDuration={4000}
-            pauseMs={50}
-            stroke="#ffffff"
-            width={96}
-            height={96}
-            className="drop-shadow-sm"
-          />
+          <div className="tree-reveal">
+            <Image
+              src="/Tree.png"
+              alt="Tree"
+              width={96}
+              height={96}
+              className="drop-shadow-sm tree-image"
+            />
+            <div className="tree-brightness-overlay"></div>
+          </div>
         </div>
       ))}
     </div>
