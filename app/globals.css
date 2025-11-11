@@ -66,6 +66,46 @@
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
 }
 
+/* Tree brightness sweep animation - pixel by pixel from bottom to top */
+@keyframes treeBrightnessSweep {
+  0% {
+    clip-path: inset(100% 0 0 0);
+    filter: brightness(1);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    filter: brightness(4);
+  }
+}
+
+.tree-reveal {
+  position: relative;
+  display: inline-block;
+}
+
+.tree-image {
+  position: relative;
+  z-index: 1;
+  filter: brightness(1);
+}
+
+.tree-brightness-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/Tree.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 2;
+  animation: treeBrightnessSweep 3s ease-in-out infinite;
+  opacity: 0.8;
+}
+
 /* Black and Blue Background with Transient Dots */
 @layer utilities {
   /* Main page background - black with blue dots pattern */

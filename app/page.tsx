@@ -17,9 +17,9 @@ export default function Home() {
             className="font-bold"
           />
         </h1>
-        <p className="text-xl md:text-2xl mb-12 text-white/90 flex items-center justify-center">
+        <div className="text-xl md:text-2xl mb-12 text-white/90 flex items-center justify-center">
           <EnvelopeWithText />
-        </p>
+        </div>
           <a
             href="#purchase"
             className="inline-block bg-deep-blue text-white px-12 py-5 text-lg font-bold tracking-wide hover:bg-dark-brown transition-all duration-200 shadow-lg"
