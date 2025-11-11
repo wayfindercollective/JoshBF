@@ -27,9 +27,9 @@ export default function Home() {
         </div>
           <a
             href="#purchase"
-            className="inline-block bg-deep-blue text-white px-12 py-5 text-lg font-bold tracking-wide hover:bg-dark-brown transition-all duration-200 shadow-lg"
+            className="seal-button text-lg"
           >
-            Get Started — $297
+            <span>Get Started — $297</span>
           </a>
       </section>
 
@@ -109,9 +109,9 @@ export default function Home() {
           </p>
           <a
             href="#purchase"
-            className="inline-block bg-deep-blue text-white px-16 py-6 text-xl font-bold tracking-wide hover:bg-dark-brown transition-all duration-200 shadow-lg"
+            className="seal-button text-xl"
           >
-            Claim Your Spot
+            <span>Claim Your Spot</span>
           </a>
         </div>
       </section>
@@ -156,9 +156,9 @@ export default function Home() {
           </p>
           <a
             href="#purchase"
-            className="inline-block bg-deep-blue text-white px-16 py-6 text-xl font-bold tracking-wide hover:bg-dark-brown transition-all duration-200 mb-6 shadow-lg"
+            className="seal-button text-xl mb-6"
           >
-            Get Started — <span className="font-mono">$297</span>
+            <span>Get Started — <span className="font-mono">$297</span></span>
           </a>
           <p className="font-mono text-sm text-white/60">
             Lifetime Access • Instant Download • 30-Day Money-Back Guarantee

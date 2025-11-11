@@ -107,6 +107,165 @@
 }
 
 /* Black and Blue Background with Transient Dots */
+/* Matrix-style grid animation - random cells appearing/disappearing */
+@keyframes matrixGridBuild {
+  0% {
+    opacity: 0.3;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  20% {
+    opacity: 0.4;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  40% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.4;
+  }
+  70% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes matrixGridShift {
+  0%, 100% {
+    background-position: 0 0, 0 0;
+  }
+  20% {
+    background-position: 3px 2px, -2px 3px;
+  }
+  40% {
+    background-position: -2px 3px, 3px -2px;
+  }
+  60% {
+    background-position: 2px -2px, -3px 2px;
+  }
+  80% {
+    background-position: -1px 1px, 1px -1px;
+  }
+}
+
+@keyframes matrixDashedBorder {
+  0%, 100% {
+    opacity: 0.5;
+    border-color: rgba(252, 252, 212, 0.5);
+  }
+  15% {
+    opacity: 0.8;
+    border-color: rgba(252, 252, 212, 0.8);
+  }
+  30% {
+    opacity: 0.4;
+    border-color: rgba(252, 252, 212, 0.4);
+  }
+  45% {
+    opacity: 0.9;
+    border-color: rgba(252, 252, 212, 0.9);
+  }
+  60% {
+    opacity: 0.6;
+    border-color: rgba(252, 252, 212, 0.6);
+  }
+  75% {
+    opacity: 0.85;
+    border-color: rgba(252, 252, 212, 0.85);
+  }
+  90% {
+    opacity: 0.55;
+    border-color: rgba(252, 252, 212, 0.55);
+  }
+}
+
+/* Blueprint Button Style */
+.seal-button {
+  display: inline-block;
+  position: relative;
+  padding: 1rem 2.5rem;
+  background: #033ba3;
+  color: #fcfcd4;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  border: 2px solid #fcfcd4;
+  border-style: double;
+  border-width: 3px;
+  box-shadow: 
+    0 0 0 1px rgba(252, 252, 212, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 0 20px rgba(252, 252, 212, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.seal-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    linear-gradient(rgba(252, 252, 212, 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(252, 252, 212, 0.6) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 0;
+  animation: matrixGridBuild 4s ease-in-out infinite,
+             matrixGridShift 3.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.seal-button::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  border: 1px dashed rgba(252, 252, 212, 0.4);
+  animation: matrixDashedBorder 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.seal-button:hover {
+  transform: translateY(-2px);
+  background-color: #0550c4;
+  border-color: #f9e5c1;
+  box-shadow: 
+    0 0 0 1px rgba(252, 252, 212, 0.5),
+    0 6px 20px rgba(3, 59, 163, 0.4),
+    inset 0 0 30px rgba(252, 252, 212, 0.15);
+  color: #f9e5c1;
+}
+
+.seal-button span {
+  position: relative;
+  z-index: 1;
+  display: block;
+  text-transform: uppercase;
+}
+
 @layer utilities {
   /* Main page background - black with blue dots pattern */
   .bg-brand-gradient-hero {
