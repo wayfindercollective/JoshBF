@@ -98,9 +98,10 @@ export default function DiamondBranches() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[800px] pt-8 pb-24">
+    <div className="flex items-center justify-center min-h-[640px] pt-8 pb-24">
       <div
         className="relative cursor-pointer w-full max-w-5xl"
+        style={{ transform: 'scale(0.8)' }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -112,7 +113,7 @@ export default function DiamondBranches() {
           width="100%"
           height="auto"
           className="transition-all duration-300"
-          style={{ minHeight: "800px" }}
+          style={{ minHeight: "640px" }}
         >
           {/* Animated branches */}
           {weeks.map((week, index) => {

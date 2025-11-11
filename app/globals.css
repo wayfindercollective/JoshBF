@@ -71,10 +71,12 @@
   0% {
     clip-path: inset(100% 0 0 0);
     filter: brightness(1);
+    opacity: 0.3;
   }
   100% {
     clip-path: inset(0 0 0 0);
-    filter: brightness(4);
+    filter: brightness(6);
+    opacity: 1;
   }
 }
 
@@ -103,7 +105,7 @@
   pointer-events: none;
   z-index: 2;
   animation: treeBrightnessSweep 3s ease-in-out infinite;
-  opacity: 0.8;
+  opacity: 1;
 }
 
 /* Black and Blue Background with Transient Dots */
@@ -264,6 +266,161 @@
   z-index: 1;
   display: block;
   text-transform: uppercase;
+}
+
+/* Scroll Reveal Animations - Blueprint Style */
+.scroll-reveal {
+  will-change: opacity, transform;
+  transition: opacity var(--animation-duration, 0.8s) cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform var(--animation-duration, 0.8s) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Fade Up Animation */
+.scroll-reveal.reveal-fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+.scroll-reveal.reveal-fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Fade In Animation */
+.scroll-reveal.reveal-fade-in {
+  opacity: 0;
+}
+
+.scroll-reveal.reveal-fade-in.visible {
+  opacity: 1;
+}
+
+/* Scale In Animation */
+.scroll-reveal.reveal-scale-in {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.scroll-reveal.reveal-scale-in.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Slide Left Animation */
+.scroll-reveal.reveal-slide-left {
+  opacity: 0;
+  transform: translateX(60px);
+}
+
+.scroll-reveal.reveal-slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide Right Animation */
+.scroll-reveal.reveal-slide-right {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+.scroll-reveal.reveal-slide-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Build Up Animation - Blueprint style construction */
+@keyframes buildUp {
+  0% {
+    opacity: 0;
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(20px);
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+.scroll-reveal.reveal-build-up {
+  opacity: 0;
+  clip-path: inset(100% 0 0 0);
+  transform: translateY(20px);
+}
+
+.scroll-reveal.reveal-build-up.visible {
+  animation: buildUp var(--animation-duration, 0.8s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* Typewriter Animation */
+.typewriter-text {
+  display: inline-block;
+}
+
+.typewriter-text.typing::after {
+  content: '|';
+  animation: blink 1s infinite;
+  margin-left: 2px;
+}
+
+.typewriter-text.typed::after {
+  content: '';
+}
+
+/* Stagger Children Animation */
+.scroll-reveal.reveal-stagger-children {
+  opacity: 1 !important; /* Parent container should always be visible */
+}
+
+.scroll-reveal.reveal-stagger-children > * {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.scroll-reveal.reveal-stagger-children > *.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Blueprint Grid Build Effect */
+@keyframes blueprintGrid {
+  0% {
+    opacity: 0;
+    background-size: 0% 0%;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+    background-size: 100% 100%;
+  }
+}
+
+/* Code Line Build Effect */
+@keyframes codeLineBuild {
+  0% {
+    opacity: 0;
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  }
+  100% {
+    opacity: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+.reveal-code-line {
+  opacity: 0;
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+}
+
+.reveal-code-line.reveal-code-line {
+  animation: codeLineBuild var(--animation-duration, 0.8s) cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 @layer utilities {
