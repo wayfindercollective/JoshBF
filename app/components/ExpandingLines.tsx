@@ -25,6 +25,17 @@ const upwardLines: UpwardLine[] = [
   { startY: 500, endY: 850 },   // Bottom
 ];
 
+// Bonus content text for each dot
+const bonusTexts: string[] = [
+  "Goal setting workbook",
+  "Instinctive breathwork",
+  "Life reboot bundle",
+  "10-minute book on how to make progress",
+  "", // Placeholder for 5th bonus
+  "", // Placeholder for 6th bonus
+  "", // Placeholder for 7th bonus
+];
+
 // Branch lines going to the right from each upward line endpoint
 // End position is where dots appear and where text will start
 const LEFT_POSITION = 100; // Moved further left from 200
@@ -38,6 +49,7 @@ const branchLines: BranchLine[] = upwardLines.map((line, index) => ({
 export default function ExpandingLines() {
   const [isVisible, setIsVisible] = useState(false);
   const [dotPosition, setDotPosition] = useState({ x: 500, y: 500 });
+  const [dotRadius, setDotRadius] = useState(18); // Start at three times the size (18 instead of 6)
   const [upwardProgress, setUpwardProgress] = useState<number[]>(new Array(upwardLines.length).fill(0));
   const [branchProgress, setBranchProgress] = useState<number[]>(new Array(branchLines.length).fill(0));
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,6 +67,7 @@ export default function ExpandingLines() {
             // Reset animation when out of view
             setIsVisible(false);
             setDotPosition({ x: 500, y: 500 });
+            setDotRadius(18); // Reset to starting size
             setUpwardProgress(new Array(upwardLines.length).fill(0));
             setBranchProgress(new Array(branchLines.length).fill(0));
             // Clear any ongoing animations
@@ -90,6 +103,7 @@ export default function ExpandingLines() {
     if (!isVisible) {
       // Reset all states when not visible
       setDotPosition({ x: 500, y: 500 });
+      setDotRadius(12); // Reset to starting size
       setUpwardProgress(new Array(upwardLines.length).fill(0));
       setBranchProgress(new Array(branchLines.length).fill(0));
       return;
@@ -120,7 +134,13 @@ export default function ExpandingLines() {
         const easedProgress = 1 - Math.pow(1 - progress, 2); // Ease-out
 
         const currentX = startX + (endX - startX) * easedProgress;
+        // Animate radius from 18 (three times size) to 6 (current size)
+        const startRadius = 18;
+        const endRadius = 6;
+        const currentRadius = startRadius + (endRadius - startRadius) * easedProgress;
+        
         setDotPosition({ x: currentX, y: 500 });
+        setDotRadius(currentRadius);
 
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
@@ -362,7 +382,7 @@ export default function ExpandingLines() {
             <circle
               cx={dotPosition.x}
               cy={dotPosition.y}
-              r={6}
+              r={dotRadius}
               fill="#ffffff"
               className="transition-all duration-100 ease-out"
               style={{
@@ -395,7 +415,20 @@ export default function ExpandingLines() {
               >
                 {/* Content area - text will start from the dot and extend to the right */}
                 <div className="w-48 md:w-80 lg:w-96 h-auto flex items-center justify-start pl-6">
-                  {/* Content will go here - text starts from dot position */}
+                  {bonusTexts[index] && (
+                    <p 
+                      className="text-white text-lg md:text-2xl lg:text-3xl leading-relaxed"
+                      style={{
+                        fontFamily: "'IBM Plex Sans', sans-serif",
+                        textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
+                        filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                        fontWeight: 900,
+                        letterSpacing: '0.02em',
+                      }}
+                    >
+                      {bonusTexts[index]}
+                    </p>
+                  )}
                 </div>
               </div>
             );

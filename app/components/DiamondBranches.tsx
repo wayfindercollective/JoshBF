@@ -120,7 +120,7 @@ export default function DiamondBranches() {
   return (
     <div className="flex items-center justify-center min-h-[640px] pt-8 pb-24 px-4 md:px-0 overflow-hidden">
       <div
-        className="relative cursor-pointer w-full max-w-5xl scale-[1.2] md:scale-[0.8] mx-auto flex justify-center"
+        className="relative cursor-pointer w-full max-w-5xl scale-[1.2] md:scale-100 mx-auto flex justify-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
