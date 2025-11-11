@@ -129,15 +129,16 @@ export default function TitleWithBorder({
     path.style.strokeDashoffset = `${pathLength}`;
     
     // Force a reflow to ensure the reset is applied
-    void path.offsetHeight;
-    
-    // Small delay to ensure the reset is fully applied before animating
-    animationTimeoutRef.current = setTimeout(() => {
-      if (pathRef.current) {
-        pathRef.current.style.transition = 'stroke-dashoffset 2.5s ease-in-out, stroke-width 0.3s ease, filter 0.3s ease';
-        pathRef.current.style.strokeDashoffset = '0';
-      }
-    }, 10);
+    // Use requestAnimationFrame instead of offsetHeight for SVG elements
+    requestAnimationFrame(() => {
+      // Small delay to ensure the reset is fully applied before animating
+      animationTimeoutRef.current = setTimeout(() => {
+        if (pathRef.current) {
+          pathRef.current.style.transition = 'stroke-dashoffset 2.5s ease-in-out, stroke-width 0.3s ease, filter 0.3s ease';
+          pathRef.current.style.strokeDashoffset = '0';
+        }
+      }, 10);
+    });
   }, [pathLength]);
 
   // Handle hover state changes
