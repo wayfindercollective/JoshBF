@@ -7,6 +7,7 @@ import RandomScrollReveal from './components/RandomScrollReveal';
 import CharacterPopIn from './components/CharacterPopIn';
 import FloatingGeometry from './components/FloatingGeometry';
 import TitleWithBorder from './components/TitleWithBorder';
+import ExpandingLines from './components/ExpandingLines';
 
 export default function Home() {
   return (
@@ -77,71 +78,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why It Works / Transformation Promise */}
+      {/* Bonuses Section */}
       <section className="px-6 py-24 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-20">
-              <TitleWithBorder padding="px-6 py-4">
-                <h2 className="font-heading text-4xl md:text-5xl font-black text-white">
-                  <CharacterPopIn delay={0}>Why It Works</CharacterPopIn>
+              <TitleWithBorder padding="px-8 py-4">
+                <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
+                  <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
                 </h2>
               </TitleWithBorder>
             </div>
           </RandomScrollReveal>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <RandomScrollReveal delay={100} randomDelay={true}>
-              <div className="text-center">
-                <RandomScrollReveal delay={0} randomDelay={true}>
-                  <div className="w-20 h-20 mx-auto mb-6 border-4 border-deep-blue flex items-center justify-center bg-deep-blue/10">
-                    <div className="w-10 h-10 border-2 border-deep-blue"></div>
-                  </div>
-                </RandomScrollReveal>
-                <TitleWithBorder className="mb-4" padding="px-4 py-3">
-                  <h3 className="font-heading text-2xl font-bold text-white">
-                    <CharacterPopIn delay={150}>Proven Framework</CharacterPopIn>
-                  </h3>
-                </TitleWithBorder>
-                <p className="text-white/80 leading-relaxed">
-                  <CharacterPopIn delay={200}>Built on tested methodologies that guide you from confusion to clarity.</CharacterPopIn>
-                </p>
-              </div>
-            </RandomScrollReveal>
-            <RandomScrollReveal delay={200} randomDelay={true}>
-              <div className="text-center">
-                <RandomScrollReveal delay={0} randomDelay={true}>
-                  <div className="w-20 h-20 mx-auto mb-6 border-4 border-dark-brown flex items-center justify-center bg-dark-brown/10">
-                    <div className="w-10 h-10 bg-dark-brown"></div>
-                  </div>
-                </RandomScrollReveal>
-                <TitleWithBorder className="mb-4" padding="px-4 py-3">
-                  <h3 className="font-heading text-2xl font-bold text-white">
-                    <CharacterPopIn delay={150}>Self-Paced</CharacterPopIn>
-                  </h3>
-                </TitleWithBorder>
-                <p className="text-white/80 leading-relaxed">
-                  <CharacterPopIn delay={200}>Move at your own speed. No pressure, just progress when you're ready.</CharacterPopIn>
-                </p>
-              </div>
-            </RandomScrollReveal>
-            <RandomScrollReveal delay={300} randomDelay={true}>
-              <div className="text-center">
-                <RandomScrollReveal delay={0} randomDelay={true}>
-                  <div className="w-20 h-20 mx-auto mb-6 border-4 border-black flex items-center justify-center bg-black/10">
-                    <div className="w-10 h-10 border-2 border-black rounded-full"></div>
-                  </div>
-                </RandomScrollReveal>
-                <TitleWithBorder className="mb-4" padding="px-4 py-3">
-                  <h3 className="font-heading text-2xl font-bold text-white">
-                    <CharacterPopIn delay={150}>Complete System</CharacterPopIn>
-                  </h3>
-                </TitleWithBorder>
-                <p className="text-white/80 leading-relaxed">
-                  <CharacterPopIn delay={200}>Everything you need in one place. No gaps, no guesswork.</CharacterPopIn>
-                </p>
-              </div>
-            </RandomScrollReveal>
-          </div>
+          <ExpandingLines />
         </div>
       </section>
 
