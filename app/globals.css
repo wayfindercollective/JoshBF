@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.typewriter-cursor {
+  animation: blink 1s infinite;
+  font-weight: 300;
+  color: currentColor;
+}
+
+/* Scroll-triggered icon animations - pixel by pixel drawing */
+.icon-container {
+  opacity: 1;
+}
+
+.icon-wrapper {
+  color: black;
+  position: relative;
+  border: 2px solid black;
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+}
+
+.icon-wrapper svg {
+  color: black;
+}
+
+/* SVG stroke paths - will be animated via JavaScript with actual path lengths */
+.icon-path[stroke] {
+  fill: none;
+  stroke-dasharray: 0;
+  stroke-dashoffset: 0;
+}
+
+/* Animate filled shapes with clip-path reveal */
+.icon-path[fill="currentColor"] {
+  clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+  transition: clip-path 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-container.animate .icon-path[fill="currentColor"] {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
+
