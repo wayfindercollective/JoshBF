@@ -1,6 +1,7 @@
 import TypewriterText from './components/HandwritingText';
 import ScrollAnimatedIcon from './components/ScrollAnimatedIcon';
 import BackgroundTrees from './components/BackgroundTrees';
+import EnvelopeWithText from './components/EnvelopeWithText';
 
 export default function Home() {
   return (
@@ -16,14 +17,8 @@ export default function Home() {
             className="font-bold"
           />
         </h1>
-        <p className="text-xl md:text-2xl mb-12 text-white/90">
-          <TypewriterText 
-            text="Purpose Transformation Blueprint"
-            totalDuration={800}
-            fontStyle="handwritten"
-            startDelay={2200}
-            className="font-bold"
-          />
+        <p className="text-xl md:text-2xl mb-12 text-white/90 flex items-center justify-center">
+          <EnvelopeWithText />
         </p>
           <a
             href="#purchase"

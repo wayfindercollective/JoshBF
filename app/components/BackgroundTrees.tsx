@@ -38,23 +38,31 @@ export default function BackgroundTrees() {
             fill="none"
             stroke="white"
             strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="drop-shadow-sm"
           >
-            {/* Roots */}
-            <path d="M24 32 L20 40 M24 32 L22 40 M24 32 L26 40 M24 32 L28 40" />
-            {/* Trunk */}
-            <line x1="24" y1="32" x2="24" y2="20" />
-            {/* Branches */}
-            <line x1="24" y1="20" x2="20" y2="16" />
-            <line x1="24" y1="20" x2="28" y2="16" />
-            <line x1="24" y1="24" x2="18" y2="20" />
-            <line x1="24" y1="24" x2="30" y2="20" />
-            {/* Leaves/Canopy - simple circles */}
-            <circle cx="20" cy="14" r="3" fill="white" opacity="0.3" />
-            <circle cx="28" cy="14" r="3" fill="white" opacity="0.3" />
-            <circle cx="18" cy="18" r="2.5" fill="white" opacity="0.3" />
-            <circle cx="30" cy="18" r="2.5" fill="white" opacity="0.3" />
-            <circle cx="24" cy="12" r="2" fill="white" opacity="0.3" />
+            {/* Roots - simple lines spreading outward */}
+            <line x1="24" y1="32" x2="20" y2="40" />
+            <line x1="24" y1="32" x2="22" y2="42" />
+            <line x1="24" y1="32" x2="24" y2="43" />
+            <line x1="24" y1="32" x2="26" y2="42" />
+            <line x1="24" y1="32" x2="28" y2="40" />
+            
+            {/* Trunk - simple vertical line */}
+            <line x1="24" y1="32" x2="24" y2="16" />
+            
+            {/* Branches - simple horizontal/angled lines */}
+            <line x1="24" y1="16" x2="18" y2="12" />
+            <line x1="24" y1="16" x2="30" y2="12" />
+            <line x1="24" y1="20" x2="16" y2="14" />
+            <line x1="24" y1="20" x2="32" y2="14" />
+            
+            {/* Canopy - simple triangle shape made of lines */}
+            <line x1="16" y1="12" x2="12" y2="8" />
+            <line x1="12" y1="8" x2="24" y2="6" />
+            <line x1="24" y1="6" x2="36" y2="8" />
+            <line x1="36" y1="8" x2="32" y2="12" />
           </svg>
         </div>
       ))}
