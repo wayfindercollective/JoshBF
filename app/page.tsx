@@ -6,6 +6,7 @@ import DiamondBranches from './components/DiamondBranches';
 import RandomScrollReveal from './components/RandomScrollReveal';
 import CharacterPopIn from './components/CharacterPopIn';
 import FloatingGeometry from './components/FloatingGeometry';
+import TitleWithBorder from './components/TitleWithBorder';
 
 export default function Home() {
   return (
@@ -62,9 +63,13 @@ export default function Home() {
       <section className="px-6 py-24 relative z-10">
         <div className="max-w-6xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <h2 className="font-heading text-4xl md:text-5xl font-black text-center mb-8 text-white">
-              <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
-            </h2>
+            <div className="flex justify-center mb-8">
+              <TitleWithBorder padding="px-6 py-4">
+                <h2 className="font-heading text-4xl md:text-5xl font-black text-white">
+                  <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
+                </h2>
+              </TitleWithBorder>
+            </div>
           </RandomScrollReveal>
           <RandomScrollReveal delay={200} randomDelay={true} duration={1.2}>
             <DiamondBranches />
@@ -76,9 +81,13 @@ export default function Home() {
       <section className="px-6 py-24 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <h2 className="font-heading text-4xl md:text-5xl font-black text-center mb-20 text-white">
-              <CharacterPopIn delay={0}>Why It Works</CharacterPopIn>
-            </h2>
+            <div className="flex justify-center mb-20">
+              <TitleWithBorder padding="px-6 py-4">
+                <h2 className="font-heading text-4xl md:text-5xl font-black text-white">
+                  <CharacterPopIn delay={0}>Why It Works</CharacterPopIn>
+                </h2>
+              </TitleWithBorder>
+            </div>
           </RandomScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <RandomScrollReveal delay={100} randomDelay={true}>
@@ -88,9 +97,11 @@ export default function Home() {
                     <div className="w-10 h-10 border-2 border-deep-blue"></div>
                   </div>
                 </RandomScrollReveal>
-                <h3 className="font-heading text-2xl font-bold mb-4 text-white">
-                  <CharacterPopIn delay={150}>Proven Framework</CharacterPopIn>
-                </h3>
+                <TitleWithBorder className="mb-4" padding="px-4 py-3">
+                  <h3 className="font-heading text-2xl font-bold text-white">
+                    <CharacterPopIn delay={150}>Proven Framework</CharacterPopIn>
+                  </h3>
+                </TitleWithBorder>
                 <p className="text-white/80 leading-relaxed">
                   <CharacterPopIn delay={200}>Built on tested methodologies that guide you from confusion to clarity.</CharacterPopIn>
                 </p>
@@ -103,9 +114,11 @@ export default function Home() {
                     <div className="w-10 h-10 bg-dark-brown"></div>
                   </div>
                 </RandomScrollReveal>
-                <h3 className="font-heading text-2xl font-bold mb-4 text-white">
-                  <CharacterPopIn delay={150}>Self-Paced</CharacterPopIn>
-                </h3>
+                <TitleWithBorder className="mb-4" padding="px-4 py-3">
+                  <h3 className="font-heading text-2xl font-bold text-white">
+                    <CharacterPopIn delay={150}>Self-Paced</CharacterPopIn>
+                  </h3>
+                </TitleWithBorder>
                 <p className="text-white/80 leading-relaxed">
                   <CharacterPopIn delay={200}>Move at your own speed. No pressure, just progress when you're ready.</CharacterPopIn>
                 </p>
@@ -118,9 +131,11 @@ export default function Home() {
                     <div className="w-10 h-10 border-2 border-black rounded-full"></div>
                   </div>
                 </RandomScrollReveal>
-                <h3 className="font-heading text-2xl font-bold mb-4 text-white">
-                  <CharacterPopIn delay={150}>Complete System</CharacterPopIn>
-                </h3>
+                <TitleWithBorder className="mb-4" padding="px-4 py-3">
+                  <h3 className="font-heading text-2xl font-bold text-white">
+                    <CharacterPopIn delay={150}>Complete System</CharacterPopIn>
+                  </h3>
+                </TitleWithBorder>
                 <p className="text-white/80 leading-relaxed">
                   <CharacterPopIn delay={200}>Everything you need in one place. No gaps, no guesswork.</CharacterPopIn>
                 </p>
@@ -139,11 +154,15 @@ export default function Home() {
             </div>
           </RandomScrollReveal>
           <RandomScrollReveal delay={200} randomDelay={true} duration={1}>
-            <h2 className="font-heading text-5xl md:text-6xl font-black mb-6">
-              <span className="font-mono">
-                <CharacterPopIn delay={200}>$297</CharacterPopIn>
-              </span>
-            </h2>
+            <div className="flex justify-center mb-6">
+              <TitleWithBorder padding="px-8 py-5">
+                <h2 className="font-heading text-5xl md:text-6xl font-black">
+                  <span className="font-mono">
+                    <CharacterPopIn delay={200}>$297</CharacterPopIn>
+                  </span>
+                </h2>
+              </TitleWithBorder>
+            </div>
           </RandomScrollReveal>
           <RandomScrollReveal delay={400} randomDelay={true}>
             <p className="text-xl md:text-2xl mb-4 font-medium text-warm-beige">
@@ -170,9 +189,13 @@ export default function Home() {
       <section className="px-6 py-24 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <h2 className="font-heading text-4xl md:text-5xl font-black text-center mb-16 text-white">
-              <CharacterPopIn delay={0}>What Others Say</CharacterPopIn>
-            </h2>
+            <div className="flex justify-center mb-16">
+              <TitleWithBorder padding="px-6 py-4">
+                <h2 className="font-heading text-4xl md:text-5xl font-black text-white">
+                  <CharacterPopIn delay={0}>What Others Say</CharacterPopIn>
+                </h2>
+              </TitleWithBorder>
+            </div>
           </RandomScrollReveal>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <RandomScrollReveal delay={100} randomDelay={true}>
@@ -213,9 +236,13 @@ export default function Home() {
       <section id="purchase" className="px-6 py-32 text-white">
         <div className="max-w-3xl mx-auto text-center">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <h2 className="font-heading text-4xl md:text-5xl font-black mb-8">
-              <CharacterPopIn delay={0}>Ready to Transform?</CharacterPopIn>
-            </h2>
+            <div className="flex justify-center mb-8">
+              <TitleWithBorder padding="px-6 py-4">
+                <h2 className="font-heading text-4xl md:text-5xl font-black">
+                  <CharacterPopIn delay={0}>Ready to Transform?</CharacterPopIn>
+                </h2>
+              </TitleWithBorder>
+            </div>
           </RandomScrollReveal>
           <RandomScrollReveal delay={200} randomDelay={true}>
             <p className="text-xl mb-12 text-muted-olive">
