@@ -91,7 +91,7 @@ export default function Home() {
       <section className="px-6 pt-24 pb-8 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-12 md:mb-16">
+            <div className="flex justify-center mb-2 md:mb-3">
               <TitleWithBorder padding="px-8 py-4">
                 <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
                   <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
@@ -100,78 +100,76 @@ export default function Home() {
             </div>
           </RandomScrollReveal>
           <ExpandingLines />
-        </div>
-      </section>
-
-      {/* Limited Offer Section */}
-      <section className="px-6 pt-8 md:pt-12 pb-24 text-white relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          <RandomScrollReveal delay={0} randomDelay={true} forceDirection="right">
-            <div className="font-mono inline-block bg-orange-red text-white px-6 py-2 mb-8 text-sm font-bold tracking-wider">
-              <CharacterPopIn delay={0}>BLACK FRIDAY SPECIAL</CharacterPopIn>
-            </div>
-          </RandomScrollReveal>
-          <RandomScrollReveal delay={200} randomDelay={true} duration={1}>
-            <div className="flex justify-center mb-6">
-              <TitleWithBorder padding="px-8 py-5">
-                <h2 className="font-heading text-5xl md:text-6xl font-black">
-                  <span className="font-mono">
-                    <CharacterPopIn delay={200}>$297</CharacterPopIn>
-                  </span>
-                </h2>
-              </TitleWithBorder>
-            </div>
-          </RandomScrollReveal>
+          {/* Total Value */}
           <RandomScrollReveal delay={400} randomDelay={true}>
-            <p className="text-xl md:text-2xl mb-4 font-medium text-warm-beige">
-              <CharacterPopIn delay={400}>One-Time Payment</CharacterPopIn>
-            </p>
-          </RandomScrollReveal>
-          <RandomScrollReveal delay={600} randomDelay={true}>
-            <p className="font-mono text-lg mb-8 text-muted-olive">
-              <CharacterPopIn delay={600}>Lifetime Access • No Recurring Fees</CharacterPopIn>
-            </p>
-          </RandomScrollReveal>
-          <RandomScrollReveal delay={800} randomDelay={true}>
-            <a
-              href="#purchase"
-              className="seal-button text-xl"
-            >
-              <span><CharacterPopIn delay={800}>Claim Your Spot</CharacterPopIn></span>
-            </a>
-          </RandomScrollReveal>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section id="purchase" className="px-6 py-32 text-white">
-        <div className="max-w-3xl mx-auto text-center">
-          <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-8">
-              <TitleWithBorder padding="px-6 py-4">
-                <h2 className="font-heading text-4xl md:text-5xl font-black">
-                  <CharacterPopIn delay={0}>Ready to Transform?</CharacterPopIn>
-                </h2>
-              </TitleWithBorder>
+            <div className="flex justify-center -mt-8 md:-mt-12">
+              <div className="text-center">
+                <p 
+                  className="text-white text-sm sm:text-base md:text-lg lg:text-xl mb-2"
+                  style={{
+                    fontFamily: "'IBM Plex Sans', sans-serif",
+                    textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0.5px 0.5px 0.5px rgba(0,0,0,0.3), -0.5px -0.5px 0.5px rgba(0,0,0,0.3)',
+                    filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                    fontWeight: 900,
+                    letterSpacing: '0.02em',
+                    WebkitTextStroke: '0.5px rgba(0,0,0,0.4)',
+                    WebkitTextFillColor: '#ffffff',
+                  }}
+                >
+                  Total Value
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <span 
+                    className="text-white font-mono text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold inline-block relative"
+                    style={{
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0.5px 0.5px 0.5px rgba(0,0,0,0.3), -0.5px -0.5px 0.5px rgba(0,0,0,0.3)',
+                      filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                      WebkitTextStroke: '0.5px rgba(0,0,0,0.4)',
+                      WebkitTextFillColor: '#ffffff',
+                    }}
+                  >
+                    <span style={{ 
+                      position: 'relative',
+                      display: 'inline-block',
+                    }}>
+                      $2,079
+                      {/* Diagonal strikethrough line */}
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: '0%',
+                          right: '0%',
+                          top: '50%',
+                          height: '0.1em',
+                          backgroundColor: '#ff0000',
+                          transform: 'translateY(-50%) rotate(-15deg)',
+                          transformOrigin: 'center',
+                          boxShadow: '0 0 4px rgba(255, 0, 0, 0.6)',
+                          width: '120%',
+                        }}
+                      />
+                    </span>
+                  </span>
+                </div>
+                {/* Get Started Button */}
+                <div className="flex flex-col items-center justify-center mt-12 md:mt-20">
+                  <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
+                    <a
+                      href="#purchase"
+                      className="seal-button text-xl mb-4"
+                    >
+                      <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
+                    </a>
+                  </RandomScrollReveal>
+                  <RandomScrollReveal delay={800} randomDelay={true}>
+                    <p className="text-xl text-muted-olive">
+                      <CharacterPopIn delay={800}>Join others who have found their purpose. Start your journey today.</CharacterPopIn>
+                    </p>
+                  </RandomScrollReveal>
+                </div>
+              </div>
             </div>
-          </RandomScrollReveal>
-          <RandomScrollReveal delay={200} randomDelay={true}>
-            <p className="text-xl mb-12 text-muted-olive">
-              <CharacterPopIn delay={200}>Join others who have found their purpose. Start your journey today.</CharacterPopIn>
-            </p>
-          </RandomScrollReveal>
-          <RandomScrollReveal delay={400} randomDelay={true} duration={1}>
-            <a
-              href="#purchase"
-              className="seal-button text-xl mb-6"
-            >
-              <span><CharacterPopIn delay={400}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
-            </a>
-          </RandomScrollReveal>
-          <RandomScrollReveal delay={600} randomDelay={true}>
-            <p className="font-mono text-sm text-white/60">
-              <CharacterPopIn delay={600}>Lifetime Access • Instant Download • 30-Day Money-Back Guarantee</CharacterPopIn>
-            </p>
           </RandomScrollReveal>
         </div>
       </section>
