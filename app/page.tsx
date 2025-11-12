@@ -322,7 +322,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="px-6 py-48 relative z-10">
+      <section className="px-6 pt-48 pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-12">
