@@ -244,6 +244,15 @@
   }
 }
 
+@keyframes arrowBounce {
+  0%, 100% {
+    transform: rotate(90deg) translateX(0);
+  }
+  50% {
+    transform: rotate(90deg) translateX(-10px);
+  }
+}
+
 @keyframes matrixDashedBorder {
   0%, 100% {
     opacity: 0.5;
@@ -279,19 +288,18 @@
 .seal-button {
   display: inline-block;
   position: relative;
-  padding: 1rem 2.5rem;
-  background: #033ba3;
-  color: #fcfcd4;
+  padding: 1.2rem 3rem;
+  background: #000000;
+  color: #ffffff;
   font-weight: bold;
   letter-spacing: 0.1em;
   border-radius: 4px;
-  border: 2px solid #fcfcd4;
-  border-style: double;
-  border-width: 3px;
+  border: 2px solid #ffffff;
+  border-style: solid;
+  border-width: 2px;
   box-shadow: 
-    0 0 0 1px rgba(252, 252, 212, 0.3),
-    0 4px 15px rgba(0, 0, 0, 0.3),
-    inset 0 0 20px rgba(252, 252, 212, 0.1);
+    0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 4px 15px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   cursor: pointer;
   text-decoration: none;
@@ -307,8 +315,8 @@
   right: 0;
   bottom: 0;
   background-image: 
-    linear-gradient(rgba(252, 252, 212, 0.6) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(252, 252, 212, 0.6) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
   background-size: 20px 20px;
   background-position: 0 0, 0 0;
   animation: matrixGridBuild 4s ease-in-out infinite,
@@ -324,7 +332,7 @@
   left: 4px;
   right: 4px;
   bottom: 4px;
-  border: 1px dashed rgba(252, 252, 212, 0.4);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
   animation: matrixDashedBorder 3s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
@@ -332,13 +340,12 @@
 
 .seal-button:hover {
   transform: translateY(-2px);
-  background-color: #0550c4;
-  border-color: #f9e5c1;
+  background-color: #1a1a1a;
+  border-color: #ffffff;
   box-shadow: 
-    0 0 0 1px rgba(252, 252, 212, 0.5),
-    0 6px 20px rgba(3, 59, 163, 0.4),
-    inset 0 0 30px rgba(252, 252, 212, 0.15);
-  color: #f9e5c1;
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 6px 20px rgba(0, 0, 0, 0.5);
+  color: #ffffff;
 }
 
 .seal-button span {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import Image from "next/image";
 
 interface WeekItem {
   label: string;
@@ -60,6 +61,19 @@ const weeks: WeekItem[] = [
   },
 ];
 
+interface GeometryShape {
+  type: 'triangle' | 'square' | 'circle' | 'line';
+  x: number;
+  y: number;
+  size: number;
+  rotation: number;
+  speedX: number;
+  speedY: number;
+  rotationSpeed: number;
+  opacity: number;
+  color: string;
+}
+
 export default function DiamondBranches() {
   const [isVisible, setIsVisible] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
@@ -70,6 +84,9 @@ export default function DiamondBranches() {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const branchAnimationRef = useRef<number>();
+  const modalGeometryCanvasRef = useRef<HTMLCanvasElement>(null);
+  const modalAnimationRef = useRef<number>();
+  const modalShapesRef = useRef<GeometryShape[]>([]);
 
   // Animate branches extending out
   useEffect(() => {
@@ -170,6 +187,158 @@ export default function DiamondBranches() {
     return { x: 500 + x, y: 500 + y };
   };
 
+  // Geometry animation for modal background
+  useEffect(() => {
+    if (clickedWeekIndex === null || !modalGeometryCanvasRef.current) {
+      if (modalAnimationRef.current) {
+        cancelAnimationFrame(modalAnimationRef.current);
+      }
+      return;
+    }
+
+    const canvas = modalGeometryCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size to match modal
+    const resizeCanvas = () => {
+      const modal = canvas.parentElement;
+      if (modal) {
+        canvas.width = modal.clientWidth;
+        canvas.height = modal.clientHeight;
+      }
+    };
+    resizeCanvas();
+
+    // Generate shapes for modal
+    const generateShapes = (): GeometryShape[] => {
+      const shapes: GeometryShape[] = [];
+      const types: GeometryShape['type'][] = ['triangle', 'square', 'circle', 'line'];
+      const cols = Math.ceil(canvas.width / 100);
+      const rows = Math.ceil(canvas.height / 100);
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = col * 100 + 50 + (Math.random() - 0.5) * 30;
+          const y = row * 100 + 50 + (Math.random() - 0.5) * 30;
+          const type = types[Math.floor(Math.random() * types.length)];
+
+          shapes.push({
+            type,
+            x,
+            y,
+            size: 4 + Math.random() * 6,
+            rotation: Math.random() * Math.PI * 2,
+            speedX: (Math.random() - 0.5) * 0.15,
+            speedY: (Math.random() - 0.5) * 0.15,
+            rotationSpeed: (Math.random() - 0.5) * 0.008,
+            opacity: 0.4 + Math.random() * 0.4,
+            color: `rgba(255, 255, 255, ${0.5 + Math.random() * 0.4})`,
+          });
+        }
+      }
+
+      return shapes;
+    };
+
+    modalShapesRef.current = generateShapes();
+
+    const drawTriangle = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+      ctx.beginPath();
+      ctx.moveTo(0, -shape.size / 2);
+      ctx.lineTo(-shape.size / 2, shape.size / 2);
+      ctx.lineTo(shape.size / 2, shape.size / 2);
+      ctx.closePath();
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawSquare = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.strokeRect(-shape.size / 2, -shape.size / 2, shape.size, shape.size);
+      ctx.restore();
+    };
+
+    const drawCircle = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.beginPath();
+      ctx.arc(0, 0, shape.size / 2, 0, Math.PI * 2);
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawLine = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+      ctx.beginPath();
+      ctx.moveTo(-shape.size / 2, 0);
+      ctx.lineTo(shape.size / 2, 0);
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      modalShapesRef.current.forEach((shape) => {
+        shape.x += shape.speedX;
+        shape.y += shape.speedY;
+        shape.rotation += shape.rotationSpeed;
+
+        if (shape.x < -shape.size) shape.x = canvas.width + shape.size;
+        if (shape.x > canvas.width + shape.size) shape.x = -shape.size;
+        if (shape.y < -shape.size) shape.y = canvas.height + shape.size;
+        if (shape.y > canvas.height + shape.size) shape.y = -shape.size;
+
+        switch (shape.type) {
+          case 'triangle':
+            drawTriangle(shape);
+            break;
+          case 'square':
+            drawSquare(shape);
+            break;
+          case 'circle':
+            drawCircle(shape);
+            break;
+          case 'line':
+            drawLine(shape);
+            break;
+        }
+      });
+
+      modalAnimationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      if (modalAnimationRef.current) {
+        cancelAnimationFrame(modalAnimationRef.current);
+      }
+    };
+  }, [clickedWeekIndex]);
+
   // Scroll-triggered visibility observer - triggers when diamond is visible in viewport
   useEffect(() => {
     if (!containerRef.current) return;
@@ -206,33 +375,68 @@ export default function DiamondBranches() {
     <>
       {/* Modal for week context */}
       {clickedWeekIndex !== null && (
-        <div
+        <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
           onClick={() => setClickedWeekIndex(null)}
         >
-          <div
-            className="bg-warm-beige border-2 border-orange-red/30 rounded-lg p-8 max-w-2xl w-full relative"
+          <div 
+            className="bg-black border border-white/10 rounded-sm p-10 mx-auto flex flex-col relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             style={{
-              animation: "popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+              width: '90%',
+              maxWidth: '600px',
+              maxHeight: '700px',
+              minHeight: '500px',
             }}
           >
-            <button
-              onClick={() => setClickedWeekIndex(null)}
-              className="absolute top-4 right-4 text-orange-red/80 hover:text-orange-red text-4xl font-bold transition-colors"
-              style={{ cursor: "pointer" }}
+            {/* Geometry background canvas */}
+            <canvas
+              ref={modalGeometryCanvasRef}
+              className="absolute inset-0 pointer-events-none rounded-sm"
+              style={{ opacity: 0.6 }}
+            />
+            
+             <div className="flex justify-between items-start mb-8 flex-shrink-0 relative z-10">
+               <div className="flex-1 pr-4">
+                 <h3 className="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-2">
+                   {getWeekNumber(clickedWeekIndex)}
+                 </h3>
+                 <h4 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold text-white">
+                   {weeks[clickedWeekIndex].label}
+                 </h4>
+               </div>
+              <button
+                onClick={() => setClickedWeekIndex(null)}
+                className="text-white/50 hover:text-white/80 text-3xl font-light flex-shrink-0 transition-colors leading-none"
+                aria-label="Close"
+                style={{ lineHeight: '1' }}
+              >
+                ×
+              </button>
+            </div>
+             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: '100px', paddingBottom: '100px' }}>
+               <p className="text-white/70 text-xl md:text-2xl lg:text-3xl font-sans leading-relaxed">
+                 {weeks[clickedWeekIndex].description}
+               </p>
+             </div>
+            
+            {/* Tree logo in bottom-right corner */}
+            <div 
+              className="absolute bottom-4 right-4 z-20 opacity-50"
+              style={{
+                width: '80px',
+                height: '80px',
+              }}
             >
-              ×
-            </button>
-            <h3 className="text-3xl md:text-4xl font-heading font-black text-orange-red mb-2">
-              {getWeekNumber(clickedWeekIndex)}
-            </h3>
-            <h4 className="text-2xl md:text-3xl font-heading font-bold text-orange-red mb-6">
-              {weeks[clickedWeekIndex].label}
-            </h4>
-            <p className="text-orange-red/90 text-lg md:text-xl leading-relaxed font-sans">
-              {weeks[clickedWeekIndex].description}
-            </p>
+              <Image
+                src="/Tree of life.png"
+                alt="Tree Logo"
+                width={80}
+                height={80}
+                className="drop-shadow-sm"
+                style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+              />
+            </div>
           </div>
         </div>
       )}

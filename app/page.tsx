@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from 'react';
 import TypewriterText from './components/HandwritingText';
 import ScrollAnimatedIcon from './components/ScrollAnimatedIcon';
 import BackgroundTrees from './components/BackgroundTrees';
@@ -11,6 +12,94 @@ import FloatingGeometry from './components/FloatingGeometry';
 import TitleWithBorder from './components/TitleWithBorder';
 import ExpandingLines from './components/ExpandingLines';
 import CountdownTimer from './components/CountdownTimer';
+import Image from 'next/image';
+
+interface FAQItemProps {
+  faq: { question: string; answer: string };
+  index: number;
+}
+
+function FAQItem({ faq, index }: FAQItemProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <>
+      <RandomScrollReveal delay={100 + index * 100} randomDelay={true}>
+        <div className={`h-full ${index === 5 ? '' : ''}`}>
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-all duration-300 text-left w-full cursor-pointer group flex flex-col h-full"
+          >
+            <h3 className="font-heading text-lg md:text-xl font-bold text-white mb-3 group-hover:text-white/90 transition-colors">
+              {faq.question}
+            </h3>
+            <p className="text-white/70 text-sm md:text-base font-sans leading-relaxed line-clamp-3 flex-grow">
+              {faq.answer}
+            </p>
+            <span className="inline-block mt-2 text-white/50 group-hover:text-white/80 group-hover:translate-x-1 transition-all duration-200">
+              →
+            </span>
+          </button>
+        </div>
+      </RandomScrollReveal>
+
+      {/* FAQ Modal */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setIsOpen(false)}
+        >
+          <div 
+            className="bg-black border border-white/10 rounded-sm p-10 mx-auto flex flex-col relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '90%',
+              maxWidth: '600px',
+              maxHeight: '90vh',
+            }}
+          >
+            <div className="flex justify-between items-start mb-8 flex-shrink-0 relative z-10">
+              <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold text-white flex-1 pr-4">
+                {faq.question}
+              </h3>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white/50 hover:text-white/80 text-3xl font-light flex-shrink-0 transition-colors leading-none"
+                aria-label="Close"
+                style={{ lineHeight: '1' }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(90vh - 120px)', paddingRight: '100px', paddingBottom: '100px' }}>
+              <p className="text-white/70 text-lg md:text-xl lg:text-2xl font-sans leading-relaxed">
+                {faq.answer}
+              </p>
+            </div>
+            
+            {/* Tree logo in bottom-right corner */}
+            <div 
+              className="absolute bottom-4 right-4 z-20 opacity-50"
+              style={{
+                width: '80px',
+                height: '80px',
+              }}
+            >
+              <Image
+                src="/Tree of life.png"
+                alt="Tree Logo"
+                width={80}
+                height={80}
+                className="drop-shadow-sm"
+                style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 export default function Home() {
   return (
@@ -50,16 +139,25 @@ export default function Home() {
         </RandomScrollReveal>
         <RandomScrollReveal delay={200} randomDelay={true}>
           <div className="text-xl md:text-2xl mb-12 text-white/90 flex items-center justify-center mt-20 md:mt-24">
-            <EnvelopeWithText />
+            <a 
+              href="#purchase"
+              className="cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={(e) => {
+                e.preventDefault();
+                const element = document.getElementById('purchase');
+                if (element) {
+                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                  const offsetPosition = elementPosition - (window.innerHeight / 2) + (element.offsetHeight / 2);
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              }}
+            >
+              <EnvelopeWithText />
+            </a>
           </div>
-        </RandomScrollReveal>
-        <RandomScrollReveal delay={400} randomDelay={true}>
-          <a
-            href="#purchase"
-            className="seal-button text-lg mt-4"
-          >
-            <span><CharacterPopIn delay={400}>Get Started — $297</CharacterPopIn></span>
-          </a>
         </RandomScrollReveal>
       </section>
 
@@ -74,7 +172,9 @@ export default function Home() {
                     <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
                   </h2>
                   <p className="text-white/70 text-sm md:text-base mt-2 font-sans">
-                    Simply click on a week to see what it&apos;s all about.
+                    <span className="border-b border-white/50 pb-0.5 inline-block">
+                      Click on the logo of each week to learn more.
+                    </span>
                   </p>
                 </div>
               </TitleWithBorder>
@@ -110,9 +210,17 @@ export default function Home() {
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-0">
               <TitleWithBorder padding="px-8 py-4">
-                <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
-                  <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
-                </h2>
+                <div className="text-center">
+                  <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
+                    <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
+                  </h2>
+                  <p className="text-white/70 text-sm md:text-base mt-2 font-sans">
+                    All systems created by Josh Terry.<br />
+                    <span className="border-b border-white/50 pb-0.5 inline-block">
+                      Click on each title to learn more.
+                    </span>
+                  </p>
+                </div>
               </TitleWithBorder>
             </div>
           </RandomScrollReveal>
@@ -122,7 +230,7 @@ export default function Home() {
             <div className="flex justify-center -mt-8 md:-mt-12">
               <div className="text-center">
                 <p 
-                  className="text-white text-sm sm:text-base md:text-lg lg:text-xl mb-2"
+                  className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl mb-2"
                   style={{
                     fontFamily: "'IBM Plex Sans', sans-serif",
                     textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0.5px 0.5px 0.5px rgba(0,0,0,0.3), -0.5px -0.5px 0.5px rgba(0,0,0,0.3)',
@@ -135,9 +243,18 @@ export default function Home() {
                 >
                   Total Value
                 </p>
+                {/* Value Breakdown */}
+                <div className="mb-4 space-y-2">
+                  <p className="text-white/90 text-base sm:text-lg md:text-xl font-sans font-semibold">
+                    Purpose Transformation: <span className="font-bold text-white">$1,000</span>
+                  </p>
+                  <p className="text-white/80 text-sm sm:text-base md:text-lg font-sans">
+                    Bonuses: <span className="font-bold text-white/90">$1,677</span>
+                  </p>
+                </div>
                 <div className="flex items-center justify-center gap-2">
                   <span 
-                    className="text-white font-mono text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold inline-block relative"
+                    className="text-white font-mono text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold inline-block relative"
                     style={{
                       fontFamily: "'IBM Plex Mono', monospace",
                       textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0.5px 0.5px 0.5px rgba(0,0,0,0.3), -0.5px -0.5px 0.5px rgba(0,0,0,0.3)',
@@ -150,7 +267,7 @@ export default function Home() {
                       position: 'relative',
                       display: 'inline-block',
                     }}>
-                      $2,079
+                      $2,677
                       {/* Diagonal strikethrough line */}
                       <span
                         style={{
@@ -169,20 +286,33 @@ export default function Home() {
                     </span>
                   </span>
                 </div>
+                {/* Downward Arrow */}
+                <div className="flex justify-center mt-8 md:mt-12 mb-2">
+                  <span 
+                    className="inline-block transition-all duration-200"
+                    style={{ 
+                      fontSize: '7rem',
+                      display: 'inline-block',
+                      opacity: 0.8,
+                      color: '#ffffff',
+                      textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0 0 16px rgba(255,255,255,0.3)',
+                      filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                      animation: 'arrowBounce 2s ease-in-out infinite',
+                    }}
+                  >
+                    →
+                  </span>
+                </div>
                 {/* Get Started Button */}
-                <div className="flex flex-col items-center justify-center mt-12 md:mt-20">
+                <div id="purchase" className="flex flex-col items-center justify-center mt-2 md:mt-4">
                   <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
                     <a
                       href="#purchase"
-                      className="seal-button text-xl mb-4"
+                      className="seal-button text-2xl md:text-3xl mb-4 font-sans"
+                      style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                     >
                       <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
                     </a>
-                  </RandomScrollReveal>
-                  <RandomScrollReveal delay={800} randomDelay={true}>
-                    <p className="text-xl text-muted-olive">
-                      <CharacterPopIn delay={800}>Join others who have found their purpose. Start your journey today.</CharacterPopIn>
-                    </p>
                   </RandomScrollReveal>
                 </div>
               </div>
@@ -191,13 +321,80 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="px-6 py-48 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <RandomScrollReveal delay={0} randomDelay={true}>
+            <div className="flex justify-center mb-12">
+              <TitleWithBorder padding="px-8 py-4">
+                <div className="text-center">
+                  <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
+                    <CharacterPopIn delay={0}>Frequently Asked Questions</CharacterPopIn>
+                  </h2>
+                </div>
+              </TitleWithBorder>
+            </div>
+          </RandomScrollReveal>
+          
+          {/* FAQ Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8 items-stretch">
+            {[
+              {
+                question: "What exactly do I receive and how is it delivered?",
+                answer: "You get a self guided eight week curriculum with short video lessons, worksheets, and checklists. The bundle also includes the programs Instinctive Breathwork, Goal Setting Workbook, Purpose Paradox, Ten Minute Progress, and additional tools. Everything lives in a secure online portal with lifetime access. PDFs are downloadable."
+              },
+              {
+                question: "How much time does this require and can I adjust the pace?",
+                answer: "Plan about sixty to ninety minutes per week for the core lesson plus a brief daily check that takes a few minutes. The program is self paced. You can pause, repeat, or move faster. The weeks are designed to be taken in order, but you can dip into any program as needed."
+              },
+              {
+                question: "How do the bonuses fit into the eight weeks?",
+                answer: "Each bonus supports a specific skill. Breathwork for state control. Goal Setting for focus and follow through. Purpose Paradox for thinking clearly about meaning. Ten Minute Progress for breaking inertia. They plug into the main sequence so you can practice a tool the moment it becomes relevant."
+              },
+              {
+                question: "How will I know it is working?",
+                answer: "You will track a small set of visible measures such as completed actions per week, decision time on important tasks, and a simple clarity score. The portal provides templates for baseline and weekly review so you can compare before and after and see trend lines over time."
+              },
+              {
+                question: "Is this approach evidence informed and safe to use?",
+                answer: "The methods are drawn from established principles in behavior change, goal setting, and basic breath mechanics. All practices are self guided and conservative. If you have a medical condition or concerns, check with your physician before doing breathwork or any physical practice. The rest of the curriculum is cognitive and planning based and can be done by anyone."
+              }
+            ].map((faq, index) => (
+              <FAQItem key={index} faq={faq} index={index} />
+            ))}
+          </div>
+          
+          {/* Contact FAQ - Horizontal */}
+          <div className="mt-12 flex items-start gap-6">
+            <div className="flex-1">
+              <FAQItem 
+                faq={{
+                  question: "I have other questions, how can I contact you guys?",
+                  answer: "Send us an email at support@wayfindercoaching.net We're happy to answer any questions you might have."
+                }} 
+                index={5} 
+              />
+            </div>
+            <div className="flex-shrink-0 flex flex-col items-center">
+              <Image
+                src="/profile-pic.png"
+                alt="Profile"
+                width={160}
+                height={160}
+                className="rounded-full object-cover mb-3"
+                style={{ width: '160px', height: '160px' }}
+              />
+              <div className="text-center">
+                <p className="text-white/70 text-sm font-sans mb-1">Contact Details</p>
+                <p className="text-white text-sm font-sans">Support@wayfindercoaching.net</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="px-6 py-12 bg-charcoal text-muted-olive text-center text-sm relative z-10">
-        <RandomScrollReveal delay={0} randomDelay={true}>
-          <p className="font-mono">
-            <CharacterPopIn delay={0}>© 2024 Josh Terry. All rights reserved.</CharacterPopIn>
-          </p>
-        </RandomScrollReveal>
+      <footer className="px-6 py-6 relative z-10">
       </footer>
     </main>
   );

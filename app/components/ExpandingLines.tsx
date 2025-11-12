@@ -1,6 +1,20 @@
 "use client"; // Line connection fixes deployed
 
 import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from "react";
+import Image from "next/image";
+
+interface GeometryShape {
+  type: 'triangle' | 'square' | 'circle' | 'line';
+  x: number;
+  y: number;
+  size: number;
+  rotation: number;
+  speedX: number;
+  speedY: number;
+  rotationSpeed: number;
+  opacity: number;
+  color: string;
+}
 
 interface UpwardLine {
   startY: number; // Starting Y position on the left side
@@ -14,36 +28,96 @@ interface BranchLine {
 }
 
 // 7 upward lines starting from left side
-// Reduced spacing by 20% for tighter animation
+// Adjusted spacing - last three columns spread out more evenly
 const upwardLinesDesktop: UpwardLine[] = [
-  { startY: 500, endY: 180 },   // Top (reduced from 150)
-  { startY: 500, endY: 284 },   // Upper-mid (reduced from 267)
-  { startY: 500, endY: 388 },   // Mid-upper (reduced from 383)
-  { startY: 500, endY: 500 },   // Middle (unchanged)
-  { startY: 500, endY: 612 },   // Mid-lower (reduced from 617)
-  { startY: 500, endY: 724 },   // Lower-mid (reduced from 733)
-  { startY: 500, endY: 836 },   // Bottom (reduced from 850)
+  { startY: 500, endY: 180 },   // Top
+  { startY: 500, endY: 284 },   // Upper-mid
+  { startY: 500, endY: 388 },   // Mid-upper
+  { startY: 500, endY: 500 },   // Middle
+  { startY: 500, endY: 620 },   // Mid-lower (spread out more)
+  { startY: 500, endY: 740 },   // Lower-mid (spread out more)
+  { startY: 500, endY: 860 },   // Bottom (spread out more)
 ];
 
-// Increased spacing for mobile (reduced by 20%)
+// Increased spacing for mobile - last three columns spread out more evenly
 const upwardLinesMobile: UpwardLine[] = [
-  { startY: 500, endY: 120 },   // Top (reduced from 100)
-  { startY: 500, endY: 246 },   // Upper-mid (reduced from 233)
-  { startY: 500, endY: 373 },   // Mid-upper (reduced from 366)
-  { startY: 500, endY: 500 },   // Middle (unchanged)
-  { startY: 500, endY: 627 },   // Mid-lower (reduced from 634)
-  { startY: 500, endY: 754 },   // Lower-mid (reduced from 767)
-  { startY: 500, endY: 880 },   // Bottom (reduced from 900)
+  { startY: 500, endY: 120 },   // Top
+  { startY: 500, endY: 246 },   // Upper-mid
+  { startY: 500, endY: 373 },   // Mid-upper
+  { startY: 500, endY: 500 },   // Middle
+  { startY: 500, endY: 635 },   // Mid-lower (spread out more)
+  { startY: 500, endY: 770 },   // Lower-mid (spread out more)
+  { startY: 500, endY: 905 },   // Bottom (spread out more)
 ];
 
-// Bonus content text for each column
-const bonusTexts: string[] = [
-  "Goal setting workbook",
-  "Instinctive breathwork",
-  "Purpose clarity journal",
-  "Book on how to make progress",
-  "Daily reflection prompts",
-  "Values alignment guide",
+// Bonus content text for each column - split into title and subtitle
+const bonusTexts: { title: string; subtitle?: string }[] = [
+  { title: "Goal Setting Workbook" },
+  { title: "Instinctive Breathwork" },
+  { title: "Book On How To Make Progress" },
+  { title: "The Purpose Paradox", subtitle: "Understand The Truth Of Living With Purpose" },
+  { title: "Set Fail-Resistant Goals", subtitle: "A Step-By-Step Framework" },
+  { title: "Get Moving Make It Happen Now", subtitle: "Building The Life You Want" },
+];
+
+// Detailed descriptions for each bonus item
+const bonusDescriptions: { title: string; description: string[] }[] = [
+  {
+    title: "Goal Setting Workbook",
+    description: [
+      "Build goals that match how you live and think.",
+      "Pair vision with awareness so direction is realistic and repeatable.",
+      "Small steps. Clear metrics. A plan you can sustain tomorrow and next month."
+    ]
+  },
+  {
+    title: "Instinctive Breathwork: Access the breath you need",
+    description: [
+      "Learn a simple discovery method that unlocks the full range of your breathing.",
+      "Use it to reach the state you need in the moment. Calm. Focus. Endurance. Recovery.",
+      "Not a single technique. A way to find the right technique on demand."
+    ]
+  },
+  {
+    title: "Book On How To Make Progress",
+    description: [
+      "Three mental models and three short exercises that break inertia fast.",
+      "Clarify what actually matters. Stop looping the same problems. Start moving today.",
+      "Designed for functionality, performance, and purpose."
+    ]
+  },
+  {
+    title: "The Purpose Paradox",
+    description: [
+      "Understand the truth of living with purpose. (FYI: It isn't a discovery. It's a skill set.)",
+      "So you can create on a larger scale in your life, and in the smallest moments every day."
+    ]
+  },
+  {
+    title: "Set \"Fail-Resistant\" Goals",
+    description: [
+      "Most goal-setting exercises leave out core components needed to make sure you actually cross the finish line.",
+      "This video training + workbook will make winning at the goals you set inevitable…",
+      "Broken down in a step-by-step framework so that you start setting goals that actually get done!"
+    ]
+  },
+  {
+    title: "Get Moving & Make It Happen Now",
+    description: [
+      "Discover the unfamiliar strategies you need to start taking action today (and every day) toward building the life you want.",
+      "Based on the true fundamentals of how to change human behavior. (Probably the opposite of what you're trying now.)"
+    ]
+  }
+];
+
+// Prices for each bonus item (matching order of bonusTexts)
+const bonusPrices: string[] = [
+  "$200",   // Goal Setting Workbook
+  "$497",   // Instinctive Breathwork
+  "$89",    // How To Make Progress Book (10-minute workbook)
+  "$297",   // The Purpose Paradox
+  "$297",   // Set Fail-Resistant Goals
+  "$297",   // Get Moving Make It Happen Now
 ];
 
 // Branch lines going from left to right and right to left, meeting in the middle to create columns
@@ -92,12 +166,16 @@ export default function ExpandingLines() {
   const [scriptComplete, setScriptComplete] = useState(false); // Track when script animation is complete
   const [verticalLineProgress, setVerticalLineProgress] = useState(0); // Track vertical line animation progress
   const [popInProgress, setPopInProgress] = useState<number[]>(new Array(7).fill(0)); // Track pop-in animation for each item (0-1)
+  const [selectedBonus, setSelectedBonus] = useState<number | null>(null); // Track which bonus is clicked
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const priceTimeoutRef = useRef<NodeJS.Timeout[]>([]);
   const lastUpdateTime = useRef<number>(0);
   const updateThrottle = 16; // ~60fps max update rate (16ms = 1 frame at 60fps)
+  const modalGeometryCanvasRef = useRef<HTMLCanvasElement>(null);
+  const modalShapesRef = useRef<GeometryShape[]>([]);
+  const modalAnimationRef = useRef<number>();
 
   // Detect mobile screen size
   useEffect(() => {
@@ -276,6 +354,158 @@ export default function ExpandingLines() {
       }
     };
   }, [isVisible, isMobile, branchLines.length, upwardLines.length, textVisible]);
+
+  // Geometry animation for modal background
+  useEffect(() => {
+    if (!selectedBonus || !modalGeometryCanvasRef.current) {
+      if (modalAnimationRef.current) {
+        cancelAnimationFrame(modalAnimationRef.current);
+      }
+      return;
+    }
+
+    const canvas = modalGeometryCanvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size to match modal
+    const resizeCanvas = () => {
+      const modal = canvas.parentElement;
+      if (modal) {
+        canvas.width = modal.clientWidth;
+        canvas.height = modal.clientHeight;
+      }
+    };
+    resizeCanvas();
+
+    // Generate shapes for modal
+    const generateShapes = (): GeometryShape[] => {
+      const shapes: GeometryShape[] = [];
+      const types: GeometryShape['type'][] = ['triangle', 'square', 'circle', 'line'];
+      const cols = Math.ceil(canvas.width / 100);
+      const rows = Math.ceil(canvas.height / 100);
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          const x = col * 100 + 50 + (Math.random() - 0.5) * 30;
+          const y = row * 100 + 50 + (Math.random() - 0.5) * 30;
+          const type = types[Math.floor(Math.random() * types.length)];
+
+          shapes.push({
+            type,
+            x,
+            y,
+            size: 4 + Math.random() * 6,
+            rotation: Math.random() * Math.PI * 2,
+            speedX: (Math.random() - 0.5) * 0.15,
+            speedY: (Math.random() - 0.5) * 0.15,
+            rotationSpeed: (Math.random() - 0.5) * 0.008,
+            opacity: 0.4 + Math.random() * 0.4,
+            color: `rgba(255, 255, 255, ${0.5 + Math.random() * 0.4})`,
+          });
+        }
+      }
+
+      return shapes;
+    };
+
+    modalShapesRef.current = generateShapes();
+
+    const drawTriangle = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+      ctx.beginPath();
+      ctx.moveTo(0, -shape.size / 2);
+      ctx.lineTo(-shape.size / 2, shape.size / 2);
+      ctx.lineTo(shape.size / 2, shape.size / 2);
+      ctx.closePath();
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawSquare = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.strokeRect(-shape.size / 2, -shape.size / 2, shape.size, shape.size);
+      ctx.restore();
+    };
+
+    const drawCircle = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.beginPath();
+      ctx.arc(0, 0, shape.size / 2, 0, Math.PI * 2);
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const drawLine = (shape: GeometryShape) => {
+      ctx.save();
+      ctx.translate(shape.x, shape.y);
+      ctx.rotate(shape.rotation);
+      ctx.beginPath();
+      ctx.moveTo(-shape.size / 2, 0);
+      ctx.lineTo(shape.size / 2, 0);
+      ctx.strokeStyle = shape.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = shape.opacity;
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      modalShapesRef.current.forEach((shape) => {
+        shape.x += shape.speedX;
+        shape.y += shape.speedY;
+        shape.rotation += shape.rotationSpeed;
+
+        if (shape.x < -shape.size) shape.x = canvas.width + shape.size;
+        if (shape.x > canvas.width + shape.size) shape.x = -shape.size;
+        if (shape.y < -shape.size) shape.y = canvas.height + shape.size;
+        if (shape.y > canvas.height + shape.size) shape.y = -shape.size;
+
+        switch (shape.type) {
+          case 'triangle':
+            drawTriangle(shape);
+            break;
+          case 'square':
+            drawSquare(shape);
+            break;
+          case 'circle':
+            drawCircle(shape);
+            break;
+          case 'line':
+            drawLine(shape);
+            break;
+        }
+      });
+
+      modalAnimationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+    window.addEventListener('resize', resizeCanvas);
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      if (modalAnimationRef.current) {
+        cancelAnimationFrame(modalAnimationRef.current);
+      }
+    };
+  }, [selectedBonus]);
 
   return (
     <div ref={containerRef} className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] py-8 sm:py-10 md:py-12 px-2 sm:px-4 md:px-6">
@@ -549,27 +779,73 @@ export default function ExpandingLines() {
                   opacity: popInProgress[index] > 0 ? 1 : 0,
                   transition: 'opacity 0.3s ease-out',
                   width: 'max-content',
-                  maxWidth: '250px',
+                  maxWidth: '320px',
                 }}
               >
                 {/* Text appears on the left side within the column with pop-in animation */}
                   {bonusTexts[index] && (
-                      <span 
-                    className="text-white text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl leading-tight whitespace-normal text-left flex-shrink-0 block"
+                      <button
+                        onClick={() => setSelectedBonus(index)}
+                        className="text-white text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative"
                         style={{
                           fontFamily: "'IBM Plex Sans', sans-serif",
                           textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
                           filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
                           fontWeight: 900,
                           letterSpacing: '0.02em',
-                      wordBreak: 'break-word',
-                      transform: `scale(${0.3 + popInProgress[index] * 0.7}) translateY(${(1 - popInProgress[index]) * 20}px)`,
-                      opacity: popInProgress[index] > 0 ? 1 : 0,
-                      transition: popInProgress[index] === 0 ? 'none' : 'transform 0.1s ease-out',
+                          wordBreak: 'break-word',
+                          transform: `scale(${0.3 + popInProgress[index] * 0.7}) translateY(${(1 - popInProgress[index]) * 20}px)`,
+                          opacity: popInProgress[index] > 0 ? 1 : 0,
+                          transition: popInProgress[index] === 0 ? 'none' : 'all 0.2s ease-out',
+                          background: 'none',
+                          border: 'none',
+                          padding: '4px 8px',
+                          paddingLeft: '0',
+                          width: '100%',
+                        }}
+                        onMouseEnter={(e) => {
+                          const baseScale = 0.3 + popInProgress[index] * 0.7;
+                          e.currentTarget.style.textShadow = '0 0 12px rgba(255,255,255,0.9), 0 0 18px rgba(99,157,240,0.7)';
+                          e.currentTarget.style.transform = `scale(${baseScale * 1.05}) translateY(${(1 - popInProgress[index]) * 20}px)`;
+                        }}
+                        onMouseLeave={(e) => {
+                          const baseScale = 0.3 + popInProgress[index] * 0.7;
+                          e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)';
+                          e.currentTarget.style.transform = `scale(${baseScale}) translateY(${(1 - popInProgress[index]) * 20}px)`;
                         }}
                       >
-                        {bonusTexts[index]}
-                      </span>
+                        <div className="block relative" style={{ lineHeight: '1.2' }}>
+                          {/* Always-visible clickable indicator - subtle underline */}
+                          <div 
+                            className="group-hover:opacity-100 transition-all duration-200"
+                            style={{ 
+                              whiteSpace: 'normal', 
+                              wordBreak: 'break-word',
+                              borderBottom: '2px solid rgba(255, 255, 255, 0.3)',
+                              paddingBottom: '2px',
+                              display: 'inline-block',
+                              width: 'fit-content',
+                            }}
+                          >
+                            {bonusTexts[index].title}
+                            {/* Click indicator icon */}
+                            <span 
+                              className="inline-block ml-2 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
+                              style={{ fontSize: '0.7em' }}
+                            >
+                              →
+                            </span>
+                          </div>
+                          {bonusTexts[index].subtitle && (
+                            <div 
+                              className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl mt-1.5 group-hover:text-white/90 transition-colors duration-200" 
+                              style={{ fontWeight: 600, whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.2' }}
+                            >
+                              {bonusTexts[index].subtitle}
+                            </div>
+                          )}
+                        </div>
+                      </button>
                 )}
                 
               </div>
@@ -637,7 +913,7 @@ export default function ExpandingLines() {
                           position: 'relative',
                           display: 'inline-block',
                         }}>
-                          $297
+                          {bonusPrices[index] || "$297"}
                           {/* Diagonal strikethrough line */}
                           <span
                             style={{
@@ -660,6 +936,74 @@ export default function ExpandingLines() {
           })}
         </div>
       </div>
+
+      {/* Modal for bonus details */}
+      {selectedBonus !== null && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+          onClick={() => setSelectedBonus(null)}
+        >
+          <div 
+            className="bg-black border border-white/10 rounded-sm p-10 mx-auto flex flex-col relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '90%',
+              maxWidth: '600px',
+              maxHeight: '700px',
+              minHeight: '500px',
+            }}
+          >
+            {/* Geometry background canvas */}
+            <canvas
+              ref={modalGeometryCanvasRef}
+              className="absolute inset-0 pointer-events-none rounded-sm"
+              style={{ opacity: 0.6 }}
+            />
+            
+             <div className="flex justify-between items-start mb-8 flex-shrink-0 relative z-10">
+               <h3 className="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-white flex-1 pr-4">
+                 {bonusDescriptions[selectedBonus]?.title}
+               </h3>
+              <button
+                onClick={() => setSelectedBonus(null)}
+                className="text-white/50 hover:text-white/80 text-3xl font-light flex-shrink-0 transition-colors leading-none"
+                aria-label="Close"
+                style={{ lineHeight: '1' }}
+              >
+                ×
+              </button>
+            </div>
+             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: '100px', paddingBottom: '100px' }}>
+               {bonusDescriptions[selectedBonus]?.description.map((paragraph, idx) => (
+                 <p 
+                   key={idx}
+                   className="text-white/70 text-xl md:text-2xl lg:text-3xl font-sans leading-relaxed"
+                 >
+                   {paragraph}
+                 </p>
+               ))}
+             </div>
+            
+            {/* Tree logo in bottom-right corner */}
+            <div 
+              className="absolute bottom-4 right-4 z-20 opacity-50"
+              style={{
+                width: '80px',
+                height: '80px',
+              }}
+            >
+              <Image
+                src="/Tree of life.png"
+                alt="Tree Logo"
+                width={80}
+                height={80}
+                className="drop-shadow-sm"
+                style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
