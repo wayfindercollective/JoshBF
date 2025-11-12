@@ -170,7 +170,7 @@ export default function DiamondBranches() {
     return { x: 500 + x, y: 500 + y };
   };
 
-  // Scroll-triggered visibility observer - triggers when diamond is almost in middle of screen
+  // Scroll-triggered visibility observer - triggers when diamond is visible in viewport
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -178,7 +178,7 @@ export default function DiamondBranches() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Element is visible and near center of screen
+            // Element is visible in viewport
             setIsVisible(true);
           } else {
             // Element scrolled away - reset animation
@@ -188,8 +188,8 @@ export default function DiamondBranches() {
         });
       },
       {
-        threshold: 0.5, // Trigger when 50% of element is visible
-        rootMargin: '0px 0px -30% 0px', // Trigger when element is in upper-middle portion of screen
+        threshold: 0.1, // Trigger when 10% of element is visible (more lenient)
+        rootMargin: '0px', // No margin restrictions - trigger anywhere in viewport
       }
     );
 

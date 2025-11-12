@@ -13,30 +13,30 @@ interface BranchLine {
   endX: number;    // Ending X (branching to the right)
 }
 
-// 7 upward lines starting from left side (including the middle one)
-// Original spacing for desktop (116.67 units apart)
+// 7 upward lines starting from left side
+// Reduced spacing by 20% for tighter animation
 const upwardLinesDesktop: UpwardLine[] = [
-  { startY: 500, endY: 150 },   // Top
-  { startY: 500, endY: 267 },   // Upper-mid
-  { startY: 500, endY: 383 },   // Mid-upper
-  { startY: 500, endY: 500 },   // Middle (the dot that moved from center)
-  { startY: 500, endY: 617 },   // Mid-lower
-  { startY: 500, endY: 733 },   // Lower-mid
-  { startY: 500, endY: 850 },   // Bottom
+  { startY: 500, endY: 180 },   // Top (reduced from 150)
+  { startY: 500, endY: 284 },   // Upper-mid (reduced from 267)
+  { startY: 500, endY: 388 },   // Mid-upper (reduced from 383)
+  { startY: 500, endY: 500 },   // Middle (unchanged)
+  { startY: 500, endY: 612 },   // Mid-lower (reduced from 617)
+  { startY: 500, endY: 724 },   // Lower-mid (reduced from 733)
+  { startY: 500, endY: 836 },   // Bottom (reduced from 850)
 ];
 
-// Increased spacing for mobile (133 units apart)
+// Increased spacing for mobile (reduced by 20%)
 const upwardLinesMobile: UpwardLine[] = [
-  { startY: 500, endY: 100 },   // Top - increased spacing
-  { startY: 500, endY: 233 },   // Upper-mid - increased spacing
-  { startY: 500, endY: 366 },   // Mid-upper - increased spacing
-  { startY: 500, endY: 500 },   // Middle (the dot that moved from center)
-  { startY: 500, endY: 634 },   // Mid-lower - increased spacing
-  { startY: 500, endY: 767 },   // Lower-mid - increased spacing
-  { startY: 500, endY: 900 },   // Bottom - increased spacing
+  { startY: 500, endY: 120 },   // Top (reduced from 100)
+  { startY: 500, endY: 246 },   // Upper-mid (reduced from 233)
+  { startY: 500, endY: 373 },   // Mid-upper (reduced from 366)
+  { startY: 500, endY: 500 },   // Middle (unchanged)
+  { startY: 500, endY: 627 },   // Mid-lower (reduced from 634)
+  { startY: 500, endY: 754 },   // Lower-mid (reduced from 767)
+  { startY: 500, endY: 880 },   // Bottom (reduced from 900)
 ];
 
-// Bonus content text for each dot
+// Bonus content text for each column
 const bonusTexts: string[] = [
   "Goal setting workbook",
   "Instinctive breathwork",
@@ -44,31 +44,44 @@ const bonusTexts: string[] = [
   "Book on how to make progress",
   "Daily reflection prompts",
   "Values alignment guide",
-  "Action planning template",
 ];
 
-// Branch lines going to the right from each upward line endpoint
-// End position is where dots appear and where text will start
-const LEFT_POSITION = 100; // Moved further left from 200
-const BRANCH_END_X = 350; // Moved further left from 450
+// Branch lines going from left to right and right to left, meeting in the middle to create columns
+// Reduced horizontal spread by 20% for tighter animation
+const LEFT_POSITION = 180; // Left side position (moved in from 100)
+const RIGHT_POSITION = 820; // Right side position (moved in from 900)
+const CENTER_X = 500; // Center where lines meet, creating columns (unchanged)
 
 export default function ExpandingLines() {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [dotPosition, setDotPosition] = useState({ x: 500, y: 500 });
-  const [dotRadius, setDotRadius] = useState(18); // Start at three times the size (18 instead of 6)
   
   // Use responsive spacing based on screen size
   const upwardLines = isMobile ? upwardLinesMobile : upwardLinesDesktop;
-  const branchLines = upwardLines.map((line, index) => ({
-    startX: LEFT_POSITION,  // Left side position - moved further left
+  
+  // Left side branch lines - going from left towards center
+  const branchLines = upwardLines.map((line) => ({
+    startX: LEFT_POSITION,  // Start at left side
     startY: line.endY,
-    endX: BRANCH_END_X,     // Position where dots appear - text starts here
+    endX: CENTER_X,         // End at center, meeting right side lines
   }));
   
-  const [upwardProgress, setUpwardProgress] = useState<number[]>(new Array(upwardLines.length).fill(0));
-  const [branchProgress, setBranchProgress] = useState<number[]>(new Array(branchLines.length).fill(0));
-  const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(branchLines.length).fill(false));
+  // Right side branch lines - going from right towards center
+  const branchLinesRight = upwardLines.map((line) => ({
+    startX: RIGHT_POSITION,  // Start at right side
+    startY: line.endY,
+    endX: CENTER_X,         // End at center, meeting left side lines
+  }));
+  
+  const [upwardProgress, setUpwardProgress] = useState<number[]>(new Array(7).fill(0));
+  const [upwardProgressRight, setUpwardProgressRight] = useState<number[]>(new Array(7).fill(0));
+  const [branchProgress, setBranchProgress] = useState<number[]>(new Array(7).fill(0));
+  const [branchProgressRight, setBranchProgressRight] = useState<number[]>(new Array(7).fill(0));
+  const [textVisible, setTextVisible] = useState<boolean[]>(new Array(7).fill(false));
+  const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(7).fill(false)); // Price for each column
+  const [scriptComplete, setScriptComplete] = useState(false); // Track when script animation is complete
+  const [verticalLineProgress, setVerticalLineProgress] = useState(0); // Track vertical line animation progress
+  const [popInProgress, setPopInProgress] = useState<number[]>(new Array(7).fill(0)); // Track pop-in animation for each item (0-1)
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -96,11 +109,15 @@ export default function ExpandingLines() {
           } else {
             // Reset animation when out of view
             setIsVisible(false);
-            setDotPosition({ x: 500, y: 500 });
-            setDotRadius(18); // Reset to starting size
-            setUpwardProgress(new Array(upwardLines.length).fill(0));
-            setBranchProgress(new Array(branchLines.length).fill(0));
-            setPriceVisible(new Array(branchLines.length).fill(false));
+            setUpwardProgress(new Array(7).fill(0));
+            setUpwardProgressRight(new Array(7).fill(0));
+            setBranchProgress(new Array(7).fill(0));
+            setBranchProgressRight(new Array(7).fill(0));
+            setTextVisible(new Array(7).fill(false));
+            setPriceVisible(new Array(7).fill(false));
+            setScriptComplete(false);
+            setVerticalLineProgress(0);
+            setPopInProgress(new Array(7).fill(0));
             // Clear any ongoing animations
             if (animationRef.current) {
               cancelAnimationFrame(animationRef.current);
@@ -133,15 +150,19 @@ export default function ExpandingLines() {
     };
   }, []);
 
-  // Animation sequence: dot appears -> moves left -> upward lines -> branch lines
+  // Animation sequence: upward lines -> branch lines -> text appears (script-like)
   useEffect(() => {
     if (!isVisible) {
       // Reset all states when not visible
-      setDotPosition({ x: 500, y: 500 });
-      setDotRadius(12); // Reset to starting size
-      setUpwardProgress(new Array(upwardLines.length).fill(0));
-      setBranchProgress(new Array(branchLines.length).fill(0));
-      setPriceVisible(new Array(branchLines.length).fill(false));
+      setUpwardProgress(new Array(7).fill(0));
+      setUpwardProgressRight(new Array(7).fill(0));
+      setBranchProgress(new Array(7).fill(0));
+      setBranchProgressRight(new Array(7).fill(0));
+      setTextVisible(new Array(7).fill(false));
+      setPriceVisible(new Array(7).fill(false));
+      setScriptComplete(false);
+      setVerticalLineProgress(0);
+      setPopInProgress(new Array(7).fill(0));
       return;
     }
 
@@ -154,57 +175,22 @@ export default function ExpandingLines() {
       timeoutRef.current = null;
     }
 
-    let phase = 0; // 0: dot move left, 1: upward lines, 2: branch lines
+    let phase = 0; // 0: upward lines, 1: branch lines
     let currentLine = 0;
 
-    // Phase 0: Move dot from center to left
-    const moveDotLeft = () => {
-      const startTime = performance.now();
-      const duration = 500; // Optimized for 4-second total animation
-      const startX = 500;
-      const endX = LEFT_POSITION; // Use the LEFT_POSITION constant
-
-      const animate = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = 1 - Math.pow(1 - progress, 2); // Ease-out
-
-        const currentX = startX + (endX - startX) * easedProgress;
-        // Animate radius from 18 (three times size) to 6 (current size)
-        const startRadius = 18;
-        const endRadius = 6;
-        const currentRadius = startRadius + (endRadius - startRadius) * easedProgress;
-        
-        setDotPosition({ x: currentX, y: 500 });
-        setDotRadius(currentRadius);
-
-        if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
-        } else {
-          phase = 1;
-          currentLine = 0;
-          timeoutRef.current = setTimeout(() => {
-            animateUpwardLines();
-          }, 50); // Reduced delay
-        }
-      };
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    // Phase 1: Animate upward lines
+    // Phase 0: Animate upward lines (both left and right simultaneously)
     const animateUpwardLines = () => {
       if (currentLine >= upwardLines.length) {
         phase = 2;
         currentLine = 0;
         timeoutRef.current = setTimeout(() => {
           animateBranchLines();
-        }, 50); // Reduced delay
+        }, 10); // Very fast for 2.5s total animation
         return;
       }
 
       const startTime = performance.now();
-      const duration = 100; // Slightly longer for smoother animation
+      const duration = 50; // Faster for 2.5s total animation
 
       const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime;
@@ -219,6 +205,12 @@ export default function ExpandingLines() {
           newProgress[currentLine] = easedProgress;
           return newProgress;
         });
+        
+        setUpwardProgressRight((prev) => {
+          const newProgress = [...prev];
+          newProgress[currentLine] = easedProgress;
+          return newProgress;
+        });
 
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
@@ -228,13 +220,13 @@ export default function ExpandingLines() {
             // Much shorter delay for cascading effect - lines overlap more
             timeoutRef.current = setTimeout(() => {
               animateUpwardLines();
-            }, 10); // Reduced delay for more fluent cascading
+            }, 5); // Very fast for 2.5s total animation
           } else {
-            phase = 2;
+            phase = 1;
             currentLine = 0;
             timeoutRef.current = setTimeout(() => {
               animateBranchLines();
-            }, 50); // Reduced delay
+            }, 10); // Very fast for 2.5s total animation
           }
         }
       };
@@ -242,18 +234,18 @@ export default function ExpandingLines() {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Phase 2: Animate branch lines to the right
+    // Phase 1: Animate branch lines (left to right, and right to left simultaneously)
     const animateBranchLines = () => {
       if (currentLine >= branchLines.length) {
-        // All branch lines complete - trigger price animation
+        // All branch lines complete - trigger text and price animation
         timeoutRef.current = setTimeout(() => {
-          animatePrices();
-        }, 200); // Small delay before prices appear
+          animateTextAndPrices();
+        }, 50); // Fast delay for 2.5s total animation
         return;
       }
 
       const startTime = performance.now();
-      const duration = 200; // Optimized for 4-second total animation
+      const duration = 100; // Faster for 2.5s total animation
 
       const animate = (currentTime: number) => {
         const elapsed = currentTime - startTime;
@@ -265,6 +257,21 @@ export default function ExpandingLines() {
           newProgress[currentLine] = easedProgress;
           return newProgress;
         });
+        
+        setBranchProgressRight((prev) => {
+          const newProgress = [...prev];
+          newProgress[currentLine] = easedProgress;
+          return newProgress;
+        });
+
+        // Show text as line is being drawn (script effect) - when line is 80% complete
+        if (easedProgress >= 0.8 && !textVisible[currentLine]) {
+          setTextVisible((prev) => {
+            const newText = [...prev];
+            newText[currentLine] = true;
+            return newText;
+          });
+        }
 
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
@@ -273,12 +280,12 @@ export default function ExpandingLines() {
           if (currentLine < branchLines.length) {
             timeoutRef.current = setTimeout(() => {
               animateBranchLines();
-            }, 25); // Reduced delay between lines
+            }, 10); // Very fast for 2.5s total animation
           } else {
-            // All branch lines complete - trigger price animation
+            // All branch lines complete - trigger text and price animation
             timeoutRef.current = setTimeout(() => {
-              animatePrices();
-            }, 200); // Small delay before prices appear
+              animateTextAndPrices();
+            }, 50); // Fast delay for 2.5s total animation
           }
         }
       };
@@ -286,36 +293,82 @@ export default function ExpandingLines() {
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Phase 3: Animate prices appearing one after another
-    const animatePrices = () => {
+    // Phase 2: Mark script as complete and animate vertical line, then pop-in items
+    const animateTextAndPrices = () => {
       // Clear any existing price timeouts
       priceTimeoutRef.current.forEach(timeout => clearTimeout(timeout));
       priceTimeoutRef.current = [];
       
-      // Show first price immediately
-      setPriceVisible((prev) => {
-        const newPrices = [...prev];
-        newPrices[0] = true;
-        return newPrices;
-      });
+      // Keep text and prices hidden initially - they will appear with pop-in animation
+      // Don't set textVisible or priceVisible here
       
-      // Then show the rest with delays, starting from index 1
-      for (let i = 1; i < branchLines.length; i++) {
-        const timeoutId = setTimeout(() => {
-          setPriceVisible((prev) => {
-            const newPrices = [...prev];
-            newPrices[i] = true;
-            return newPrices;
-          });
-        }, 80 * i); // 80ms delay for each subsequent price (80ms, 160ms, 240ms, etc.)
-        priceTimeoutRef.current.push(timeoutId);
-      }
+      // After script lines complete, mark script as complete and animate vertical line
+      setTimeout(() => {
+        setScriptComplete(true);
+        // Animate vertical line from top to bottom
+        const startTime = performance.now();
+        const duration = 150; // Faster for 2.5s total animation
+        
+        const animateLine = (currentTime: number) => {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const easedProgress = 1 - Math.pow(1 - progress, 2); // Ease-out
+          
+          setVerticalLineProgress(easedProgress);
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateLine);
+          } else {
+            // After vertical line completes, start pop-in animation
+            setTimeout(() => {
+              animatePopIn();
+            }, 50); // Fast delay for 2.5s total animation
+          }
+        };
+        
+        requestAnimationFrame(animateLine);
+      }, 50); // Fast delay for 2.5s total animation
+    };
+
+    // Pop-in animation: items pop up in order 0, 1, 2, 3, 4, 5
+    const animatePopIn = () => {
+      // Animate all indices: 0, 1, 2, 3, 4, 5
+      const indices = [0, 1, 2, 3, 4, 5];
+      const delayBetweenItems = 20; // Very fast - 20ms between each for 2.5s total
+      const popDuration = 100; // 100ms for each pop animation
+      
+      indices.forEach((index, arrayIndex) => {
+        setTimeout(() => {
+          const startTime = performance.now();
+          
+          const animateItem = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / popDuration, 1);
+            // Bounce effect: ease-out with slight overshoot
+            const easedProgress = progress < 0.6 
+              ? 1 - Math.pow(1 - progress / 0.6, 3)
+              : 1 + 0.1 * Math.sin((progress - 0.6) * Math.PI / 0.4);
+            
+            setPopInProgress((prev) => {
+              const newProgress = [...prev];
+              newProgress[index] = Math.min(easedProgress, 1);
+              return newProgress;
+            });
+            
+            if (progress < 1) {
+              requestAnimationFrame(animateItem);
+            }
+          };
+          
+          requestAnimationFrame(animateItem);
+        }, arrayIndex * delayBetweenItems);
+      });
     };
 
     // Start animation sequence
     timeoutRef.current = setTimeout(() => {
-      moveDotLeft();
-    }, 100); // Reduced initial delay
+      animateUpwardLines();
+    }, 50); // Fast initial delay for 2.5s total animation
 
     return () => {
       if (animationRef.current) {
@@ -332,7 +385,7 @@ export default function ExpandingLines() {
   }, [isVisible, isMobile]);
 
   return (
-    <div ref={containerRef} className="flex items-center justify-start min-h-[400px] sm:min-h-[500px] md:min-h-[600px] py-8 sm:py-10 md:py-12 px-2 sm:px-4 md:px-6">
+    <div ref={containerRef} className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] py-8 sm:py-10 md:py-12 px-2 sm:px-4 md:px-6">
       <div className="relative w-full max-w-6xl">
         <svg
           viewBox="0 0 1000 1000"
@@ -340,26 +393,30 @@ export default function ExpandingLines() {
           height="auto"
           className="transition-all duration-300"
           style={{ minHeight: "400px", maxWidth: "100%" }}
-          preserveAspectRatio="xMinYMid meet"
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Upward lines from left side */}
           {upwardLines.map((line, index) => {
             const progress = upwardProgress[index] || 0;
             const currentEndY = line.startY + (line.endY - line.startY) * progress;
+            // Upward line must extend to exactly where branch line starts for perfect connection
+            // All lines extend 1px past line.endY to ensure connection with branch lines
+            const upwardEndY = progress >= 1 ? line.endY + 1 : currentEndY;
+            const upwardX = LEFT_POSITION;
 
             return (
-              <g key={`upward-${index}`}>
+              <g key={`upward-left-${index}`}>
                 {/* Main upward line */}
                 <line
-                  x1={LEFT_POSITION}
+                  x1={upwardX}
                   y1={line.startY}
-                  x2={LEFT_POSITION}
-                  y2={currentEndY}
+                  x2={upwardX}
+                  y2={upwardEndY}
                   stroke="#ffffff"
-                  strokeWidth={progress > 0 ? 2.5 : 0}
-                  strokeOpacity={progress > 0 ? 0.8 : 0}
+                  strokeWidth={progress >= 1 ? 2.5 : (progress > 0 ? 2.5 : 0)}
+                  strokeOpacity={progress >= 1 ? 0.8 : (progress > 0 ? 0.8 : 0)}
                   className="transition-all duration-100 ease-out"
-                  strokeLinecap="round"
+                  strokeLinecap="butt"
                   style={{
                     filter: progress > 0.5 ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
                   }}
@@ -367,10 +424,10 @@ export default function ExpandingLines() {
                 {/* Futuristic glow effect */}
                 {progress > 0.3 && (
                   <line
-                    x1={LEFT_POSITION}
+                    x1={upwardX}
                     y1={line.startY}
-                    x2={LEFT_POSITION}
-                    y2={currentEndY}
+                    x2={upwardX}
+                    y2={upwardEndY}
                     stroke="#639df0"
                     strokeWidth={progress > 0 ? 1 : 0}
                     strokeOpacity={progress * 0.4}
@@ -385,24 +442,28 @@ export default function ExpandingLines() {
             );
           })}
 
-          {/* Branch lines going to the right */}
-          {branchLines.map((branch, index) => {
-            const progress = branchProgress[index] || 0;
-            const currentEndX = branch.startX + (branch.endX - branch.startX) * progress;
+          {/* Upward lines from right side */}
+          {upwardLines.map((line, index) => {
+            const progress = upwardProgressRight[index] || 0;
+            const currentEndY = line.startY + (line.endY - line.startY) * progress;
+            // Upward line must extend to exactly where branch line starts for perfect connection
+            // All lines extend 1px past line.endY to ensure connection with branch lines
+            const upwardEndY = progress >= 1 ? line.endY + 1 : currentEndY;
+            const upwardX = RIGHT_POSITION;
 
             return (
-              <g key={`branch-${index}`}>
-                {/* Main branch line */}
+              <g key={`upward-right-${index}`}>
+                {/* Main upward line */}
                 <line
-                  x1={branch.startX}
-                  y1={branch.startY}
-                  x2={currentEndX}
-                  y2={branch.startY}
+                  x1={upwardX}
+                  y1={line.startY}
+                  x2={upwardX}
+                  y2={upwardEndY}
                   stroke="#ffffff"
-                  strokeWidth={progress > 0 ? 2.5 : 0}
-                  strokeOpacity={progress > 0 ? 0.8 : 0}
+                  strokeWidth={progress >= 1 ? 2.5 : (progress > 0 ? 2.5 : 0)}
+                  strokeOpacity={progress >= 1 ? 0.8 : (progress > 0 ? 0.8 : 0)}
                   className="transition-all duration-100 ease-out"
-                  strokeLinecap="round"
+                  strokeLinecap="butt"
                   style={{
                     filter: progress > 0.5 ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
                   }}
@@ -410,10 +471,10 @@ export default function ExpandingLines() {
                 {/* Futuristic glow effect */}
                 {progress > 0.3 && (
                   <line
-                    x1={branch.startX}
-                    y1={branch.startY}
-                    x2={currentEndX}
-                    y2={branch.startY}
+                    x1={upwardX}
+                    y1={line.startY}
+                    x2={upwardX}
+                    y2={upwardEndY}
                     stroke="#639df0"
                     strokeWidth={progress > 0 ? 1 : 0}
                     strokeOpacity={progress * 0.4}
@@ -424,33 +485,53 @@ export default function ExpandingLines() {
                     }}
                   />
                 )}
-                {/* End point indicator */}
-                {progress > 0.9 && (
-                  <circle
-                    cx={branch.endX}
-                    cy={branch.startY}
-                    r={8}
-                    fill="#ffffff"
-                    opacity={progress}
-                    className="transition-opacity duration-300"
-                    style={{
-                      filter: "drop-shadow(0 0 12px rgba(255,255,255,0.8))",
-                    }}
-                  />
-                )}
-                {/* Pulsing end point */}
-                {progress >= 1 && (
-                  <circle
-                    cx={branch.endX}
-                    cy={branch.startY}
-                    r={12}
-                    fill="none"
+              </g>
+            );
+          })}
+
+          {/* Branch lines going to the right (from left side) */}
+          {branchLines.map((branch, index) => {
+            const progress = branchProgress[index] || 0;
+            // Extend to center to ensure connection with right line
+            const currentEndX = branch.startX + (branch.endX - branch.startX) * progress;
+            const extendedEndX = progress >= 1 ? CENTER_X : currentEndX;
+            // Branch line starts at line.endY to connect with upward line
+            // Upward line extends to line.endY + 1, so branch starts at line.endY (branch.startY) for perfect connection
+            // All lines use consistent connection point
+            const branchStartX = branch.startX;
+            const branchStartY = branch.startY; // This equals line.endY, upward line extends 1px past this
+
+            return (
+              <g key={`branch-left-${index}`}>
+                {/* Main branch line */}
+                <line
+                  x1={branchStartX}
+                  y1={branchStartY}
+                  x2={extendedEndX}
+                  y2={branchStartY}
+                  stroke="#ffffff"
+                  strokeWidth={progress >= 1 ? 2.5 : (progress > 0 ? 2.5 : 0)}
+                  strokeOpacity={progress >= 1 ? 0.8 : (progress > 0 ? 0.8 : 0)}
+                  className="transition-all duration-100 ease-out"
+                  strokeLinecap="butt"
+                  style={{
+                    filter: progress > 0.5 ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
+                  }}
+                />
+                {/* Futuristic glow effect */}
+                {progress > 0.3 && (
+                  <line
+                    x1={branchStartX}
+                    y1={branchStartY}
+                    x2={extendedEndX}
+                    y2={branchStartY}
                     stroke="#639df0"
-                    strokeWidth={2}
-                    opacity={0.6}
-                    className="animate-pulse"
+                    strokeWidth={progress > 0 ? 1 : 0}
+                    strokeOpacity={progress * 0.4}
+                    className="transition-all duration-100 ease-out"
+                    strokeLinecap="round"
                     style={{
-                      filter: "blur(1px)",
+                      filter: "blur(2px)",
                     }}
                   />
                 )}
@@ -458,74 +539,212 @@ export default function ExpandingLines() {
             );
           })}
 
-          {/* Moving dot */}
-          {isVisible && (
-            <circle
-              cx={dotPosition.x}
-              cy={dotPosition.y}
-              r={dotRadius}
-              fill="#ffffff"
-              className="transition-all duration-100 ease-out"
+          {/* Branch lines going to the left (from right side) */}
+          {branchLinesRight.map((branch, index) => {
+            const progress = branchProgressRight[index] || 0;
+            // For right side, we animate from right to left, so startX > endX
+            // Extend to center to ensure connection with left line
+            const currentEndX = branch.startX + (branch.endX - branch.startX) * progress;
+            const extendedEndX = progress >= 1 ? CENTER_X : currentEndX;
+            // Branch line starts at line.endY to connect with upward line
+            // Upward line extends to line.endY + 1, so branch starts at line.endY (branch.startY) for perfect connection
+            // All lines use consistent connection point
+            const branchStartX = branch.startX;
+            const branchStartY = branch.startY; // This equals line.endY, upward line extends 1px past this
+
+            return (
+              <g key={`branch-right-${index}`}>
+                {/* Main branch line */}
+                <line
+                  x1={branchStartX}
+                  y1={branchStartY}
+                  x2={extendedEndX}
+                  y2={branchStartY}
+                  stroke="#ffffff"
+                  strokeWidth={progress >= 1 ? 2.5 : (progress > 0 ? 2.5 : 0)}
+                  strokeOpacity={progress >= 1 ? 0.8 : (progress > 0 ? 0.8 : 0)}
+                  className="transition-all duration-100 ease-out"
+                  strokeLinecap="butt"
+                    style={{
+                    filter: progress > 0.5 ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
+                  }}
+                />
+                {/* Futuristic glow effect */}
+                {progress > 0.3 && (
+                  <line
+                    x1={branchStartX}
+                    y1={branchStartY}
+                    x2={extendedEndX}
+                    y2={branchStartY}
+                    stroke="#639df0"
+                    strokeWidth={progress > 0 ? 1 : 0}
+                    strokeOpacity={progress * 0.4}
+                    className="transition-all duration-100 ease-out"
+                    strokeLinecap="round"
+                    style={{
+                      filter: "blur(2px)",
+                    }}
+                  />
+                )}
+              </g>
+            );
+          })}
+
+          {/* Distinctive vertical line to the left of prices - only show after script is complete */}
+          {isVisible && scriptComplete && (() => {
+            // Position vertical line just to the left of prices
+            // Prices are at CENTER_X (500) + 200px offset, so line should be at ~500 + 170px
+            const verticalLineX = CENTER_X + 170; // Just to the left of prices, moved more to the right
+            
+            // Calculate top and bottom Y positions based on branch lines (not exceeding outer lines)
+            // Use the Y positions of the branch lines (which are at upwardLines.endY)
+            const branchYPositions = upwardLines.map(line => line.endY);
+            const topY = Math.min(...branchYPositions); // Topmost branch line
+            const bottomY = Math.max(...branchYPositions); // Bottommost branch line
+            
+            // Animate line from top to bottom
+            const currentBottomY = topY + (bottomY - topY) * verticalLineProgress;
+            
+            return (
+              <line
+                x1={verticalLineX}
+                y1={topY}
+                x2={verticalLineX}
+                y2={currentBottomY}
+                stroke="#ffffff"
+                strokeWidth="2"
+                strokeOpacity={verticalLineProgress > 0 ? 0.6 : 0}
+                className="transition-opacity duration-300"
               style={{
-                filter: "drop-shadow(0 0 15px rgba(255,255,255,0.9))",
+                  filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
               }}
             />
-          )}
+            );
+          })()}
         </svg>
 
-        {/* Content areas for each branch - starting from dots, extending to the right */}
+        {/* Content areas - text and prices centered within columns */}
         <div className="absolute inset-0 pointer-events-none">
           {branchLines.map((branch, index) => {
             const progress = branchProgress[index] || 0;
+            const progressRight = branchProgressRight[index] || 0;
             
-            // Position content areas starting from the dot position (end of branch line)
-            const xPercent = (branch.endX / 1000) * 100;
-            const yPercent = (branch.startY / 1000) * 100;
+            // Position content centered vertically within the column space
+            // Each column is centered between its line and the next line
+            const currentY = branch.startY;
+            let columnCenterY;
+            
+            if (index === branchLines.length - 1) {
+              // Last column: center between this line and add spacing below (use a fixed offset)
+              const prevY = branchLines[index - 1].startY;
+              const spacing = currentY - prevY; // Use the spacing from previous column
+              columnCenterY = currentY + (spacing / 2); // Position below the line with spacing
+            } else {
+              // All other columns: center between this line and the next line
+              const nextY = branchLines[index + 1].startY;
+              columnCenterY = (currentY + nextY) / 2;
+            }
+            
+            const yPercent = (columnCenterY / 1000) * 100;
+            const columnCenterX = CENTER_X; // Center of the column where lines meet
+            
+            // Position titles on the left side but within the column area
+            // Calculate left edge of column (between LEFT_POSITION and CENTER_X)
+            const columnLeftX = LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.2); // 20% from left edge of column
 
             return (
               <div
-                key={index}
+                key={`column-${index}`}
                 className="absolute pointer-events-auto"
                 style={{
-                  left: `${xPercent}%`,
+                  left: `${(columnLeftX / 1000) * 100}%`, // Position on left side within column
                   top: `${yPercent}%`,
-                  transform: 'translate(0%, -50%)',
-                  opacity: progress >= 0.9 ? 1 : 0,
-                  transition: 'opacity 0.5s ease-out',
+                  transform: 'translate(0%, -50%)', // Center vertically, align to left
+                  opacity: popInProgress[index] > 0 ? 1 : 0,
+                  transition: 'opacity 0.3s ease-out',
+                  width: 'max-content',
+                  maxWidth: '250px',
                 }}
               >
-                {/* Content area - text will start from the dot and extend to the right */}
-                <div className="w-32 sm:w-48 md:w-80 lg:w-96 h-auto flex items-center justify-start pl-2 sm:pl-4 md:pl-6">
+                {/* Text appears on the left side within the column with pop-in animation */}
                   {bonusTexts[index] && (
-                    <div className="flex items-center gap-0 whitespace-nowrap">
                       <span 
-                        className="text-white text-sm sm:text-base md:text-xl lg:text-2xl xl:text-3xl leading-none"
+                    className="text-white text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl leading-tight whitespace-normal text-left flex-shrink-0 block"
                         style={{
                           fontFamily: "'IBM Plex Sans', sans-serif",
                           textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
                           filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
                           fontWeight: 900,
                           letterSpacing: '0.02em',
-                          display: 'inline',
+                      wordBreak: 'break-word',
+                      transform: `scale(${0.3 + popInProgress[index] * 0.7}) translateY(${(1 - popInProgress[index]) * 20}px)`,
+                      opacity: popInProgress[index] > 0 ? 1 : 0,
+                      transition: popInProgress[index] === 0 ? 'none' : 'transform 0.1s ease-out',
                         }}
                       >
                         {bonusTexts[index]}
                       </span>
+                )}
+                
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Prices positioned at fixed Y level - all aligned horizontally */}
+        <div className="absolute inset-0 pointer-events-none">
+          {branchLines.map((branch, index) => {
+            // Skip price for last column (index 6)
+            if (index >= bonusTexts.length) {
+              return null;
+            }
+            
+            const progress = branchProgress[index] || 0;
+            const progressRight = branchProgressRight[index] || 0;
+            
+            // Calculate column center Y for this column (same as text positioning)
+            const currentY = branch.startY;
+            let columnCenterY;
+            if (index === branchLines.length - 1) {
+              // Last column: use spacing below the line (matching text positioning)
+              const prevY = branchLines[index - 1].startY;
+              const spacing = currentY - prevY;
+              columnCenterY = currentY + (spacing / 2);
+            } else {
+              // All other columns: center between this line and the next line
+              const nextY = branchLines[index + 1].startY;
+              columnCenterY = (currentY + nextY) / 2;
+            }
+            const columnCenterYPercent = (columnCenterY / 1000) * 100;
+            
+            // Center prices horizontally in the space between vertical line and right edge
+            // Vertical line is at CENTER_X + 170 = 670
+            // Right edge is at RIGHT_POSITION = 820
+            // Center of that space is at (670 + 820) / 2 = 745
+            const verticalLineX = CENTER_X + 170;
+            const priceCenterX = (verticalLineX + RIGHT_POSITION) / 2;
+            
+            return (
+              <div
+                key={`price-${index}`}
+                className="absolute pointer-events-auto"
+                style={{
+                  left: `${(priceCenterX / 1000) * 100}%`,
+                  top: `${columnCenterYPercent}%`,
+                  transform: 'translate(-50%, -50%)', // Center both horizontally and vertically within column space
+                  opacity: popInProgress[index] > 0 ? 1 : 0,
+                  transition: 'opacity 0.3s ease-out',
+                }}
+              >
                       <span
-                        className="text-white font-mono text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold inline-block relative ml-1 sm:ml-2"
+                  className="text-white font-mono text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap"
                         style={{
                           fontFamily: "'IBM Plex Mono', monospace",
                           textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
                           filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
-                          opacity: priceVisible[index] ? 1 : 0,
-                          transform: priceVisible[index] ? 'scale(1)' : 'scale(0.3)',
-                          animation: priceVisible[index] ? 'pricePopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
-                          transformOrigin: 'center',
-                          transition: priceVisible[index] ? 'none' : 'opacity 0s, transform 0s',
-                          pointerEvents: priceVisible[index] ? 'auto' : 'none',
-                          minWidth: 'fit-content',
-                          display: 'inline-block',
-                          verticalAlign: 'baseline',
+                    opacity: popInProgress[index] > 0 ? 1 : 0,
+                    transform: `scale(${0.3 + popInProgress[index] * 0.7}) translateY(${(1 - popInProgress[index]) * 20}px)`,
+                    transition: popInProgress[index] === 0 ? 'none' : 'transform 0.1s ease-out',
                         }}
                       >
                         <span style={{ 
@@ -541,18 +760,15 @@ export default function ExpandingLines() {
                               right: '0%',
                               top: '50%',
                               height: '0.1em',
-                              backgroundColor: '#ff0000',
+                        backgroundColor: '#d9d7b3',
                               transform: 'translateY(-50%) rotate(-15deg)',
                               transformOrigin: 'center',
-                              boxShadow: '0 0 4px rgba(255, 0, 0, 0.6)',
+                        boxShadow: '0 0 4px rgba(217, 215, 179, 0.6)',
                               width: '120%',
                             }}
                           />
                         </span>
                       </span>
-                    </div>
-                  )}
-                </div>
               </div>
             );
           })}
