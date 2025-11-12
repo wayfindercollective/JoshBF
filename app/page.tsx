@@ -8,16 +8,18 @@ import CharacterPopIn from './components/CharacterPopIn';
 import FloatingGeometry from './components/FloatingGeometry';
 import TitleWithBorder from './components/TitleWithBorder';
 import ExpandingLines from './components/ExpandingLines';
+import CountdownTimer from './components/CountdownTimer';
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-gradient-hero text-white relative">
+      <CountdownTimer />
       <FloatingGeometry />
       <BackgroundTrees />
       {/* Hero Section */}
-      <section className="px-6 py-24 md:py-32 lg:py-40 max-w-4xl mx-auto text-center relative z-10">
+      <section className="px-6 pt-32 pb-24 md:pt-40 md:pb-32 lg:pt-48 lg:pb-40 max-w-4xl mx-auto text-center relative z-10">
         <RandomScrollReveal delay={0} randomDelay={true}>
-          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl mb-8 text-white leading-tight">
+          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl mb-16 text-white leading-tight">
             <TypewriterText 
               text="Find Purpose.\nBuild Clarity.\nMove Forward."
               totalDuration={2000}
@@ -27,18 +29,36 @@ export default function Home() {
           </h1>
         </RandomScrollReveal>
         <RandomScrollReveal delay={200} randomDelay={true}>
-          <div className="text-xl md:text-2xl mb-12 text-white/90 flex items-center justify-center">
+          <div className="text-xl md:text-2xl mb-12 text-white/90 flex items-center justify-center mt-20 md:mt-24">
             <EnvelopeWithText />
           </div>
         </RandomScrollReveal>
         <RandomScrollReveal delay={400} randomDelay={true}>
           <a
             href="#purchase"
-            className="seal-button text-lg"
+            className="seal-button text-lg mt-4"
           >
             <span><CharacterPopIn delay={400}>Get Started — $297</CharacterPopIn></span>
           </a>
         </RandomScrollReveal>
+      </section>
+
+      {/* Purpose Transformation - Diamond Branches */}
+      <section className="px-6 py-24 relative z-10">
+        <div className="max-w-5xl mx-auto">
+          <RandomScrollReveal delay={0} randomDelay={true}>
+            <div className="flex justify-center mb-8">
+              <TitleWithBorder padding="px-6 py-4">
+                <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-white text-center">
+                  <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
+                </h2>
+              </TitleWithBorder>
+            </div>
+          </RandomScrollReveal>
+          <RandomScrollReveal delay={200} randomDelay={true} duration={1.2}>
+            <DiamondBranches />
+          </RandomScrollReveal>
+        </div>
       </section>
 
       {/* About the Blueprint */}
@@ -56,24 +76,6 @@ export default function Home() {
                 Self-paced, comprehensive, and built for transformation.
               </CharacterPopIn>
             </p>
-          </RandomScrollReveal>
-        </div>
-      </section>
-
-      {/* Purpose Transformation - Diamond Branches */}
-      <section className="px-6 py-24 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-8">
-              <TitleWithBorder padding="px-6 py-4">
-                <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-white text-center">
-                  <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
-                </h2>
-              </TitleWithBorder>
-            </div>
-          </RandomScrollReveal>
-          <RandomScrollReveal delay={200} randomDelay={true} duration={1.2}>
-            <DiamondBranches />
           </RandomScrollReveal>
         </div>
       </section>
@@ -131,53 +133,6 @@ export default function Home() {
               <span><CharacterPopIn delay={800}>Claim Your Spot</CharacterPopIn></span>
             </a>
           </RandomScrollReveal>
-        </div>
-      </section>
-
-      {/* Testimonials / Social Proof */}
-      <section className="px-6 py-24 relative z-10">
-        <div className="max-w-5xl mx-auto">
-          <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-16">
-              <TitleWithBorder padding="px-6 py-4">
-                <h2 className="font-heading text-4xl md:text-5xl font-black text-white">
-                  <CharacterPopIn delay={0}>What Others Say</CharacterPopIn>
-                </h2>
-              </TitleWithBorder>
-            </div>
-          </RandomScrollReveal>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <RandomScrollReveal delay={100} randomDelay={true}>
-              <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue shadow-lg">
-                <p className="text-lg mb-6 text-white/90 italic leading-relaxed">
-                  <CharacterPopIn delay={100}>&quot;This blueprint changed everything. I finally have clarity on my direction.&quot;</CharacterPopIn>
-                </p>
-                <p className="text-sm font-bold text-white">
-                  <CharacterPopIn delay={300}>— Testimonial 1</CharacterPopIn>
-                </p>
-              </div>
-            </RandomScrollReveal>
-            <RandomScrollReveal delay={200} randomDelay={true}>
-              <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue shadow-lg">
-                <p className="text-lg mb-6 text-white/90 italic leading-relaxed">
-                  <CharacterPopIn delay={200}>&quot;The self-paced format allowed me to truly absorb each module. Highly recommend.&quot;</CharacterPopIn>
-                </p>
-                <p className="text-sm font-bold text-white">
-                  <CharacterPopIn delay={400}>— Testimonial 2</CharacterPopIn>
-                </p>
-              </div>
-            </RandomScrollReveal>
-            <RandomScrollReveal delay={300} randomDelay={true}>
-              <div className="bg-white/10 backdrop-blur-sm p-8 border-2 border-deep-blue shadow-lg">
-                <p className="text-lg mb-6 text-white/90 italic leading-relaxed">
-                  <CharacterPopIn delay={300}>&quot;Worth every penny. The transformation has been remarkable.&quot;</CharacterPopIn>
-                </p>
-                <p className="text-sm font-bold text-white">
-                  <CharacterPopIn delay={500}>— Testimonial 3</CharacterPopIn>
-                </p>
-              </div>
-            </RandomScrollReveal>
-          </div>
         </div>
       </section>
 

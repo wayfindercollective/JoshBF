@@ -120,7 +120,7 @@ export default function DiamondBranches() {
   return (
     <div className="flex items-center justify-center min-h-[640px] pt-8 pb-24 px-4 md:px-0 overflow-hidden">
       <div
-        className="relative cursor-pointer w-full max-w-5xl scale-[1.2] md:scale-100 mx-auto flex justify-center"
+        className="relative cursor-pointer w-full max-w-5xl scale-[1.2] md:scale-[1.2] mx-auto flex justify-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => {
           setIsHovered(false);
@@ -168,8 +168,13 @@ export default function DiamondBranches() {
                       const baseTextDistance = week.distance + logoRadius + 40;
                       const textDistance = week.angle === 180 ? baseTextDistance - 20 : baseTextDistance;
                       const textRad = (week.angle * Math.PI) / 180;
-                      const textX = 500 + Math.cos(textRad) * textDistance;
+                      let textX = 500 + Math.cos(textRad) * textDistance;
                       const textY = 500 + Math.sin(textRad) * textDistance;
+                      
+                      // Move Week 7 text to the left to avoid logo overlap
+                      if (week.angle === 180) {
+                        textX -= 20; // Move left by 20 pixels to avoid logo overlap
+                      }
                       
                       // Determine text rotation based on angle
                       let textAngle = 0;
@@ -179,29 +184,34 @@ export default function DiamondBranches() {
                       } else if (week.angle === 45 || week.angle === 225) {
                         textAngle = -45;
                       } else if (week.angle === 180) {
-                        // Week Seven - left side, use "end" anchor to prevent cutoff
-                        textAnchor = "end";
+                        // Week Seven - left side, use "middle" anchor to center the text
+                        textAnchor = "middle";
                       } else if (week.angle === 0) {
                         // Week Three - right side, use "start" anchor
                         textAnchor = "start";
                       }
                       
                       return (
-                        <text
-                          x={textX}
-                          y={textY}
-                          fill="#ffffff"
-                          fontSize="28.8"
-                          fontWeight="bold"
-                          textAnchor={textAnchor}
-                          className="font-heading transition-opacity duration-300"
-                          opacity={labelVisible[index] ? 1 : 0}
-                          dominantBaseline="middle"
-                          transform={textAngle !== 0 ? `rotate(${textAngle} ${textX} ${textY})` : ""}
+                        <g
+                          style={{
+                            animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                          }}
                         >
-                          <tspan x={textX} dy="0">{getWeekNumber(index)}</tspan>
-                          <tspan x={textX} dy="34">{week.label}</tspan>
-                        </text>
+                          <text
+                            x={textX}
+                            y={textY}
+                            fill="#ffffff"
+                            fontSize="28.8"
+                            fontWeight="bold"
+                            textAnchor={textAnchor}
+                            className="font-heading"
+                            dominantBaseline="middle"
+                            transform={textAngle !== 0 ? `rotate(${textAngle} ${textX} ${textY})` : ""}
+                          >
+                            <tspan x={textX} dy="0">{getWeekNumber(index)}</tspan>
+                            <tspan x={textX} dy="34">{week.label}</tspan>
+                          </text>
+                        </g>
                       );
                     })()}
                   </g>

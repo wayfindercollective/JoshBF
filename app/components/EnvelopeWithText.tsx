@@ -1,15 +1,65 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
+const ACTUAL_TEXT = 'Purpose Transformation Blueprint';
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
 
 export default function EnvelopeWithText() {
   const [isHovered, setIsHovered] = useState(false);
+  const [isScrambling, setIsScrambling] = useState(false);
+  const [displayText, setDisplayText] = useState('');
+
+  // Generate random scrambled text
+  const generateScrambled = useCallback(() => {
+    return ACTUAL_TEXT
+      .split('')
+      .map((char) => (char === ' ' ? ' ' : CHARS[Math.floor(Math.random() * CHARS.length)]))
+      .join('');
+  }, []);
+
+  // Auto-trigger animation on page load - wait for typewriter to complete
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsHovered(true);
+    }, 2200); // Wait for typewriter (2000ms) + small buffer (200ms)
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Scrambling effect when text appears - starts when text emerges from envelope
+  useEffect(() => {
+    if (!isHovered) return;
+
+    let scrambleInterval: NodeJS.Timeout;
+    let revealTimer: NodeJS.Timeout;
+
+    // Delay scrambling to start when text actually emerges (0.3s transition delay + small buffer)
+    const startScrambleTimer = setTimeout(() => {
+      setIsScrambling(true);
+      setDisplayText(generateScrambled());
+
+      scrambleInterval = setInterval(() => {
+        setDisplayText(generateScrambled());
+      }, 50); // Update every 50ms for fast scrambling
+
+      revealTimer = setTimeout(() => {
+        clearInterval(scrambleInterval);
+        setIsScrambling(false);
+        setDisplayText(ACTUAL_TEXT);
+      }, 500); // Scramble for 0.5 seconds
+    }, 350); // Start scrambling 350ms after hover (when text emerges)
+
+    return () => {
+      clearTimeout(startScrambleTimer);
+      if (scrambleInterval) clearInterval(scrambleInterval);
+      if (revealTimer) clearTimeout(revealTimer);
+    };
+  }, [isHovered, generateScrambled]);
 
   return (
     <div 
-      className="inline-block relative cursor-pointer"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className="inline-block relative"
     >
       {/* Envelope SVG - More detailed */}
       <div className="relative inline-block">
@@ -76,29 +126,9 @@ export default function EnvelopeWithText() {
               strokeDasharray="3 3"
             />
           )}
-          
-          {/* Inner shadow/depth lines */}
-          <line
-            x1="30"
-            y1="45"
-            x2="290"
-            y2="45"
-            stroke="white"
-            strokeWidth="0.5"
-            opacity="0.3"
-          />
-          <line
-            x1="30"
-            y1="115"
-            x2="290"
-            y2="115"
-            stroke="white"
-            strokeWidth="0.5"
-            opacity="0.3"
-          />
         </svg>
 
-        {/* Envelope flap - opens upward uniformly from top edge */}
+        {/* Envelope flap - slides upward */}
         <svg
           width="320"
           height="140"
@@ -108,9 +138,9 @@ export default function EnvelopeWithText() {
           strokeWidth="2"
           className="absolute top-0 left-0"
           style={{
-            transformOrigin: '160px 35px',
-            transform: isHovered ? 'rotate(-45deg)' : 'rotate(0deg)',
-            transition: 'transform 0.5s ease-out',
+            transform: isHovered ? 'translateY(-80px)' : 'translateY(0px)',
+            opacity: isHovered ? 0 : 1,
+            transition: 'transform 0.6s ease-out, opacity 0.5s ease-out',
             pointerEvents: 'none',
           }}
         >
@@ -159,20 +189,57 @@ export default function EnvelopeWithText() {
           </g>
         </svg>
 
-        {/* Text - only visible when hovering and moving up */}
+        {/* Text - emerges from envelope with dramatic animation */}
         <div
-          className={`absolute left-1/2 transform -translate-x-1/2 transition-all duration-700 ease-out whitespace-nowrap ${
+          className={`absolute left-1/2 whitespace-nowrap ${
             isHovered 
-              ? 'opacity-100 translate-y-[-100px]' 
-              : 'opacity-0 translate-y-0'
+              ? 'opacity-100' 
+              : 'opacity-0'
           }`}
           style={{
             top: '70px', // Starting position inside envelope
+            transform: isHovered ? 'translate(-50%, -140px) scale(1.25)' : 'translate(-50%, -20px) scale(0.5)',
+            transition: isHovered ? 'opacity 0.4s ease-out 0.3s, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s' : 'opacity 0.3s ease-out, transform 0.3s ease-out',
           }}
         >
-          <span className="font-handwritten font-bold text-white text-lg bg-black/60 px-4 py-2 rounded backdrop-blur-sm shadow-lg">
-            Purpose Transformation Blueprint
-          </span>
+          <div className="relative inline-block" style={{ overflow: 'visible' }}>
+            <span 
+              className="font-handwritten font-bold text-white text-xl md:text-2xl relative overflow-hidden inline-block blueprint-text"
+              style={{
+                animation: isHovered ? 'textPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards, textPulse 2s ease-in-out 1.1s infinite' : 'none',
+                padding: '12px 24px',
+                position: 'relative',
+              }}
+            >
+              {/* Blueprint grid pattern overlay */}
+              <span 
+                className="absolute inset-0 opacity-20 pointer-events-none"
+                style={{
+                  backgroundImage: `
+                    linear-gradient(rgba(188, 69, 0, 0.3) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(188, 69, 0, 0.3) 1px, transparent 1px)
+                  `,
+                  backgroundSize: '10px 10px',
+                  backgroundPosition: '0 0',
+                }}
+              />
+              {/* Corner marks like blueprint annotations */}
+              <span className="absolute top-0 left-0 w-3 h-3 border-l-2 border-t-2 border-orange-red opacity-60" />
+              <span className="absolute top-0 right-0 w-3 h-3 border-r-2 border-t-2 border-orange-red opacity-60" />
+              <span className="absolute bottom-0 left-0 w-3 h-3 border-l-2 border-b-2 border-orange-red opacity-60" />
+              <span className="absolute bottom-0 right-0 w-3 h-3 border-r-2 border-b-2 border-orange-red opacity-60" />
+              
+              <span className="relative z-10 text-orange-red drop-shadow-[0_0_8px_rgba(188,69,0,0.8)]">{displayText || ACTUAL_TEXT}</span>
+              {isHovered && (
+                <span 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-red/20 to-transparent pointer-events-none"
+                  style={{
+                    animation: 'shimmer 2s ease-in-out infinite',
+                  }}
+                />
+              )}
+            </span>
+          </div>
         </div>
       </div>
     </div>

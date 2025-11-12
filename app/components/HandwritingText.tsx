@@ -91,14 +91,14 @@ export default function TypewriterText({
         return <br key={index} />;
       } else if (part === '|LOGO|') {
         return (
-          <span key={index} className="inline-block align-middle mx-1">
+          <span key={index} className="inline-block align-middle -mr-1">
             <Image
               src="/polarity-systems-logo.png"
               alt="P"
-              width={60}
-              height={60}
+              width={78}
+              height={78}
               className="inline-block filter brightness-0 invert"
-              style={{ verticalAlign: 'middle', height: '1em', width: 'auto' }}
+              style={{ verticalAlign: 'middle', height: '1.3em', width: 'auto' }}
             />
           </span>
         );
