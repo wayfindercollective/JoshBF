@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Line connection fixes deployed
 
 import { useState, useEffect, useRef } from "react";
 
