@@ -79,8 +79,7 @@ export default function Home() {
           <RandomScrollReveal delay={200} randomDelay={true}>
             <p className="text-lg md:text-xl leading-relaxed text-white/80 max-w-2xl mx-auto">
               <CharacterPopIn delay={200}>
-                An 8-week guided digital system designed to help you uncover your purpose and build clear direction for your life. 
-                Self-paced, comprehensive, and built for transformation.
+                8 weeks of self guided training that moves you from uncertainty to clarity with a simple plan you can apply on your own. Self paced and flexible.
               </CharacterPopIn>
             </p>
           </RandomScrollReveal>

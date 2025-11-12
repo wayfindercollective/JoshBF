@@ -21,6 +21,7 @@ export default function FloatingGeometry() {
   const animationFrameRef = useRef<number>();
   const lastScrollYRef = useRef<number>(0);
   const generatedRegionsRef = useRef<Set<number>>(new Set());
+  const generatedGridRowsRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -43,7 +44,7 @@ export default function FloatingGeometry() {
       if (newHeight > canvas.height) {
         const oldHeight = canvas.height;
         canvas.height = newHeight;
-        // Generate shapes for the new area
+        // Generate shapes only for the truly new area (will skip already-generated rows)
         const newShapes = generateShapesForRegion(oldHeight, newHeight);
         shapesRef.current.push(...newShapes);
       }
@@ -52,90 +53,171 @@ export default function FloatingGeometry() {
     // Check document height periodically
     const heightCheckInterval = setInterval(updateCanvasHeight, 500);
 
-    // Generate shapes for the entire document height
+    // Grid cell dimensions - shared across all generation functions
+    const gridCellWidth = 200;
+    const gridCellHeight = 200;
+
+    // Generate shapes for the entire document height with even distribution
     const generateShapesForFullPage = (pageHeight: number): Shape[] => {
       const shapes: Shape[] = [];
-      const viewportHeight = window.innerHeight;
-      const density = 0.8; // Shapes per 100px of height
-      const totalShapes = Math.ceil((pageHeight / 100) * density);
       
-      for (let i = 0; i < totalShapes; i++) {
-        const types: Shape['type'][] = ['triangle', 'square', 'circle'];
-        const type = types[Math.floor(Math.random() * types.length)];
+      // Grid-based distribution for even spacing
+      const cols = Math.ceil(canvas.width / gridCellWidth);
+      const rows = Math.ceil(pageHeight / gridCellHeight);
+      
+      // Generate shapes evenly distributed across grid
+      const types: Shape['type'][] = ['triangle', 'square', 'circle'];
+      let shapeIndex = 0;
+      
+      for (let row = 0; row < rows; row++) {
+        // Mark this row as generated
+        generatedGridRowsRef.current.add(row);
         
-        shapes.push({
-          type,
-          x: Math.random() * canvas.width,
-          y: Math.random() * pageHeight,
-          size: 5 + Math.random() * 7.5, // Small: 5-12.5px
-          rotation: Math.random() * Math.PI * 2,
-          speedX: (Math.random() - 0.5) * 0.2,
-          speedY: (Math.random() - 0.5) * 0.2,
-          rotationSpeed: (Math.random() - 0.5) * 0.01,
-          opacity: 0.4 + Math.random() * 0.3,
-          color: `rgba(255, 255, 255, ${0.5 + Math.random() * 0.4})`,
-        });
+        for (let col = 0; col < cols; col++) {
+          // Place one shape per grid cell with slight random offset
+          const baseX = col * gridCellWidth + gridCellWidth / 2;
+          const baseY = row * gridCellHeight + gridCellHeight / 2;
+          const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.6; // Max 30% offset
+          const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.6;
+          
+          const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
+          const y = Math.max(0, Math.min(pageHeight, baseY + offsetY));
+          
+          const type = types[shapeIndex % types.length];
+          
+          shapes.push({
+            type,
+            x,
+            y,
+            size: 5 + Math.random() * 7.5, // Small: 5-12.5px
+            rotation: Math.random() * Math.PI * 2,
+            speedX: (Math.random() - 0.5) * 0.2,
+            speedY: (Math.random() - 0.5) * 0.2,
+            rotationSpeed: (Math.random() - 0.5) * 0.01,
+            opacity: 0.4 + Math.random() * 0.3,
+            color: `rgba(255, 255, 255, ${0.5 + Math.random() * 0.4})`,
+          });
+          
+          shapeIndex++;
+        }
       }
 
-      // Add connecting lines distributed across the page
-      const lineCount = Math.ceil((pageHeight / 200) * density);
-      for (let i = 0; i < lineCount; i++) {
-        shapes.push({
-          type: 'line',
-          x: Math.random() * canvas.width,
-          y: Math.random() * pageHeight,
-          size: 10 + Math.random() * 10,
-          rotation: Math.random() * Math.PI * 2,
-          speedX: (Math.random() - 0.5) * 0.15,
-          speedY: (Math.random() - 0.5) * 0.15,
-          rotationSpeed: (Math.random() - 0.5) * 0.005,
-          opacity: 0.3 + Math.random() * 0.2,
-          color: `rgba(255, 255, 255, ${0.4 + Math.random() * 0.3})`,
-        });
+      // Add connecting lines evenly distributed
+      const lineCols = Math.ceil(canvas.width / (gridCellWidth * 1.5));
+      const lineRows = Math.ceil(pageHeight / (gridCellHeight * 1.5));
+      
+      for (let row = 0; row < lineRows; row++) {
+        for (let col = 0; col < lineCols; col++) {
+          const baseX = col * gridCellWidth * 1.5 + gridCellWidth * 0.75;
+          const baseY = row * gridCellHeight * 1.5 + gridCellHeight * 0.75;
+          const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.8;
+          const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.8;
+          
+          const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
+          const y = Math.max(0, Math.min(pageHeight, baseY + offsetY));
+          
+          shapes.push({
+            type: 'line',
+            x,
+            y,
+            size: 10 + Math.random() * 10,
+            rotation: Math.random() * Math.PI * 2,
+            speedX: (Math.random() - 0.5) * 0.15,
+            speedY: (Math.random() - 0.5) * 0.15,
+            rotationSpeed: (Math.random() - 0.5) * 0.005,
+            opacity: 0.3 + Math.random() * 0.2,
+            color: `rgba(255, 255, 255, ${0.4 + Math.random() * 0.3})`,
+          });
+        }
       }
 
       return shapes;
     };
 
-    // Generate shapes for a specific region (for scroll-based generation)
+    // Generate shapes for a specific region (only for new areas when page grows) with even distribution
     const generateShapesForRegion = (regionStart: number, regionEnd: number): Shape[] => {
       const shapes: Shape[] = [];
       const regionHeight = regionEnd - regionStart;
-      const shapeCount = Math.ceil((regionHeight / 100) * 0.8); // Same density
       
-      for (let i = 0; i < shapeCount; i++) {
-        const types: Shape['type'][] = ['triangle', 'square', 'circle'];
-        const type = types[Math.floor(Math.random() * types.length)];
+      // Calculate which grid rows this region covers
+      const startRow = Math.floor(regionStart / gridCellHeight);
+      const endRow = Math.ceil(regionEnd / gridCellHeight);
+      
+      const cols = Math.ceil(canvas.width / gridCellWidth);
+      const types: Shape['type'][] = ['triangle', 'square', 'circle'];
+      let shapeIndex = 0;
+      
+      // Only generate shapes for rows that haven't been generated yet
+      for (let row = startRow; row < endRow; row++) {
+        // Skip if this row was already generated
+        if (generatedGridRowsRef.current.has(row)) {
+          continue;
+        }
         
-        shapes.push({
-          type,
-          x: Math.random() * canvas.width,
-          y: regionStart + Math.random() * regionHeight,
-          size: 5 + Math.random() * 7.5,
-          rotation: Math.random() * Math.PI * 2,
-          speedX: (Math.random() - 0.5) * 0.2,
-          speedY: (Math.random() - 0.5) * 0.2,
-          rotationSpeed: (Math.random() - 0.5) * 0.01,
-          opacity: 0.4 + Math.random() * 0.3,
-          color: `rgba(255, 255, 255, ${0.5 + Math.random() * 0.4})`,
-        });
+        // Mark this row as generated
+        generatedGridRowsRef.current.add(row);
+        
+        for (let col = 0; col < cols; col++) {
+          // Place one shape per grid cell with slight random offset
+          const baseX = col * gridCellWidth + gridCellWidth / 2;
+          const baseY = row * gridCellHeight + gridCellHeight / 2;
+          const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.6; // Max 30% offset
+          const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.6;
+          
+          const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
+          const y = Math.max(regionStart, Math.min(regionEnd, baseY + offsetY));
+          
+          const type = types[shapeIndex % types.length];
+          
+          shapes.push({
+            type,
+            x,
+            y,
+            size: 5 + Math.random() * 7.5,
+            rotation: Math.random() * Math.PI * 2,
+            speedX: (Math.random() - 0.5) * 0.2,
+            speedY: (Math.random() - 0.5) * 0.2,
+            rotationSpeed: (Math.random() - 0.5) * 0.01,
+            opacity: 0.4 + Math.random() * 0.3,
+            color: `rgba(255, 255, 255, ${0.5 + Math.random() * 0.4})`,
+          });
+          
+          shapeIndex++;
+        }
       }
 
-      // Add lines
-      const lineCount = Math.ceil((regionHeight / 200) * 0.8);
-      for (let i = 0; i < lineCount; i++) {
-        shapes.push({
-          type: 'line',
-          x: Math.random() * canvas.width,
-          y: regionStart + Math.random() * regionHeight,
-          size: 10 + Math.random() * 10,
-          rotation: Math.random() * Math.PI * 2,
-          speedX: (Math.random() - 0.5) * 0.15,
-          speedY: (Math.random() - 0.5) * 0.15,
-          rotationSpeed: (Math.random() - 0.5) * 0.005,
-          opacity: 0.3 + Math.random() * 0.2,
-          color: `rgba(255, 255, 255, ${0.4 + Math.random() * 0.3})`,
-        });
+      // Add connecting lines evenly distributed (only for new rows)
+      const lineCols = Math.ceil(canvas.width / (gridCellWidth * 1.5));
+      const lineStartRow = Math.floor(regionStart / (gridCellHeight * 1.5));
+      const lineEndRow = Math.ceil(regionEnd / (gridCellHeight * 1.5));
+      
+      for (let row = lineStartRow; row < lineEndRow; row++) {
+        for (let col = 0; col < lineCols; col++) {
+          const baseX = col * gridCellWidth * 1.5 + gridCellWidth * 0.75;
+          const baseY = row * gridCellHeight * 1.5 + gridCellHeight * 0.75;
+          
+          // Only add if this line is in the new region
+          if (baseY >= regionStart && baseY <= regionEnd) {
+            const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.8;
+            const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.8;
+            
+            const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
+            const y = Math.max(regionStart, Math.min(regionEnd, baseY + offsetY));
+            
+            shapes.push({
+              type: 'line',
+              x,
+              y,
+              size: 10 + Math.random() * 10,
+              rotation: Math.random() * Math.PI * 2,
+              speedX: (Math.random() - 0.5) * 0.15,
+              speedY: (Math.random() - 0.5) * 0.15,
+              rotationSpeed: (Math.random() - 0.5) * 0.005,
+              opacity: 0.3 + Math.random() * 0.2,
+              color: `rgba(255, 255, 255, ${0.4 + Math.random() * 0.3})`,
+            });
+          }
+        }
       }
 
       return shapes;
@@ -199,38 +281,19 @@ export default function FloatingGeometry() {
       ctx.restore();
     };
 
-    // Handle scroll - generate new shapes for new areas and update canvas height
+    // Handle scroll - only update canvas height, don't generate shapes on scroll
+    // Shapes are only generated when page height actually increases
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
       const currentPageHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
       
       // Update canvas height if page grew
       if (currentPageHeight > canvas.height) {
+        const oldHeight = canvas.height;
         canvas.height = currentPageHeight;
-        // Generate shapes for the new area
-        const newAreaStart = canvas.height - viewportHeight * 2;
-        const newAreaEnd = currentPageHeight;
-        if (newAreaEnd > newAreaStart) {
-          const newShapes = generateShapesForRegion(newAreaStart, newAreaEnd);
-          shapesRef.current.push(...newShapes);
-        }
-      }
-      
-      // Generate shapes for areas ahead of scroll (preload)
-      const preloadDistance = viewportHeight * 2;
-      const preloadStart = scrollY + viewportHeight;
-      const preloadEnd = Math.min(preloadStart + preloadDistance, currentPageHeight);
-      
-      // Check if we need to generate for this region
-      const regionKey = Math.floor(preloadStart / viewportHeight);
-      if (!generatedRegionsRef.current.has(regionKey) && preloadEnd > preloadStart) {
-        const newShapes = generateShapesForRegion(preloadStart, preloadEnd);
+        // Generate shapes only for the truly new area
+        const newShapes = generateShapesForRegion(oldHeight, currentPageHeight);
         shapesRef.current.push(...newShapes);
-        generatedRegionsRef.current.add(regionKey);
       }
-      
-      lastScrollYRef.current = scrollY;
     };
 
     // Animation loop

@@ -14,49 +14,49 @@ const weeks: WeekItem[] = [
     label: "Clarity", 
     angle: 270, 
     distance: 300,
-    description: "Turn small wins into a daily habit with a Success Journal and tiny actions that create momentum. You start noticing what works, build confidence, and spark desire for more progress."
+    description: "Map your current position, constraints, and assumptions. Define success criteria and a small set of baseline measures you will track."
   },
   { 
     label: "Desire", 
     angle: 315, 
     distance: 300,
-    description: "Wake up your real wants with a simple sit, listen, act drill. Train desire by acting immediately on what you truly want so decisiveness and motivation return."
+    description: "Identify what you actually want and how you know. Separate short term impulse from longer term values using simple prompts and a quick daily check."
   },
   { 
     label: "Boundaries", 
     angle: 0, 
     distance: 300,
-    description: "Contain your energy so it hits the target. Use the Abundance Equation worksheet and a \"container\" check to decide what comes in, what goes out, and what you will or will not do."
+    description: "Inventory commitments and set rules for time, attention, and energy. Create allow and deny lists and a straightforward plan for saying no."
   },
   { 
     label: "Perspective", 
     angle: 45, 
     distance: 300,
-    description: "Balance Vision and Awareness. Write what you want to do and how you want to be, then merge them into a few next moves you can actually execute this week."
+    description: "Connect direction with present facts. Write a brief statement that links where you intend to go with what is true right now, then create two or three decision filters."
   },
   { 
     label: "Action", 
     angle: 90, 
     distance: 300,
-    description: "Set customized goals that fit you and still stretch you. Ditch one-size-fits-all targets and choose actions that create real results today and tomorrow."
+    description: "Translate direction into objectives and simple metrics. Break work into small experiments and select the first task that will move a visible number."
   },
   { 
     label: "Productivity", 
     angle: 135, 
     distance: 300,
-    description: "Build an environment where winning is the default. Replace infinite time sinks with finite ones, make a tight to-do list, and practice finishing small tasks fast."
+    description: "Design an environment that reduces drag. Add containers for focus work and for leisure, a short daily checklist, and a weekly review loop."
   },
   { 
     label: "Identifying Purpose", 
     angle: 180, 
     distance: 300,
-    description: "Go from knowing the steps to dancing them. Practice speaking and acting in the face of resistance so purpose becomes a felt sense, not just an idea."
+    description: "Test your hypothesis in real situations. Collect evidence, refine the purpose statement, and note both performance markers and emotional signals."
   },
   { 
     label: "Living Your Purpose", 
     angle: 225, 
     distance: 300,
-    description: "Shift from theory to a way of life. Meaning comes from action and skill, so you keep questioning, choose what is good and right, and act with alignment."
+    description: "Consolidate what works into a repeatable routine. Build a maintenance plan, a simple risk list with responses, and a clear roadmap for the next quarter."
   },
 ];
 
