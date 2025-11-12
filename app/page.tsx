@@ -19,9 +19,27 @@ export default function Home() {
       <FloatingGeometry />
       <BackgroundTrees />
       {/* Hero Section */}
-      <section className="px-6 pt-32 pb-24 md:pt-40 md:pb-32 lg:pt-48 lg:pb-40 max-w-4xl mx-auto text-center relative z-10">
+      <section className="px-6 pt-24 pb-24 md:pt-28 md:pb-32 lg:pt-28 lg:pb-40 max-w-4xl mx-auto text-center relative z-10">
         <RandomScrollReveal delay={0} randomDelay={true}>
-          <h1 className="font-heading text-5xl md:text-6xl lg:text-7xl mb-16 text-white leading-tight">
+          <h1 
+            className="font-heading text-5xl md:text-6xl lg:text-7xl mb-16 text-white leading-tight"
+            style={{
+              textShadow: `
+                1px 1px 0px rgba(0, 0, 0, 0.4),
+                2px 2px 0px rgba(0, 0, 0, 0.3),
+                3px 3px 0px rgba(0, 0, 0, 0.2),
+                4px 4px 4px rgba(0, 0, 0, 0.5),
+                5px 5px 8px rgba(0, 0, 0, 0.4),
+                6px 6px 12px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 255, 255, 0.15),
+                0 0 60px rgba(255, 255, 255, 0.08)
+              `,
+              filter: 'drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4))',
+              WebkitTextStroke: '0.5px rgba(0, 0, 0, 0.2)',
+              WebkitTextFillColor: '#ffffff',
+              letterSpacing: '0.02em',
+            }}
+          >
             <TypewriterText 
               text="Find Purpose.\nBuild Clarity.\nMove Forward."
               totalDuration={2000}
@@ -90,7 +108,7 @@ export default function Home() {
       <section className="px-6 pt-24 pb-8 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-2 md:mb-3">
+            <div className="flex justify-center mb-0">
               <TitleWithBorder padding="px-8 py-4">
                 <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
                   <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
@@ -141,10 +159,10 @@ export default function Home() {
                           right: '0%',
                           top: '50%',
                           height: '0.1em',
-                          backgroundColor: '#ff0000',
+                          backgroundColor: '#d9d7b3',
                           transform: 'translateY(-50%) rotate(-15deg)',
                           transformOrigin: 'center',
-                          boxShadow: '0 0 4px rgba(255, 0, 0, 0.6)',
+                          boxShadow: '0 0 4px rgba(217, 215, 179, 0.6)',
                           width: '120%',
                         }}
                       />

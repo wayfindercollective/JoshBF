@@ -3,25 +3,18 @@
 import Image from 'next/image';
 
 export default function BackgroundTrees() {
-  // Two trees positioned at top corners
+  // Tree positioned at top left corner, aligned with Black Friday sticker
   const trees = [
     {
       id: 1,
       x: 5, // Upper left corner (original position)
-      y: 15, // Near top/hero section (original position)
-      rotation: 0, // Upright
-      scale: 1, // Same size
-    },
-    {
-      id: 2,
-      x: 95, // Upper right corner (mirroring left)
-      y: 15, // Same vertical position as left
+      y: 0, // Will be positioned using top value to align with CountdownTimer
       rotation: 0, // Upright
       scale: 1, // Same size
     },
   ];
 
-  const treeSize = 96; // Same size for both trees
+  const treeSize = 96; // Tree size
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -31,10 +24,10 @@ export default function BackgroundTrees() {
           className="absolute opacity-40"
           style={{
             left: `${tree.x}%`,
-            top: `${tree.y}%`,
+            top: '1.5rem', // Match CountdownTimer's top-6 (24px)
             width: `${treeSize}px`,
             height: `${treeSize}px`,
-            transform: `translate(-50%, -50%) rotate(${tree.rotation}deg) scale(${tree.scale})`,
+            transform: `translate(-50%, 0) rotate(${tree.rotation}deg) scale(${tree.scale})`,
           }}
         >
           <div className="tree-reveal" style={{ width: `${treeSize}px`, height: `${treeSize}px` }}>
