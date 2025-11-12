@@ -1,6 +1,6 @@
 "use client"; // Line connection fixes deployed
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from "react";
 
 interface UpwardLine {
   startY: number; // Starting Y position on the left side
@@ -56,27 +56,37 @@ export default function ExpandingLines() {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Use responsive spacing based on screen size
-  const upwardLines = isMobile ? upwardLinesMobile : upwardLinesDesktop;
+  // Use responsive spacing based on screen size - memoized to prevent recalculation
+  const upwardLines = useMemo(() => 
+    isMobile ? upwardLinesMobile : upwardLinesDesktop,
+    [isMobile]
+  );
   
-  // Left side branch lines - going from left towards center
-  const branchLines = upwardLines.map((line) => ({
-    startX: LEFT_POSITION,  // Start at left side
-    startY: line.endY,
-    endX: CENTER_X,         // End at center, meeting right side lines
-  }));
+  // Left side branch lines - going from left towards center - memoized
+  const branchLines = useMemo(() => 
+    upwardLines.map((line) => ({
+      startX: LEFT_POSITION,  // Start at left side
+      startY: line.endY,
+      endX: CENTER_X,         // End at center, meeting right side lines
+    })),
+    [upwardLines]
+  );
   
-  // Right side branch lines - going from right towards center
-  const branchLinesRight = upwardLines.map((line) => ({
-    startX: RIGHT_POSITION,  // Start at right side
-    startY: line.endY,
-    endX: CENTER_X,         // End at center, meeting left side lines
-  }));
+  // Right side branch lines - going from right towards center - memoized
+  const branchLinesRight = useMemo(() => 
+    upwardLines.map((line) => ({
+      startX: RIGHT_POSITION,  // Start at right side
+      startY: line.endY,
+      endX: CENTER_X,         // End at center, meeting left side lines
+    })),
+    [upwardLines]
+  );
   
-  const [upwardProgress, setUpwardProgress] = useState<number[]>(new Array(7).fill(0));
-  const [upwardProgressRight, setUpwardProgressRight] = useState<number[]>(new Array(7).fill(0));
-  const [branchProgress, setBranchProgress] = useState<number[]>(new Array(7).fill(0));
-  const [branchProgressRight, setBranchProgressRight] = useState<number[]>(new Array(7).fill(0));
+  // Lines are always fully drawn when visible (no animation)
+  const upwardProgress = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
+  const upwardProgressRight = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
+  const branchProgress = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
+  const branchProgressRight = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
   const [textVisible, setTextVisible] = useState<boolean[]>(new Array(7).fill(false));
   const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(7).fill(false)); // Price for each column
   const [scriptComplete, setScriptComplete] = useState(false); // Track when script animation is complete
@@ -86,6 +96,8 @@ export default function ExpandingLines() {
   const animationRef = useRef<number>();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const priceTimeoutRef = useRef<NodeJS.Timeout[]>([]);
+  const lastUpdateTime = useRef<number>(0);
+  const updateThrottle = 16; // ~60fps max update rate (16ms = 1 frame at 60fps)
 
   // Detect mobile screen size
   useEffect(() => {
@@ -109,10 +121,6 @@ export default function ExpandingLines() {
           } else {
             // Reset animation when out of view
             setIsVisible(false);
-            setUpwardProgress(new Array(7).fill(0));
-            setUpwardProgressRight(new Array(7).fill(0));
-            setBranchProgress(new Array(7).fill(0));
-            setBranchProgressRight(new Array(7).fill(0));
             setTextVisible(new Array(7).fill(false));
             setPriceVisible(new Array(7).fill(false));
             setScriptComplete(false);
@@ -150,14 +158,10 @@ export default function ExpandingLines() {
     };
   }, []);
 
-  // Animation sequence: upward lines -> branch lines -> text appears (script-like)
+  // Animation sequence: lines appear instantly, then vertical line and pop-in
   useEffect(() => {
     if (!isVisible) {
       // Reset all states when not visible
-      setUpwardProgress(new Array(7).fill(0));
-      setUpwardProgressRight(new Array(7).fill(0));
-      setBranchProgress(new Array(7).fill(0));
-      setBranchProgressRight(new Array(7).fill(0));
       setTextVisible(new Array(7).fill(false));
       setPriceVisible(new Array(7).fill(false));
       setScriptComplete(false);
@@ -175,167 +179,51 @@ export default function ExpandingLines() {
       timeoutRef.current = null;
     }
 
-    let phase = 0; // 0: upward lines, 1: branch lines
-    let currentLine = 0;
+    // Reset throttle timer for smooth animation start
+    lastUpdateTime.current = performance.now();
 
-    // Phase 0: Animate upward lines (both left and right simultaneously)
-    const animateUpwardLines = () => {
-      if (currentLine >= upwardLines.length) {
-        phase = 2;
-        currentLine = 0;
-        timeoutRef.current = setTimeout(() => {
-          animateBranchLines();
-        }, 10); // Very fast for 2.5s total animation
-        return;
-      }
-
+    // Lines appear instantly, then animate vertical line and pop-in
+    const startAnimations = () => {
+      // Mark script as complete immediately (lines are already visible)
+      setScriptComplete(true);
+      
+      // Animate vertical line from top to bottom
       const startTime = performance.now();
-      const duration = 50; // Faster for 2.5s total animation
-
-      const animate = (currentTime: number) => {
+      const duration = 200; // Smooth vertical line animation
+      
+      const animateLine = (currentTime: number) => {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        // Smoother easing function for more fluid motion
-        const easedProgress = progress < 0.5 
-          ? 2 * progress * progress 
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-        setUpwardProgress((prev) => {
-          const newProgress = [...prev];
-          newProgress[currentLine] = easedProgress;
-          return newProgress;
-        });
+        const easedProgress = 1 - Math.pow(1 - progress, 2); // Smooth ease-out
         
-        setUpwardProgressRight((prev) => {
-          const newProgress = [...prev];
-          newProgress[currentLine] = easedProgress;
-          return newProgress;
-        });
-
-        if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
-        } else {
-          currentLine++;
-          if (currentLine < upwardLines.length) {
-            // Much shorter delay for cascading effect - lines overlap more
-            timeoutRef.current = setTimeout(() => {
-              animateUpwardLines();
-            }, 5); // Very fast for 2.5s total animation
-          } else {
-            phase = 1;
-            currentLine = 0;
-            timeoutRef.current = setTimeout(() => {
-              animateBranchLines();
-            }, 10); // Very fast for 2.5s total animation
-          }
-        }
-      };
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    // Phase 1: Animate branch lines (left to right, and right to left simultaneously)
-    const animateBranchLines = () => {
-      if (currentLine >= branchLines.length) {
-        // All branch lines complete - trigger text and price animation
-        timeoutRef.current = setTimeout(() => {
-          animateTextAndPrices();
-        }, 50); // Fast delay for 2.5s total animation
-        return;
-      }
-
-      const startTime = performance.now();
-      const duration = 100; // Faster for 2.5s total animation
-
-      const animate = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = 1 - Math.pow(1 - progress, 3);
-
-        setBranchProgress((prev) => {
-          const newProgress = [...prev];
-          newProgress[currentLine] = easedProgress;
-          return newProgress;
-        });
-        
-        setBranchProgressRight((prev) => {
-          const newProgress = [...prev];
-          newProgress[currentLine] = easedProgress;
-          return newProgress;
-        });
-
-        // Show text as line is being drawn (script effect) - when line is 80% complete
-        if (easedProgress >= 0.8 && !textVisible[currentLine]) {
-          setTextVisible((prev) => {
-            const newText = [...prev];
-            newText[currentLine] = true;
-            return newText;
+        // Throttle updates to prevent excessive re-renders
+        if (currentTime - lastUpdateTime.current >= updateThrottle || progress >= 1) {
+          lastUpdateTime.current = currentTime;
+          
+          // Use startTransition for non-blocking state update
+          startTransition(() => {
+            setVerticalLineProgress(easedProgress);
           });
         }
-
+        
         if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
+          requestAnimationFrame(animateLine);
         } else {
-          currentLine++;
-          if (currentLine < branchLines.length) {
-            timeoutRef.current = setTimeout(() => {
-              animateBranchLines();
-            }, 10); // Very fast for 2.5s total animation
-          } else {
-            // All branch lines complete - trigger text and price animation
-            timeoutRef.current = setTimeout(() => {
-              animateTextAndPrices();
-            }, 50); // Fast delay for 2.5s total animation
-          }
+          // After vertical line completes, start pop-in animation
+          setTimeout(() => {
+            animatePopIn();
+          }, 50); // Small delay before pop-in
         }
       };
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    // Phase 2: Mark script as complete and animate vertical line, then pop-in items
-    const animateTextAndPrices = () => {
-      // Clear any existing price timeouts
-      priceTimeoutRef.current.forEach(timeout => clearTimeout(timeout));
-      priceTimeoutRef.current = [];
-      
-      // Keep text and prices hidden initially - they will appear with pop-in animation
-      // Don't set textVisible or priceVisible here
-      
-      // After script lines complete, mark script as complete and animate vertical line
-      setTimeout(() => {
-        setScriptComplete(true);
-        // Animate vertical line from top to bottom
-        const startTime = performance.now();
-        const duration = 150; // Faster for 2.5s total animation
-        
-        const animateLine = (currentTime: number) => {
-          const elapsed = currentTime - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          const easedProgress = 1 - Math.pow(1 - progress, 2); // Ease-out
-          
-          setVerticalLineProgress(easedProgress);
-          
-          if (progress < 1) {
-            requestAnimationFrame(animateLine);
-          } else {
-            // After vertical line completes, start pop-in animation
-            setTimeout(() => {
-              animatePopIn();
-            }, 50); // Fast delay for 2.5s total animation
-          }
-        };
-        
-        requestAnimationFrame(animateLine);
-      }, 50); // Fast delay for 2.5s total animation
+      requestAnimationFrame(animateLine);
     };
 
     // Pop-in animation: items pop up in order 0, 1, 2, 3, 4, 5
     const animatePopIn = () => {
       // Animate all indices: 0, 1, 2, 3, 4, 5
       const indices = [0, 1, 2, 3, 4, 5];
-      const delayBetweenItems = 20; // Very fast - 20ms between each for 2.5s total
-      const popDuration = 100; // 100ms for each pop animation
+      const delayBetweenItems = 30; // Smooth cascading
+      const popDuration = 120; // 120ms for each pop animation - smooth and fast
       
       indices.forEach((index, arrayIndex) => {
         setTimeout(() => {
@@ -344,31 +232,36 @@ export default function ExpandingLines() {
           const animateItem = (currentTime: number) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / popDuration, 1);
-            // Bounce effect: ease-out with slight overshoot
-            const easedProgress = progress < 0.6 
-              ? 1 - Math.pow(1 - progress / 0.6, 3)
-              : 1 + 0.1 * Math.sin((progress - 0.6) * Math.PI / 0.4);
+            // Smooth ease-out for faster, smoother animation
+            const easedProgress = 1 - Math.pow(1 - progress, 2);
             
-            setPopInProgress((prev) => {
-              const newProgress = [...prev];
-              newProgress[index] = Math.min(easedProgress, 1);
-              return newProgress;
-            });
+            // Throttle updates to prevent excessive re-renders
+            if (currentTime - lastUpdateTime.current >= updateThrottle || progress >= 1) {
+              lastUpdateTime.current = currentTime;
+              
+              // Use startTransition for non-blocking state update
+              startTransition(() => {
+                setPopInProgress((prev) => {
+                  const newProgress = [...prev];
+                  newProgress[index] = Math.min(easedProgress, 1);
+                  return newProgress;
+                });
+              });
+            }
             
             if (progress < 1) {
               requestAnimationFrame(animateItem);
             }
           };
-          
           requestAnimationFrame(animateItem);
         }, arrayIndex * delayBetweenItems);
       });
     };
 
-    // Start animation sequence
+    // Start animation sequence immediately
     timeoutRef.current = setTimeout(() => {
-      animateUpwardLines();
-    }, 50); // Fast initial delay for 2.5s total animation
+      startAnimations();
+    }, 0);
 
     return () => {
       if (animationRef.current) {
@@ -413,9 +306,8 @@ export default function ExpandingLines() {
                   x2={upwardX}
                   y2={upwardEndY}
                   stroke="#ffffff"
-                  strokeWidth={progress >= 1 ? 2.5 : (progress > 0 ? 2.5 : 0)}
-                  strokeOpacity={progress >= 1 ? 0.8 : (progress > 0 ? 0.8 : 0)}
-                  className="transition-all duration-100 ease-out"
+                  strokeWidth="2.5"
+                  strokeOpacity={progress > 0 ? 0.8 : 0}
                   strokeLinecap="butt"
                   style={{
                     filter: progress > 0.5 ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
@@ -431,7 +323,6 @@ export default function ExpandingLines() {
                     stroke="#639df0"
                     strokeWidth={progress > 0 ? 1 : 0}
                     strokeOpacity={progress * 0.4}
-                    className="transition-all duration-100 ease-out"
                     strokeLinecap="round"
                     style={{
                       filter: "blur(2px)",
@@ -460,9 +351,8 @@ export default function ExpandingLines() {
                   x2={upwardX}
                   y2={upwardEndY}
                   stroke="#ffffff"
-                  strokeWidth={progress >= 1 ? 2.5 : (progress > 0 ? 2.5 : 0)}
-                  strokeOpacity={progress >= 1 ? 0.8 : (progress > 0 ? 0.8 : 0)}
-                  className="transition-all duration-100 ease-out"
+                  strokeWidth="2.5"
+                  strokeOpacity={progress > 0 ? 0.8 : 0}
                   strokeLinecap="butt"
                   style={{
                     filter: progress > 0.5 ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
@@ -478,7 +368,6 @@ export default function ExpandingLines() {
                     stroke="#639df0"
                     strokeWidth={progress > 0 ? 1 : 0}
                     strokeOpacity={progress * 0.4}
-                    className="transition-all duration-100 ease-out"
                     strokeLinecap="round"
                     style={{
                       filter: "blur(2px)",
@@ -510,9 +399,8 @@ export default function ExpandingLines() {
                   x2={extendedEndX}
                   y2={branchStartY}
                   stroke="#ffffff"
-                  strokeWidth={progress >= 1 ? 2.5 : (progress > 0 ? 2.5 : 0)}
-                  strokeOpacity={progress >= 1 ? 0.8 : (progress > 0 ? 0.8 : 0)}
-                  className="transition-all duration-100 ease-out"
+                  strokeWidth="2.5"
+                  strokeOpacity={progress > 0 ? 0.8 : 0}
                   strokeLinecap="butt"
                   style={{
                     filter: progress > 0.5 ? "drop-shadow(0 0 8px rgba(255,255,255,0.6))" : "none",
@@ -528,7 +416,6 @@ export default function ExpandingLines() {
                     stroke="#639df0"
                     strokeWidth={progress > 0 ? 1 : 0}
                     strokeOpacity={progress * 0.4}
-                    className="transition-all duration-100 ease-out"
                     strokeLinecap="round"
                     style={{
                       filter: "blur(2px)",
@@ -579,7 +466,6 @@ export default function ExpandingLines() {
                     stroke="#639df0"
                     strokeWidth={progress > 0 ? 1 : 0}
                     strokeOpacity={progress * 0.4}
-                    className="transition-all duration-100 ease-out"
                     strokeLinecap="round"
                     style={{
                       filter: "blur(2px)",
