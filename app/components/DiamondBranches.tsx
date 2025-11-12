@@ -14,49 +14,49 @@ const weeks: WeekItem[] = [
     label: "Clarity", 
     angle: 270, 
     distance: 300,
-    description: "Gain crystal-clear understanding of your core values, strengths, and what truly matters to you. This foundational week helps you see yourself and your path with unprecedented clarity."
+    description: "Turn small wins into a daily habit with a Success Journal and tiny actions that create momentum. You start noticing what works, build confidence, and spark desire for more progress."
   },
   { 
     label: "Desire", 
     angle: 315, 
     distance: 300,
-    description: "Connect deeply with your authentic desires and passions. Learn to distinguish between what you truly want versus what others expect, unlocking your genuine motivation."
+    description: "Wake up your real wants with a simple sit, listen, act drill. Train desire by acting immediately on what you truly want so decisiveness and motivation return."
   },
   { 
     label: "Boundaries", 
     angle: 0, 
     distance: 300,
-    description: "Establish healthy boundaries that protect your energy and align with your values. Create space for what matters while gracefully saying no to what doesn't serve you."
+    description: "Contain your energy so it hits the target. Use the Abundance Equation worksheet and a \"container\" check to decide what comes in, what goes out, and what you will or will not do."
   },
   { 
     label: "Perspective", 
     angle: 45, 
     distance: 300,
-    description: "Shift your perspective to see challenges as opportunities and setbacks as growth. Develop a mindset that empowers you to navigate life's complexities with wisdom."
+    description: "Balance Vision and Awareness. Write what you want to do and how you want to be, then merge them into a few next moves you can actually execute this week."
   },
   { 
     label: "Action", 
     angle: 90, 
     distance: 300,
-    description: "Transform clarity and desire into concrete, meaningful action. Learn to take purposeful steps forward, building momentum toward your goals with intention and focus."
+    description: "Set customized goals that fit you and still stretch you. Ditch one-size-fits-all targets and choose actions that create real results today and tomorrow."
   },
   { 
     label: "Productivity", 
     angle: 135, 
     distance: 300,
-    description: "Master productivity systems that align with your purpose. Work smarter, not harder, by focusing your energy on activities that truly move you forward."
+    description: "Build an environment where winning is the default. Replace infinite time sinks with finite ones, make a tight to-do list, and practice finishing small tasks fast."
   },
   { 
     label: "Identifying Purpose", 
     angle: 180, 
     distance: 300,
-    description: "Discover and articulate your unique purpose. Understand how your values, passions, and strengths converge to create your life's meaningful direction."
+    description: "Go from knowing the steps to dancing them. Practice speaking and acting in the face of resistance so purpose becomes a felt sense, not just an idea."
   },
   { 
     label: "Living Your Purpose", 
     angle: 225, 
     distance: 300,
-    description: "Integrate your purpose into daily life. Create sustainable practices and habits that keep you aligned with your deepest values and long-term vision."
+    description: "Shift from theory to a way of life. Meaning comes from action and skill, so you keep questioning, choose what is good and right, and act with alignment."
   },
 ];
 

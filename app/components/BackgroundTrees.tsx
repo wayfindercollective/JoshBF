@@ -39,7 +39,7 @@ export default function BackgroundTrees() {
         >
           <div className="tree-reveal" style={{ width: `${treeSize}px`, height: `${treeSize}px` }}>
             <Image
-              src="/Tree.png"
+              src="/Tree of life.png"
               alt="Tree"
               width={treeSize}
               height={treeSize}
