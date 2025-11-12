@@ -74,7 +74,7 @@ export default function Home() {
                     <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
                   </h2>
                   <p className="text-white/70 text-sm md:text-base mt-2 font-sans">
-                    Simply click on a week to see what it's all about.
+                    Simply click on a week to see what it&apos;s all about.
                   </p>
                 </div>
               </TitleWithBorder>

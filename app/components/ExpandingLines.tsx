@@ -382,7 +382,7 @@ export default function ExpandingLines() {
         priceTimeoutRef.current = [];
       }
     };
-  }, [isVisible, isMobile]);
+  }, [isVisible, isMobile, branchLines.length, upwardLines.length, textVisible]);
 
   return (
     <div ref={containerRef} className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] py-8 sm:py-10 md:py-12 px-2 sm:px-4 md:px-6">
