@@ -6,38 +6,89 @@ interface WeekItem {
   label: string;
   angle: number; // Angle in degrees from center
   distance: number; // Distance from center
+  description: string;
 }
 
 const weeks: WeekItem[] = [
-  { label: "Clarity", angle: 270, distance: 300 },      // Week One - Top
-  { label: "Desire", angle: 315, distance: 300 },       // Week Two - Top-right
-  { label: "Boundaries", angle: 0, distance: 300 },     // Week Three - Right
-  { label: "Perspective", angle: 45, distance: 300 },  // Week Four - Bottom-right
-  { label: "Action", angle: 90, distance: 300 },        // Week Five - Bottom
-  { label: "Productivity", angle: 135, distance: 300 }, // Week Six - Bottom-left
-  { label: "Identifying Purpose", angle: 180, distance: 300 },   // Week Seven - Left
-  { label: "Living Your Purpose", angle: 225, distance: 300 },  // Week Eight - Top-left
+  { 
+    label: "Clarity", 
+    angle: 270, 
+    distance: 300,
+    description: "Gain crystal-clear understanding of your core values, strengths, and what truly matters to you. This foundational week helps you see yourself and your path with unprecedented clarity."
+  },
+  { 
+    label: "Desire", 
+    angle: 315, 
+    distance: 300,
+    description: "Connect deeply with your authentic desires and passions. Learn to distinguish between what you truly want versus what others expect, unlocking your genuine motivation."
+  },
+  { 
+    label: "Boundaries", 
+    angle: 0, 
+    distance: 300,
+    description: "Establish healthy boundaries that protect your energy and align with your values. Create space for what matters while gracefully saying no to what doesn't serve you."
+  },
+  { 
+    label: "Perspective", 
+    angle: 45, 
+    distance: 300,
+    description: "Shift your perspective to see challenges as opportunities and setbacks as growth. Develop a mindset that empowers you to navigate life's complexities with wisdom."
+  },
+  { 
+    label: "Action", 
+    angle: 90, 
+    distance: 300,
+    description: "Transform clarity and desire into concrete, meaningful action. Learn to take purposeful steps forward, building momentum toward your goals with intention and focus."
+  },
+  { 
+    label: "Productivity", 
+    angle: 135, 
+    distance: 300,
+    description: "Master productivity systems that align with your purpose. Work smarter, not harder, by focusing your energy on activities that truly move you forward."
+  },
+  { 
+    label: "Identifying Purpose", 
+    angle: 180, 
+    distance: 300,
+    description: "Discover and articulate your unique purpose. Understand how your values, passions, and strengths converge to create your life's meaningful direction."
+  },
+  { 
+    label: "Living Your Purpose", 
+    angle: 225, 
+    distance: 300,
+    description: "Integrate your purpose into daily life. Create sustainable practices and habits that keep you aligned with your deepest values and long-term vision."
+  },
 ];
 
 export default function DiamondBranches() {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const [hoveredWeekIndex, setHoveredWeekIndex] = useState<number | null>(null);
+  const [clickedWeekIndex, setClickedWeekIndex] = useState<number | null>(null);
   const [branchProgress, setBranchProgress] = useState<number[]>(new Array(weeks.length).fill(0));
   const [labelVisible, setLabelVisible] = useState<boolean[]>(new Array(weeks.length).fill(false));
   const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const branchAnimationRef = useRef<number>();
 
   // Animate branches extending out
   useEffect(() => {
-    if (!isHovered) {
-      setBranchProgress(new Array(weeks.length).fill(0));
-      setLabelVisible(new Array(weeks.length).fill(false));
+    if (!isVisible || hasAnimated) {
+      if (!isVisible) {
+        // Reset when scrolled away
+        setBranchProgress(new Array(weeks.length).fill(0));
+        setLabelVisible(new Array(weeks.length).fill(false));
+        setHasAnimated(false);
+      }
       return;
     }
 
     let currentBranch = 0;
     const animateBranch = () => {
-      if (currentBranch >= weeks.length) return;
+      if (currentBranch >= weeks.length) {
+        setHasAnimated(true);
+        return;
+      }
 
       const startTime = performance.now();
       const duration = 400; // 400ms per branch
@@ -71,6 +122,8 @@ export default function DiamondBranches() {
             setTimeout(() => {
               branchAnimationRef.current = requestAnimationFrame(animate);
             }, 100); // Small delay between branches
+          } else {
+            setHasAnimated(true);
           }
         }
       };
@@ -85,7 +138,7 @@ export default function DiamondBranches() {
         cancelAnimationFrame(branchAnimationRef.current);
       }
     };
-  }, [isHovered]);
+  }, [isVisible, hasAnimated]);
 
   const getWeekNumber = (index: number): string => {
     return `Week ${index + 1}`;
@@ -117,15 +170,78 @@ export default function DiamondBranches() {
     return { x: 500 + x, y: 500 + y };
   };
 
+  // Scroll-triggered visibility observer - triggers when diamond is almost in middle of screen
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Element is visible and near center of screen
+            setIsVisible(true);
+          } else {
+            // Element scrolled away - reset animation
+            setIsVisible(false);
+            setHasAnimated(false);
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of element is visible
+        rootMargin: '0px 0px -30% 0px', // Trigger when element is in upper-middle portion of screen
+      }
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="flex items-center justify-center min-h-[640px] pt-8 pb-24 px-4 md:px-0 overflow-hidden">
-      <div
-        className="relative cursor-pointer w-full max-w-5xl scale-[1.2] md:scale-[1.2] mx-auto flex justify-center"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => {
-          setIsHovered(false);
-        }}
+    <>
+      {/* Modal for week context */}
+      {clickedWeekIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          onClick={() => setClickedWeekIndex(null)}
+        >
+          <div
+            className="bg-warm-beige border-2 border-orange-red/30 rounded-lg p-8 max-w-2xl w-full relative"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: "popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            }}
+          >
+            <button
+              onClick={() => setClickedWeekIndex(null)}
+              className="absolute top-4 right-4 text-orange-red/80 hover:text-orange-red text-4xl font-bold transition-colors"
+              style={{ cursor: "pointer" }}
+            >
+              ×
+            </button>
+            <h3 className="text-3xl md:text-4xl font-heading font-black text-orange-red mb-2">
+              {getWeekNumber(clickedWeekIndex)}
+            </h3>
+            <h4 className="text-2xl md:text-3xl font-heading font-bold text-orange-red mb-6">
+              {weeks[clickedWeekIndex].label}
+            </h4>
+            <p className="text-orange-red/90 text-lg md:text-xl leading-relaxed font-sans">
+              {weeks[clickedWeekIndex].description}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div 
+        ref={containerRef}
+        className="flex items-center justify-center min-h-[640px] pt-8 pb-24 px-4 md:px-0 overflow-hidden"
       >
+        <div className="relative w-full max-w-5xl scale-[1.2] md:scale-[1.2] mx-auto flex justify-center">
         <svg
           ref={svgRef}
           viewBox="-200 -50 1400 1100"
@@ -135,6 +251,20 @@ export default function DiamondBranches() {
           style={{ minHeight: "640px", maxWidth: "100%" }}
           preserveAspectRatio="xMidYMid meet"
         >
+          {/* Gradient definitions */}
+          <defs>
+            <linearGradient id="shinyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+              <stop offset="30%" stopColor="rgba(255,255,255,0)" />
+              <stop offset="50%" stopColor="rgba(255,255,255,0.8)" />
+              <stop offset="70%" stopColor="rgba(255,255,255,0)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            </linearGradient>
+            {/* Mask using logo image alpha - this ensures shiny only shows on visible logo content */}
+            <mask id="logoAlphaMask" maskUnits="objectBoundingBox">
+              <image href="/YingYangLogo.png" x="0" y="0" width="1" height="1" preserveAspectRatio="none" />
+            </mask>
+          </defs>
           {/* Animated branches */}
           {weeks.map((week, index) => {
             const endPos = getPosition(week.angle, week.distance);
@@ -220,22 +350,48 @@ export default function DiamondBranches() {
                 {progress > 0.8 && (
                   <g>
                     <g
-                      transform={`translate(${endPos.x}, ${endPos.y})`}
+                      transform={`translate(${endPos.x}, ${endPos.y}) ${isHoveredDot ? "scale(1.1)" : "scale(1)"}`}
                       className="transition-all duration-300 cursor-pointer"
                       opacity={progress}
                       onMouseEnter={() => setHoveredWeekIndex(index)}
                       onMouseLeave={() => setHoveredWeekIndex(null)}
-                      style={{ cursor: "pointer" }}
+                      onClick={() => setClickedWeekIndex(index)}
+                      style={{ 
+                        cursor: "pointer",
+                        filter: isHoveredDot ? "drop-shadow(0 0 15px rgba(255,255,255,0.8))" : "drop-shadow(0 0 8px rgba(255,255,255,0.4))",
+                      }}
                     >
+                      {/* Yin Yang Logo */}
                       <image
                         href="/YingYangLogo.png"
                         x={-60}
                         y={-60}
                         width={120}
                         height={120}
+                        className="yin-yang-clickable"
+                        style={{
+                          transition: "all 0.3s ease",
+                          transformOrigin: "center",
+                        }}
                       />
+                      {/* Shiny overlay effect - masked to only show on visible logo content */}
+                      <g transform="translate(-60, -60)">
+                        <rect
+                          x="0"
+                          y="0"
+                          width="120"
+                          height="120"
+                          fill="url(#shinyGradient)"
+                          opacity={0.6}
+                          className="yin-yang-shiny"
+                          mask="url(#logoAlphaMask)"
+                          style={{
+                            pointerEvents: "none",
+                          }}
+                        />
+                      </g>
                     </g>
-                    {/* Invisible larger hoverable area */}
+                    {/* Invisible larger clickable area */}
                     <circle
                       cx={endPos.x}
                       cy={endPos.y}
@@ -244,6 +400,7 @@ export default function DiamondBranches() {
                       className="cursor-pointer"
                       onMouseEnter={() => setHoveredWeekIndex(index)}
                       onMouseLeave={() => setHoveredWeekIndex(null)}
+                      onClick={() => setClickedWeekIndex(index)}
                       style={{ cursor: "pointer" }}
                     />
                   </g>
@@ -257,15 +414,16 @@ export default function DiamondBranches() {
             points="500,450 550,500 500,550 450,500"
             fill="none"
             stroke="#ffffff"
-            strokeWidth={isHovered ? 5 : 4}
+            strokeWidth={isVisible ? 5 : 4}
             className="transition-all duration-300"
             style={{
-              filter: isHovered ? "drop-shadow(0 0 20px rgba(255,255,255,0.7))" : "none",
+              filter: isVisible ? "drop-shadow(0 0 20px rgba(255,255,255,0.7))" : "none",
             }}
           />
         </svg>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

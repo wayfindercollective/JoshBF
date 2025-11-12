@@ -1,3 +1,5 @@
+"use client";
+
 import TypewriterText from './components/HandwritingText';
 import ScrollAnimatedIcon from './components/ScrollAnimatedIcon';
 import BackgroundTrees from './components/BackgroundTrees';
@@ -49,9 +51,14 @@ export default function Home() {
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-8">
               <TitleWithBorder padding="px-6 py-4">
-                <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-white text-center">
-                  <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
-                </h2>
+                <div className="text-center">
+                  <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-white">
+                    <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
+                  </h2>
+                  <p className="text-white/70 text-sm md:text-base mt-2 font-sans">
+                    Simply click on a week to see what it's all about.
+                  </p>
+                </div>
               </TitleWithBorder>
             </div>
           </RandomScrollReveal>
@@ -81,10 +88,10 @@ export default function Home() {
       </section>
 
       {/* Bonuses Section */}
-      <section className="px-6 py-24 relative z-10">
+      <section className="px-6 pt-24 pb-8 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-20">
+            <div className="flex justify-center mb-12 md:mb-16">
               <TitleWithBorder padding="px-8 py-4">
                 <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
                   <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
@@ -97,7 +104,7 @@ export default function Home() {
       </section>
 
       {/* Limited Offer Section */}
-      <section className="px-6 py-24 text-white relative z-10">
+      <section className="px-6 pt-8 md:pt-12 pb-24 text-white relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <RandomScrollReveal delay={0} randomDelay={true} forceDirection="right">
             <div className="font-mono inline-block bg-orange-red text-white px-6 py-2 mb-8 text-sm font-bold tracking-wider">

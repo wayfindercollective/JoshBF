@@ -13,7 +13,8 @@ export default function TitleWithBorder({
   className = "",
   padding = "px-6 py-4"
 }: TitleWithBorderProps) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasAnimated, setHasAnimated] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
@@ -27,29 +28,68 @@ export default function TitleWithBorder({
     const updateDimensions = () => {
       // Measure the content container directly
       if (contentRef.current) {
-        const rect = contentRef.current.getBoundingClientRect();
-        const scrollWidth = contentRef.current.scrollWidth;
-        const scrollHeight = contentRef.current.scrollHeight;
+        // First, try to find the actual text element inside
+        const textElement = contentRef.current.querySelector('h1, h2, h3, h4, h5, h6, p, span') as HTMLElement;
         
-        // Use the larger of bounding rect or scroll dimensions
-        const width = Math.max(rect.width, scrollWidth);
-        const height = Math.max(rect.height, scrollHeight);
+        let rect: DOMRect;
+        let scrollWidth: number;
+        let scrollHeight: number;
         
-        if (width > 0 && height > 0) {
-          setDimensions({ width, height });
-          setIsReady(true);
-          if (!dimensionsLockedRef.current && width > 10 && height > 10) {
-            dimensionsLockedRef.current = true;
+        if (textElement && textElement.getBoundingClientRect().width > 0) {
+          // Use the text element's dimensions - this ensures we get the actual text size
+          const textRect = textElement.getBoundingClientRect();
+          const textScrollWidth = textElement.scrollWidth;
+          const textScrollHeight = textElement.scrollHeight;
+          
+          // Get padding values from the container
+          const containerStyles = window.getComputedStyle(contentRef.current);
+          const paddingLeft = parseFloat(containerStyles.paddingLeft) || 0;
+          const paddingRight = parseFloat(containerStyles.paddingRight) || 0;
+          const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
+          const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
+          
+          // Calculate total dimensions including padding
+          scrollWidth = textScrollWidth + paddingLeft + paddingRight;
+          scrollHeight = textScrollHeight + paddingTop + paddingBottom;
+          
+          // Use container rect but with calculated width/height
+          rect = contentRef.current.getBoundingClientRect();
+          const width = Math.max(scrollWidth, rect.width);
+          const height = Math.max(scrollHeight, rect.height);
+          
+          if (width > 0 && height > 0) {
+            setDimensions({ width, height });
+            setIsReady(true);
+            if (!dimensionsLockedRef.current && width > 10 && height > 10) {
+              dimensionsLockedRef.current = true;
+            }
+          }
+        } else {
+          // Fall back to container dimensions
+          rect = contentRef.current.getBoundingClientRect();
+          scrollWidth = contentRef.current.scrollWidth;
+          scrollHeight = contentRef.current.scrollHeight;
+          
+          const width = Math.max(rect.width, scrollWidth);
+          const height = Math.max(rect.height, scrollHeight);
+          
+          if (width > 0 && height > 0) {
+            setDimensions({ width, height });
+            setIsReady(true);
+            if (!dimensionsLockedRef.current && width > 10 && height > 10) {
+              dimensionsLockedRef.current = true;
+            }
           }
         }
       }
     };
 
     // Multiple attempts to ensure content is fully rendered (including animations)
+    // Wait longer to ensure CharacterPopIn animations complete
     const timeoutId1 = setTimeout(updateDimensions, 200);
-    const timeoutId2 = setTimeout(updateDimensions, 600);
-    const timeoutId3 = setTimeout(updateDimensions, 1000);
-    const timeoutId4 = setTimeout(updateDimensions, 1500); // Extra delay for CharacterPopIn animations
+    const timeoutId2 = setTimeout(updateDimensions, 800);
+    const timeoutId3 = setTimeout(updateDimensions, 1500);
+    const timeoutId4 = setTimeout(updateDimensions, 2000); // Extra delay for CharacterPopIn animations
     
     // Use ResizeObserver to catch any late content changes
     const resizeObserver = new ResizeObserver(() => {
@@ -80,9 +120,9 @@ export default function TitleWithBorder({
     };
   }, [children]);
 
-  // Use consistent border width for path calculation (always use hover width)
+  // Use consistent border width for path calculation (always use visible width)
   const pathBorderWidth = 5;
-  const displayBorderWidth = isHovered ? 5 : 4;
+  const displayBorderWidth = isVisible ? 5 : 4;
   const halfBorder = pathBorderWidth / 2;
   const w = dimensions.width;
   const h = dimensions.height;
@@ -124,12 +164,48 @@ export default function TitleWithBorder({
       animationTimeoutRef.current = null;
     }
     
+    // Recalculate dimensions one more time before animating to ensure accuracy
+    if (contentRef.current) {
+      // Try to find the actual text element inside
+      const textElement = contentRef.current.querySelector('h1, h2, h3, h4, h5, h6, p, span') as HTMLElement;
+      
+      let width: number;
+      let height: number;
+      
+      if (textElement && textElement.getBoundingClientRect().width > 0) {
+        // Use the text element's dimensions
+        const textScrollWidth = textElement.scrollWidth;
+        const textScrollHeight = textElement.scrollHeight;
+        
+        // Get padding values from the container
+        const containerStyles = window.getComputedStyle(contentRef.current);
+        const paddingLeft = parseFloat(containerStyles.paddingLeft) || 0;
+        const paddingRight = parseFloat(containerStyles.paddingRight) || 0;
+        const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
+        const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
+        
+        // Calculate total dimensions including padding
+        width = textScrollWidth + paddingLeft + paddingRight;
+        height = textScrollHeight + paddingTop + paddingBottom;
+      } else {
+        // Fall back to container dimensions
+        const rect = contentRef.current.getBoundingClientRect();
+        const scrollWidth = contentRef.current.scrollWidth;
+        const scrollHeight = contentRef.current.scrollHeight;
+        width = Math.max(rect.width, scrollWidth);
+        height = Math.max(rect.height, scrollHeight);
+      }
+      
+      if (width > 0 && height > 0 && (width !== dimensions.width || height !== dimensions.height)) {
+        setDimensions({ width, height });
+      }
+    }
+    
     // Force reset: remove transition, set to hidden, force reflow
     path.style.transition = 'none';
     path.style.strokeDashoffset = `${pathLength}`;
     
     // Force a reflow to ensure the reset is applied
-    // Use requestAnimationFrame instead of offsetHeight for SVG elements
     requestAnimationFrame(() => {
       // Small delay to ensure the reset is fully applied before animating
       animationTimeoutRef.current = setTimeout(() => {
@@ -139,24 +215,74 @@ export default function TitleWithBorder({
         }
       }, 10);
     });
+  }, [pathLength, dimensions]);
+
+  // Handle scroll-triggered visibility - track both entering and leaving viewport
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Element entered viewport - reset hasAnimated so animation can play again
+            setIsVisible(true);
+            // Reset hasAnimated when entering viewport so animation can play
+            setHasAnimated(false);
+          } else {
+            // Element left viewport - reset animation state and visual
+            setIsVisible(false);
+            setHasAnimated(false);
+            // Reset the animation visually
+            if (pathRef.current && pathLength > 0) {
+              pathRef.current.style.transition = 'none';
+              pathRef.current.style.strokeDashoffset = `${pathLength}`;
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
   }, [pathLength]);
 
-  // Handle hover state changes
+  // Handle visibility state changes - trigger animation when visible
   useEffect(() => {
     if (!isReady || pathLength === 0 || !pathRef.current) return;
     
-    if (isHovered) {
-      resetAnimation();
-    } else {
-      // Clear any pending animation
-      if (animationTimeoutRef.current) {
-        clearTimeout(animationTimeoutRef.current);
-        animationTimeoutRef.current = null;
-      }
-      if (pathRef.current) {
-        pathRef.current.style.transition = 'stroke-dashoffset 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease';
-        pathRef.current.style.strokeDashoffset = `${pathLength}`;
-      }
+    if (isVisible && !hasAnimated) {
+      // Wait for CharacterPopIn animation to complete before starting border animation
+      // CharacterPopIn typically takes ~1-2 seconds depending on text length
+      const delay = setTimeout(() => {
+        // Ensure animation is reset before playing
+        if (pathRef.current) {
+          pathRef.current.style.transition = 'none';
+          pathRef.current.style.strokeDashoffset = `${pathLength}`;
+          
+          // Force reflow
+          requestAnimationFrame(() => {
+            if (pathRef.current) {
+              pathRef.current.style.transition = 'stroke-dashoffset 2.5s ease-in-out, stroke-width 0.3s ease, filter 0.3s ease';
+              pathRef.current.style.strokeDashoffset = '0';
+              setHasAnimated(true);
+            }
+          });
+        }
+      }, 1500); // Wait for CharacterPopIn to complete
+      
+      return () => {
+        clearTimeout(delay);
+      };
     }
     
     // Cleanup on unmount
@@ -166,16 +292,14 @@ export default function TitleWithBorder({
         animationTimeoutRef.current = null;
       }
     };
-  }, [isHovered, isReady, pathLength, resetAnimation]);
+  }, [isVisible, isReady, pathLength, hasAnimated]);
 
   return (
     <div
       ref={containerRef}
       className={`inline-block relative ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      <div ref={contentRef} className={`relative ${padding}`}>
+      <div ref={contentRef} className={`relative inline-block ${padding}`}>
         {/* Animated SVG border - positioned to match content area */}
         {isReady && dimensions.width > 0 && dimensions.height > 0 && pathData && (
           <svg
@@ -200,7 +324,7 @@ export default function TitleWithBorder({
               strokeDasharray={pathLength}
               strokeDashoffset={pathLength}
               style={{
-                filter: isHovered ? "drop-shadow(0 0 20px rgba(255,255,255,0.7))" : "none",
+                filter: isVisible ? "drop-shadow(0 0 20px rgba(255,255,255,0.7))" : "none",
               }}
             />
           </svg>
