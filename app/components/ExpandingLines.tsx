@@ -1096,10 +1096,10 @@ export default function ExpandingLines() {
                           >
                             {index === 3 ? (
                               <>
-                                <span style={{ color: index === 0 ? '#bc4500' : 'inherit', display: 'block' }}>
+                                <span style={{ color: 'inherit', display: 'block' }}>
                                   Book On How To Make
                                 </span>
-                                <span style={{ color: index === 0 ? '#bc4500' : 'inherit', display: 'inline-block', verticalAlign: 'baseline' }}>
+                                <span style={{ color: 'inherit', display: 'inline-block', verticalAlign: 'baseline' }}>
                                   Progress
                                 </span>
                               </>
