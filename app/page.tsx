@@ -132,7 +132,7 @@ function EnvelopeClickableWrapper() {
   };
 
   return (
-    <div className="text-xl md:text-2xl mb-12 text-white/90 flex flex-col items-center justify-center mt-20 md:mt-24 w-full">
+    <div className="text-xl md:text-2xl mb-12 text-white/90 flex flex-col items-center justify-center mt-[84px] md:mt-24 w-full">
       <a 
         href="#bonuses"
         className="cursor-pointer hover:opacity-80 transition-opacity flex flex-col items-center w-full"

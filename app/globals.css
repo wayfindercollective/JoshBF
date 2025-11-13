@@ -910,6 +910,18 @@
     .bonus-desktop-layout {
       display: none !important;
     }
+    
+    /* Shift text left on mobile only */
+    .mobile-text-shift-left {
+      transform: translateX(-8px);
+    }
+  }
+  
+  /* Reset transform on desktop */
+  @media (min-width: 768px) {
+    .mobile-text-shift-left {
+      transform: none;
+    }
   }
 
   /* Desktop bonus title arrow animation */
