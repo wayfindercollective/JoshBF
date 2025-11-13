@@ -894,7 +894,7 @@ export default function ExpandingLines() {
               : LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.2);
             const currentY = branchLines[0].startY;
             const nextY = branchLines[1].startY;
-            const columnCenterY = currentY + ((nextY - currentY) * 0.45);
+            const columnCenterY = currentY + ((nextY - currentY) * 0.25); // Use same calculation as text positioning (0.25 for first row)
             
             // End point is well to the left of the column (outside the column structure)
             // LEFT_POSITION is 180, so we want to stay well to the left of that
@@ -918,8 +918,11 @@ export default function ExpandingLines() {
             const targetY = columnCenterY;
             const arrowAngle = Math.atan2(targetY - endY, targetX - endX);
             
+            // Only show arrow if popInProgress[0] is greater than 0
+            const arrowOpacity = popInProgress[0] > 0 ? 1 : 0;
+            
             return (
-              <g>
+              <g style={{ opacity: arrowOpacity, transition: 'opacity 0.3s ease-out' }}>
                 {/* Curved arrow path */}
                 <path
                   d={`M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`}
@@ -930,13 +933,11 @@ export default function ExpandingLines() {
                   strokeLinecap="round"
                   style={{
                     filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
-                    opacity: popInProgress[0] > 0 ? 1 : 0,
-                    transition: 'opacity 0.3s ease-out',
                   }}
                 />
                 {/* Arrow head - pointing toward Purpose Transformation */}
                 <path
-                  d={`M ${endX + 3} ${endY - 1.5} L ${endX + 3 - arrowSize * Math.cos(arrowAngle - Math.PI / 6)} ${endY - 1.5 - arrowSize * Math.sin(arrowAngle - Math.PI / 6)} M ${endX + 3} ${endY - 1.5} L ${endX + 3 - arrowSize * Math.cos(arrowAngle + Math.PI / 6)} ${endY - 1.5 - arrowSize * Math.sin(arrowAngle + Math.PI / 6)}`}
+                  d={`M ${endX + 3} ${endY} L ${endX + 3 - arrowSize * Math.cos(arrowAngle - Math.PI / 6)} ${endY - arrowSize * Math.sin(arrowAngle - Math.PI / 6)} M ${endX + 3} ${endY} L ${endX + 3 - arrowSize * Math.cos(arrowAngle + Math.PI / 6)} ${endY - arrowSize * Math.sin(arrowAngle + Math.PI / 6)}`}
                   stroke="#ffffff"
                   strokeWidth="2.5"
                   strokeOpacity="0.8"
@@ -945,8 +946,6 @@ export default function ExpandingLines() {
                   fill="none"
                   style={{
                     filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
-                    opacity: popInProgress[0] > 0 ? 1 : 0,
-                    transition: 'opacity 0.3s ease-out',
                   }}
                 />
               </g>
