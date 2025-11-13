@@ -116,8 +116,6 @@ function FAQItem({ faq, index }: FAQItemProps) {
 }
 
 function EnvelopeClickableWrapper() {
-  const [showArrow, setShowArrow] = useState(false);
-
   const handleScroll = () => {
     const element = document.getElementById('bonuses');
     if (element) {
@@ -142,36 +140,8 @@ function EnvelopeClickableWrapper() {
         }}
       >
         <div onClick={handleScroll} className="flex justify-center w-full">
-          <EnvelopeWithText onAnimationComplete={() => setShowArrow(true)} />
+          <EnvelopeWithText />
         </div>
-        {/* Click here arrow and text - below envelope, only shown after animation */}
-        {showArrow && (
-          <div className="flex flex-col items-center mt-2">
-            <div 
-              className="text-white/70 hover:text-white/90 transition-all duration-300"
-              style={{
-                animation: 'arrowBounceUp 2s ease-in-out infinite',
-              }}
-            >
-              <svg 
-                width="20" 
-                height="20" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round"
-                className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-              >
-                <path d="M12 19V5M5 12l7-7 7 7" />
-              </svg>
-            </div>
-            <span className="text-white/60 text-xs sm:text-sm md:text-base font-handwritten mt-1">
-              Click here
-            </span>
-          </div>
-        )}
       </a>
     </div>
   );

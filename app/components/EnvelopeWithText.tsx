@@ -75,10 +75,17 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
     <div 
       className="block relative cursor-pointer mx-auto"
     >
-      {/* Envelope SVG - More detailed */}
-      <div className="relative inline-block w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36">
-        {/* Envelope base SVG */}
-        <svg
+      {/* Envelope SVG - More detailed - hide visually but keep space when animation complete */}
+      <div 
+        className="relative inline-block w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36"
+        style={{
+          opacity: animationComplete ? 0 : 1,
+          visibility: animationComplete ? 'hidden' : 'visible',
+          transition: animationComplete ? 'opacity 0s, visibility 0s' : 'opacity 0.5s ease-out, visibility 0.5s ease-out',
+        }}
+      >
+          {/* Envelope base SVG */}
+          <svg
           width="100%"
           height="100%"
           viewBox="0 0 320 140"
@@ -88,44 +95,53 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
           className="transition-all duration-300"
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Envelope back/base - main body */}
+          {/* Envelope back/base - main body - hide bottom part when animation complete */}
           <path
-            d="M20 35 L160 95 L300 35 L300 125 L20 125 Z"
+            d={animationComplete ? "M20 35 L160 95 L300 35 Z" : "M20 35 L160 95 L300 35 L300 125 L20 125 Z"}
             fill="rgba(255, 255, 255, 0.1)"
             stroke="white"
             strokeWidth="2"
+            style={{
+              transition: 'd 0.5s ease-out',
+            }}
           />
           
-          {/* Left side fold detail */}
+          {/* Left side fold detail - hide bottom part when animation complete */}
+          {!animationComplete && (
+            <path
+              d="M20 35 L20 125"
+              stroke="white"
+              strokeWidth="2"
+              opacity="0.7"
+            />
+          )}
+          
+          {/* Right side fold detail - hide bottom part when animation complete */}
+          {!animationComplete && (
+            <path
+              d="M300 35 L300 125"
+              stroke="white"
+              strokeWidth="2"
+              opacity="0.7"
+            />
+          )}
+          
+          {/* Bottom fold line - hide when animation complete */}
+          {!animationComplete && (
+            <line
+              x1="20"
+              y1="125"
+              x2="300"
+              y2="125"
+              stroke="white"
+              strokeWidth="2"
+              opacity="0.7"
+            />
+          )}
+          
+          {/* Envelope front outline - hide bottom part when animation complete */}
           <path
-            d="M20 35 L20 125"
-            stroke="white"
-            strokeWidth="2"
-            opacity="0.7"
-          />
-          
-          {/* Right side fold detail */}
-          <path
-            d="M300 35 L300 125"
-            stroke="white"
-            strokeWidth="2"
-            opacity="0.7"
-          />
-          
-          {/* Bottom fold line */}
-          <line
-            x1="20"
-            y1="125"
-            x2="300"
-            y2="125"
-            stroke="white"
-            strokeWidth="2"
-            opacity="0.7"
-          />
-          
-          {/* Envelope front outline */}
-          <path
-            d="M20 35 L160 95 L300 35 L300 125 L20 125 Z"
+            d={animationComplete ? "M20 35 L160 95 L300 35 Z" : "M20 35 L160 95 L300 35 L300 125 L20 125 Z"}
             fill="none"
             stroke={animationComplete ? "rgba(255,255,255,1)" : "white"}
             strokeWidth={animationComplete ? "2.5" : "2"}
@@ -134,7 +150,7 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
               filter: animationComplete 
                 ? 'drop-shadow(0 0 8px rgba(255,255,255,0.9)) brightness(1.15)'
                 : 'none',
-              transition: 'filter 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease',
+              transition: 'filter 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease, d 0.5s ease-out',
             }}
           />
           
@@ -161,8 +177,8 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
           className="absolute top-0 left-0"
           style={{
             transform: isHovered ? 'translateY(-80px)' : 'translateY(0px)',
-            opacity: isHovered ? 0 : 1,
-            transition: 'transform 0.6s ease-out, opacity 0.5s ease-out',
+            opacity: animationComplete ? 0 : (isHovered ? 0 : 1),
+            transition: animationComplete ? 'opacity 0s' : 'transform 0.6s ease-out, opacity 0.5s ease-out',
             pointerEvents: 'none',
           }}
           preserveAspectRatio="xMidYMid meet"
@@ -211,20 +227,21 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
             <ellipse cx="157" cy="62" rx="2" ry="1.5" fill="rgba(255, 255, 255, 0.4)" />
           </g>
         </svg>
+      </div>
 
-        {/* Text - emerges from envelope with dramatic animation */}
-        <div
-          className={`absolute left-1/2 whitespace-nowrap ${
-            isHovered 
-              ? 'opacity-100' 
-              : 'opacity-0'
-          }`}
-          style={{
-            top: 'clamp(56px, 18vw, 70px)', // Responsive top position
-            transform: isHovered ? 'translate(-50%, -140px) scale(1.25)' : 'translate(-50%, -20px) scale(0.5)',
-            transition: isHovered ? 'opacity 0.4s ease-out 0.3s, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s' : 'opacity 0.3s ease-out, transform 0.3s ease-out',
-          }}
-        >
+      {/* Text - emerges from envelope with dramatic animation */}
+      <div
+        className={`absolute left-1/2 whitespace-nowrap ${
+          isHovered 
+            ? 'opacity-100' 
+            : 'opacity-0'
+        }`}
+        style={{
+          top: 'clamp(56px, 18vw, 70px)', // Responsive top position
+          transform: isHovered ? 'translate(-50%, -140px) scale(1.25)' : 'translate(-50%, -20px) scale(0.5)',
+          transition: isHovered ? 'opacity 0.4s ease-out 0.3s, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s' : 'opacity 0.3s ease-out, transform 0.3s ease-out',
+        }}
+      >
           <div className="relative inline-block" style={{ overflow: 'visible' }}>
             <span 
               className={`font-handwritten font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl relative overflow-hidden inline-block blueprint-text ${animationComplete ? 'blueprint-text-shine' : ''}`}
@@ -300,7 +317,42 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
             </span>
           </div>
         </div>
-      </div>
+
+      {/* Arrow and "Click here" text - appears in place of lower envelope when animation complete */}
+      {animationComplete && (
+        <div 
+          className="absolute left-1/2 flex flex-col items-center"
+          style={{
+            top: 'clamp(30px, 10vw, 50px)', // Position at the bottom of where envelope was
+            transform: 'translateX(-50%)',
+            transition: 'opacity 0.5s ease-out',
+          }}
+        >
+          <div 
+            className="text-white/70 hover:text-white/90 transition-all duration-300"
+            style={{
+              animation: 'arrowBounceUp 2s ease-in-out infinite',
+            }}
+          >
+            <svg 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+            >
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+          </div>
+          <span className="text-white/60 text-xs sm:text-sm md:text-base font-handwritten mt-1">
+            Click here
+          </span>
+        </div>
+      )}
     </div>
   );
 }
