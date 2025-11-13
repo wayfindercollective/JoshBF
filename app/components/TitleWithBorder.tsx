@@ -26,59 +26,31 @@ export default function TitleWithBorder({
 
   useEffect(() => {
     const updateDimensions = () => {
-      // Measure the content container directly
+      // Measure the content container directly - account for ALL content including subtext
       if (contentRef.current) {
-        // First, try to find the actual text element inside
-        const textElement = contentRef.current.querySelector('h1, h2, h3, h4, h5, h6, p, span') as HTMLElement;
+        // Measure the entire container including all children (title + subtext)
+        const rect = contentRef.current.getBoundingClientRect();
+        const scrollWidth = contentRef.current.scrollWidth;
+        const scrollHeight = contentRef.current.scrollHeight;
         
-        let rect: DOMRect;
-        let scrollWidth: number;
-        let scrollHeight: number;
+        // Get padding values from the container
+        const containerStyles = window.getComputedStyle(contentRef.current);
+        const paddingLeft = parseFloat(containerStyles.paddingLeft) || 0;
+        const paddingRight = parseFloat(containerStyles.paddingRight) || 0;
+        const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
+        const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
         
-        if (textElement && textElement.getBoundingClientRect().width > 0) {
-          // Use the text element's dimensions - this ensures we get the actual text size
-          const textRect = textElement.getBoundingClientRect();
-          const textScrollWidth = textElement.scrollWidth;
-          const textScrollHeight = textElement.scrollHeight;
-          
-          // Get padding values from the container
-          const containerStyles = window.getComputedStyle(contentRef.current);
-          const paddingLeft = parseFloat(containerStyles.paddingLeft) || 0;
-          const paddingRight = parseFloat(containerStyles.paddingRight) || 0;
-          const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
-          const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
-          
-          // Calculate total dimensions including padding
-          scrollWidth = textScrollWidth + paddingLeft + paddingRight;
-          scrollHeight = textScrollHeight + paddingTop + paddingBottom;
-          
-          // Use container rect but with calculated width/height
-          rect = contentRef.current.getBoundingClientRect();
-          const width = Math.max(scrollWidth, rect.width);
-          const height = Math.max(scrollHeight, rect.height);
-          
-          if (width > 0 && height > 0) {
-            setDimensions({ width, height });
-            setIsReady(true);
-            if (!dimensionsLockedRef.current && width > 10 && height > 10) {
-              dimensionsLockedRef.current = true;
-            }
-          }
-        } else {
-          // Fall back to container dimensions
-          rect = contentRef.current.getBoundingClientRect();
-          scrollWidth = contentRef.current.scrollWidth;
-          scrollHeight = contentRef.current.scrollHeight;
-          
-          const width = Math.max(rect.width, scrollWidth);
-          const height = Math.max(rect.height, scrollHeight);
-          
-          if (width > 0 && height > 0) {
-            setDimensions({ width, height });
-            setIsReady(true);
-            if (!dimensionsLockedRef.current && width > 10 && height > 10) {
-              dimensionsLockedRef.current = true;
-            }
+        // Use scrollWidth/scrollHeight to ensure we capture all content including subtext
+        // Add a small buffer to ensure border doesn't overlap text
+        const borderBuffer = 4; // Extra space to prevent border overlap
+        const width = Math.max(rect.width, scrollWidth) + borderBuffer;
+        const height = Math.max(rect.height, scrollHeight) + borderBuffer;
+        
+        if (width > 0 && height > 0) {
+          setDimensions({ width, height });
+          setIsReady(true);
+          if (!dimensionsLockedRef.current && width > 10 && height > 10) {
+            dimensionsLockedRef.current = true;
           }
         }
       }
@@ -166,35 +138,15 @@ export default function TitleWithBorder({
     
     // Recalculate dimensions one more time before animating to ensure accuracy
     if (contentRef.current) {
-      // Try to find the actual text element inside
-      const textElement = contentRef.current.querySelector('h1, h2, h3, h4, h5, h6, p, span') as HTMLElement;
+      // Measure entire container including all content (title + subtext)
+      const rect = contentRef.current.getBoundingClientRect();
+      const scrollWidth = contentRef.current.scrollWidth;
+      const scrollHeight = contentRef.current.scrollHeight;
       
-      let width: number;
-      let height: number;
-      
-      if (textElement && textElement.getBoundingClientRect().width > 0) {
-        // Use the text element's dimensions
-        const textScrollWidth = textElement.scrollWidth;
-        const textScrollHeight = textElement.scrollHeight;
-        
-        // Get padding values from the container
-        const containerStyles = window.getComputedStyle(contentRef.current);
-        const paddingLeft = parseFloat(containerStyles.paddingLeft) || 0;
-        const paddingRight = parseFloat(containerStyles.paddingRight) || 0;
-        const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
-        const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
-        
-        // Calculate total dimensions including padding
-        width = textScrollWidth + paddingLeft + paddingRight;
-        height = textScrollHeight + paddingTop + paddingBottom;
-      } else {
-        // Fall back to container dimensions
-        const rect = contentRef.current.getBoundingClientRect();
-        const scrollWidth = contentRef.current.scrollWidth;
-        const scrollHeight = contentRef.current.scrollHeight;
-        width = Math.max(rect.width, scrollWidth);
-        height = Math.max(rect.height, scrollHeight);
-      }
+      // Add buffer to prevent border overlap
+      const borderBuffer = 4;
+      const width = Math.max(rect.width, scrollWidth) + borderBuffer;
+      const height = Math.max(rect.height, scrollHeight) + borderBuffer;
       
       if (width > 0 && height > 0 && (width !== dimensions.width || height !== dimensions.height)) {
         setDimensions({ width, height });
