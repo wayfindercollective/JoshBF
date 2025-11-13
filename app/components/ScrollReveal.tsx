@@ -115,10 +115,12 @@ export default function ScrollReveal({
       setTimeout(checkAndObserve, 50);
     });
 
+    const currentContainer = containerRef.current;
+
     return () => {
       cancelAnimationFrame(rafId);
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
+      if (currentContainer) {
+        observer.unobserve(currentContainer);
       }
     };
   }, [delay, triggerAnimation, hasAnimated]);

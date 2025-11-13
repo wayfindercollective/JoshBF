@@ -399,13 +399,15 @@ export default function FloatingGeometry() {
 
     window.addEventListener('mousemove', handleMouseMove);
 
+    const currentAnimationFrame = animationFrameRef.current;
+
     return () => {
       clearInterval(heightCheckInterval);
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+      if (currentAnimationFrame) {
+        cancelAnimationFrame(currentAnimationFrame);
       }
     };
   }, []);
