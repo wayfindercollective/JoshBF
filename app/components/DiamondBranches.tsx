@@ -21,31 +21,31 @@ const weeks: WeekItem[] = [
     label: "Desire", 
     angle: 315, 
     distance: 300,
-    description: "Identify what you actually want and how you know. Separate short term impulse from longer term values using simple prompts and a quick daily check."
+    description: "Get help identifying exactly what you want. Separate short term impulse from longer term values using prompts and a quick daily check."
   },
   { 
     label: "Boundaries", 
     angle: 0, 
     distance: 300,
-    description: "Inventory commitments and set rules for time, attention, and energy. Create allow and deny lists and a straightforward plan for saying no."
+    description: "Create 'allow and deny lists'. Form a straightforward plan for saying NO."
   },
   { 
     label: "Perspective", 
     angle: 45, 
     distance: 300,
-    description: "Connect direction with present facts. Write a brief statement that links where you intend to go with what is true right now, then create two or three decision filters."
+    description: "Get intentional. Write down what is true right now, and where you intend to go. Then create decision filters for navigating the future."
   },
   { 
     label: "Action", 
     angle: 90, 
     distance: 300,
-    description: "Translate direction into objectives and simple metrics. Break work into small experiments and select the first task that will move a visible number."
+    description: "Translate your direction into objectives and measurable metrics. Break work into small experiments and start moving the numbers."
   },
   { 
     label: "Productivity", 
     angle: 135, 
     distance: 300,
-    description: "Design an environment that reduces drag. Add containers for focus work and for leisure, a short daily checklist, and a weekly review loop."
+    description: "Design an environment that reduces drag. Add containers for focused work (and leisure). Craft a daily checklist and a weekly review loop."
   },
   { 
     label: "Identifying Purpose", 
@@ -400,8 +400,6 @@ export default function DiamondBranches() {
             style={{
               width: '90%',
               maxWidth: '600px',
-              maxHeight: '700px',
-              minHeight: 'clamp(400px, 70vh, 500px)',
             }}
           >
             {/* Geometry background canvas */}
@@ -411,12 +409,12 @@ export default function DiamondBranches() {
               style={{ opacity: 0.6 }}
             />
             
-             <div className="flex justify-between items-start mb-8 flex-shrink-0 relative z-10">
+             <div className="flex justify-between items-start mb-6 flex-shrink-0 relative z-10">
                <div className="flex-1 pr-4">
-                 <h3 className="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-white mb-2">
+                 <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold text-white mb-2">
                    {getWeekNumber(clickedWeekIndex)}
                  </h3>
-                 <h4 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold text-white">
+                 <h4 className="font-heading text-xl md:text-2xl lg:text-3xl font-semibold text-white">
                    {weeks[clickedWeekIndex].label}
                  </h4>
                </div>
@@ -429,8 +427,8 @@ export default function DiamondBranches() {
                 ×
               </button>
             </div>
-             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
-               <p className="text-white/70 text-xl md:text-2xl lg:text-3xl font-sans leading-relaxed">
+             <div className="space-y-5 flex-1 relative z-10" style={{ paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
+               <p className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed">
                  {weeks[clickedWeekIndex].description}
                </p>
              </div>
