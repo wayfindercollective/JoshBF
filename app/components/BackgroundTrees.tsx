@@ -60,7 +60,6 @@ export default function BackgroundTrees() {
               style={{ 
                 objectFit: 'contain', 
                 maxWidth: '100%', 
-                height: 'auto',
                 width: `${currentTreeSize}px`,
                 height: `${currentTreeSize}px`,
               }}
