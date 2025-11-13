@@ -14,7 +14,9 @@ export default function BackgroundTrees() {
     },
   ];
 
-  const treeSize = 96; // Tree size
+  // Responsive tree size - scales proportionally with screen size
+  const treeSizeMobile = 64; // Smaller on mobile
+  const treeSizeDesktop = 96; // Desktop size
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -24,20 +26,25 @@ export default function BackgroundTrees() {
           className="absolute opacity-40"
           style={{
             left: `${tree.x}%`,
-            top: '1.5rem', // Match CountdownTimer's top-6 (24px)
-            width: `${treeSize}px`,
-            height: `${treeSize}px`,
-            transform: `translate(-50%, 0) rotate(${tree.rotation}deg) scale(${tree.scale})`,
+            top: '1rem', // Match CountdownTimer's top-4 on mobile (16px), sm:top-6 (24px)
           }}
         >
-          <div className="tree-reveal" style={{ width: `${treeSize}px`, height: `${treeSize}px` }}>
+          <div 
+            className="tree-reveal"
+            style={{ 
+              width: `${treeSizeMobile}px`, 
+              height: `${treeSizeMobile}px`,
+            }}
+            // Use CSS classes for responsive sizing
+            // Tailwind will handle the responsive breakpoints
+          >
             <Image
               src="/Tree of life.png"
               alt="Tree"
-              width={treeSize}
-              height={treeSize}
-              className="drop-shadow-sm tree-image"
-              style={{ width: `${treeSize}px`, height: `${treeSize}px`, objectFit: 'contain' }}
+              width={96}
+              height={96}
+              className="drop-shadow-sm tree-image w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24"
+              style={{ objectFit: 'contain' }}
             />
             <div className="tree-brightness-overlay"></div>
           </div>
@@ -46,4 +53,5 @@ export default function BackgroundTrees() {
     </div>
   );
 }
+
 

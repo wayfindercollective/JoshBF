@@ -62,16 +62,17 @@ export default function EnvelopeWithText() {
       className="inline-block relative"
     >
       {/* Envelope SVG - More detailed */}
-      <div className="relative inline-block">
+      <div className="relative inline-block w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36">
         {/* Envelope base SVG */}
         <svg
-          width="320"
-          height="140"
+          width="100%"
+          height="100%"
           viewBox="0 0 320 140"
           fill="none"
           stroke="white"
           strokeWidth="2"
           className="transition-all duration-300"
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Envelope back/base - main body */}
           <path
@@ -130,8 +131,8 @@ export default function EnvelopeWithText() {
 
         {/* Envelope flap - slides upward */}
         <svg
-          width="320"
-          height="140"
+          width="100%"
+          height="100%"
           viewBox="0 0 320 140"
           fill="none"
           stroke="white"
@@ -143,6 +144,7 @@ export default function EnvelopeWithText() {
             transition: 'transform 0.6s ease-out, opacity 0.5s ease-out',
             pointerEvents: 'none',
           }}
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Flap main shape */}
           <path
@@ -197,17 +199,17 @@ export default function EnvelopeWithText() {
               : 'opacity-0'
           }`}
           style={{
-            top: '70px', // Starting position inside envelope
+            top: 'clamp(56px, 18vw, 70px)', // Responsive top position
             transform: isHovered ? 'translate(-50%, -140px) scale(1.25)' : 'translate(-50%, -20px) scale(0.5)',
             transition: isHovered ? 'opacity 0.4s ease-out 0.3s, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s' : 'opacity 0.3s ease-out, transform 0.3s ease-out',
           }}
         >
           <div className="relative inline-block" style={{ overflow: 'visible' }}>
             <span 
-              className="font-handwritten font-bold text-white text-xl md:text-2xl relative overflow-hidden inline-block blueprint-text"
+              className="font-handwritten font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl relative overflow-hidden inline-block blueprint-text"
               style={{
                 animation: isHovered ? 'textPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards, textPulse 2s ease-in-out 1.1s infinite' : 'none',
-                padding: '12px 24px',
+                padding: 'clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px)',
                 position: 'relative',
               }}
             >

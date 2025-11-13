@@ -288,7 +288,7 @@
 .seal-button {
   display: inline-block;
   position: relative;
-  padding: 1.2rem 3rem;
+  padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1.5rem, 6vw, 3rem);
   background: #000000;
   color: #ffffff;
   font-weight: bold;

@@ -81,12 +81,25 @@ export default function DiamondBranches() {
   const [clickedWeekIndex, setClickedWeekIndex] = useState<number | null>(null);
   const [branchProgress, setBranchProgress] = useState<number[]>(new Array(weeks.length).fill(0));
   const [labelVisible, setLabelVisible] = useState<boolean[]>(new Array(weeks.length).fill(false));
+  const [isMobile, setIsMobile] = useState(false);
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const branchAnimationRef = useRef<number>();
   const modalGeometryCanvasRef = useRef<HTMLCanvasElement>(null);
   const modalAnimationRef = useRef<number>();
   const modalShapesRef = useRef<GeometryShape[]>([]);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Animate branches extending out
   useEffect(() => {
@@ -168,18 +181,20 @@ export default function DiamondBranches() {
     return { x: 500 + x, y: 500 + y };
   };
 
-  const getLineEndPosition = (angle: number, distance: number, logoRadius: number) => {
+  const getLineEndPosition = (angle: number, distance: number, logoRadius: number, isMobile: boolean) => {
     const rad = (angle * Math.PI) / 180;
     // Adjust offset based on angle - weeks 1, 2, 3 (270, 315, 0) need more offset
     // Other angles need less to avoid going into the logo
-    let offset = 55;
+    // Mobile: scaled by 1.3 (130%), Desktop: original sizes
+    const scaleFactor = isMobile ? 1.3 : 1.0;
+    let offset = 55 * scaleFactor;
     if (angle === 270) {
-      offset = 56; // Week One - top
+      offset = 56 * scaleFactor; // Week One - top
     } else if (angle === 315 || angle === 0) {
-      offset = 55; // Week Two and Three - top-right and right
+      offset = 55 * scaleFactor; // Week Two and Three - top-right and right
     } else {
       // Week Four through Eight - reduce offset to prevent overlap
-      offset = 50;
+      offset = 50 * scaleFactor;
     }
     const lineDistance = distance - logoRadius + offset;
     const x = Math.cos(rad) * lineDistance;
@@ -380,13 +395,13 @@ export default function DiamondBranches() {
           onClick={() => setClickedWeekIndex(null)}
         >
           <div 
-            className="bg-black border border-white/10 rounded-sm p-10 mx-auto flex flex-col relative overflow-hidden"
+            className="bg-black border border-white/10 rounded-sm p-4 sm:p-6 md:p-10 mx-auto flex flex-col relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '90%',
               maxWidth: '600px',
               maxHeight: '700px',
-              minHeight: '500px',
+              minHeight: 'clamp(400px, 70vh, 500px)',
             }}
           >
             {/* Geometry background canvas */}
@@ -414,7 +429,7 @@ export default function DiamondBranches() {
                 ×
               </button>
             </div>
-             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: '100px', paddingBottom: '100px' }}>
+             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
                <p className="text-white/70 text-xl md:text-2xl lg:text-3xl font-sans leading-relaxed">
                  {weeks[clickedWeekIndex].description}
                </p>
@@ -422,19 +437,15 @@ export default function DiamondBranches() {
             
             {/* Tree logo in bottom-right corner */}
             <div 
-              className="absolute bottom-4 right-4 z-20 opacity-50"
-              style={{
-                width: '80px',
-                height: '80px',
-              }}
+              className="absolute bottom-4 right-4 z-20 opacity-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
             >
               <Image
                 src="/Tree of life.png"
                 alt="Tree Logo"
                 width={80}
                 height={80}
-                className="drop-shadow-sm"
-                style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+                className="drop-shadow-sm w-full h-full"
+                style={{ objectFit: 'contain' }}
               />
             </div>
           </div>
@@ -443,16 +454,16 @@ export default function DiamondBranches() {
 
       <div 
         ref={containerRef}
-        className="flex items-center justify-center min-h-[640px] pt-8 pb-24 px-4 md:px-0 overflow-hidden"
+        className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[640px] pt-4 sm:pt-6 md:pt-8 pb-4 sm:pb-6 md:pb-8 px-4 md:px-0 overflow-hidden"
       >
-        <div className="relative w-full max-w-5xl scale-[1.2] md:scale-[1.2] mx-auto flex justify-center">
+        <div className="relative w-full max-w-5xl scale-[1.105] sm:scale-[1.3] md:scale-[1.2] mx-auto flex justify-center">
         <svg
           ref={svgRef}
           viewBox="-200 -50 1400 1100"
           width="100%"
           height="auto"
           className="transition-all duration-300"
-          style={{ minHeight: "640px", maxWidth: "100%" }}
+          style={{ minHeight: "clamp(400px, 50vw, 640px)", maxWidth: "100%" }}
           preserveAspectRatio="xMidYMid meet"
         >
           {/* Gradient definitions */}
@@ -472,8 +483,10 @@ export default function DiamondBranches() {
           {/* Animated branches */}
           {weeks.map((week, index) => {
             const endPos = getPosition(week.angle, week.distance);
-            const logoRadius = 60; // Half of logo width/height (120px / 2) - doubled from 30
-            const lineEndPos = getLineEndPosition(week.angle, week.distance, logoRadius);
+            // Mobile: 156px (78 radius), Desktop: 120px (60 radius)
+            const logoSize = isMobile ? 156 : 120;
+            const logoRadius = isMobile ? 78 : 60;
+            const lineEndPos = getLineEndPosition(week.angle, week.distance, logoRadius, isMobile);
             const progress = branchProgress[index] || 0;
             const isHoveredDot = hoveredWeekIndex === index;
 
@@ -486,7 +499,7 @@ export default function DiamondBranches() {
                   x2={500 + (lineEndPos.x - 500) * progress}
                   y2={500 + (lineEndPos.y - 500) * progress}
                   stroke="#ffffff"
-                  strokeWidth={isHoveredDot ? 3 : 2}
+                  strokeWidth={isHoveredDot ? (isMobile ? 4 : 3) : (isMobile ? 3 : 2)}
                   strokeOpacity={progress > 0 ? (isHoveredDot ? 1 : 0.6) : 0}
                   className="transition-all duration-300 ease-out"
                   strokeLinecap="round"
@@ -497,17 +510,18 @@ export default function DiamondBranches() {
                     {/* Calculate text offset based on angle to position it nicely relative to the dot */}
                     {(() => {
                       // Position text at the end of the line, extending beyond the logo
-                      const logoRadius = 60;
-                      // Adjust textDistance for Week Seven (left side) to ensure full visibility
-                      const baseTextDistance = week.distance + logoRadius + 40;
-                      const textDistance = week.angle === 180 ? baseTextDistance - 20 : baseTextDistance;
+                      // Mobile: scaled by 1.3, Desktop: original
+                      const scaleFactor = isMobile ? 1.3 : 1.0;
+                      const logoRadius = isMobile ? 78 : 60;
+                      const baseTextDistance = week.distance + logoRadius + (40 * scaleFactor);
+                      const textDistance = week.angle === 180 ? baseTextDistance - (20 * scaleFactor) : baseTextDistance;
                       const textRad = (week.angle * Math.PI) / 180;
                       let textX = 500 + Math.cos(textRad) * textDistance;
                       const textY = 500 + Math.sin(textRad) * textDistance;
                       
                       // Move Week 7 text to the left to avoid logo overlap
                       if (week.angle === 180) {
-                        textX -= 20; // Move left by 20 pixels to avoid logo overlap
+                        textX -= (20 * scaleFactor);
                       }
                       
                       // Determine text rotation based on angle
@@ -535,7 +549,7 @@ export default function DiamondBranches() {
                             x={textX}
                             y={textY}
                             fill="#ffffff"
-                            fontSize="28.8"
+                            fontSize={isMobile ? "37.44" : "28.8"}
                             fontWeight="bold"
                             textAnchor={textAnchor}
                             className="font-heading"
@@ -543,7 +557,7 @@ export default function DiamondBranches() {
                             transform={textAngle !== 0 ? `rotate(${textAngle} ${textX} ${textY})` : ""}
                           >
                             <tspan x={textX} dy="0">{getWeekNumber(index)}</tspan>
-                            <tspan x={textX} dy="34">{week.label}</tspan>
+                            <tspan x={textX} dy={isMobile ? "44.2" : "34"}>{week.label}</tspan>
                           </text>
                         </g>
                       );
@@ -568,10 +582,10 @@ export default function DiamondBranches() {
                       {/* Yin Yang Logo */}
                       <image
                         href="/YingYangLogo.png"
-                        x={-60}
-                        y={-60}
-                        width={120}
-                        height={120}
+                        x={-logoRadius}
+                        y={-logoRadius}
+                        width={logoSize}
+                        height={logoSize}
                         className="yin-yang-clickable"
                         style={{
                           transition: "all 0.3s ease",
@@ -579,12 +593,12 @@ export default function DiamondBranches() {
                         }}
                       />
                       {/* Shiny overlay effect - masked to only show on visible logo content */}
-                      <g transform="translate(-60, -60)">
+                      <g transform={`translate(-${logoRadius}, -${logoRadius})`}>
                         <rect
                           x="0"
                           y="0"
-                          width="120"
-                          height="120"
+                          width={logoSize}
+                          height={logoSize}
                           fill="url(#shinyGradient)"
                           opacity={0.6}
                           className="yin-yang-shiny"
@@ -599,7 +613,7 @@ export default function DiamondBranches() {
                     <circle
                       cx={endPos.x}
                       cy={endPos.y}
-                      r={70}
+                      r={isMobile ? 91 : 70}
                       fill="transparent"
                       className="cursor-pointer"
                       onMouseEnter={() => setHoveredWeekIndex(index)}
@@ -618,7 +632,7 @@ export default function DiamondBranches() {
             points="500,450 550,500 500,550 450,500"
             fill="none"
             stroke="#ffffff"
-            strokeWidth={isVisible ? 5 : 4}
+            strokeWidth={isVisible ? (isMobile ? 7 : 5) : (isMobile ? 5 : 4)}
             className="transition-all duration-300"
             style={{
               filter: isVisible ? "drop-shadow(0 0 20px rgba(255,255,255,0.7))" : "none",

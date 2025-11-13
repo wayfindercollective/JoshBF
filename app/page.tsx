@@ -50,7 +50,7 @@ function FAQItem({ faq, index }: FAQItemProps) {
           onClick={() => setIsOpen(false)}
         >
           <div 
-            className="bg-black border border-white/10 rounded-sm p-10 mx-auto flex flex-col relative overflow-hidden"
+            className="bg-black border border-white/10 rounded-sm p-4 sm:p-6 md:p-10 mx-auto flex flex-col relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '90%',
@@ -71,7 +71,7 @@ function FAQItem({ faq, index }: FAQItemProps) {
                 ×
               </button>
             </div>
-            <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(90vh - 120px)', paddingRight: '100px', paddingBottom: '100px' }}>
+            <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(90vh - 120px)', paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
               <p className="text-white/70 text-lg md:text-xl lg:text-2xl font-sans leading-relaxed">
                 {faq.answer}
               </p>
@@ -79,19 +79,15 @@ function FAQItem({ faq, index }: FAQItemProps) {
             
             {/* Tree logo in bottom-right corner */}
             <div 
-              className="absolute bottom-4 right-4 z-20 opacity-50"
-              style={{
-                width: '80px',
-                height: '80px',
-              }}
+              className="absolute bottom-4 right-4 z-20 opacity-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
             >
               <Image
                 src="/Tree of life.png"
                 alt="Tree Logo"
                 width={80}
                 height={80}
-                className="drop-shadow-sm"
-                style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+                className="drop-shadow-sm w-full h-full"
+                style={{ objectFit: 'contain' }}
               />
             </div>
           </div>
@@ -162,7 +158,7 @@ export default function Home() {
       </section>
 
       {/* Purpose Transformation - Diamond Branches */}
-      <section className="px-6 py-24 relative z-10">
+      <section className="px-6 pt-24 pb-8 sm:pb-10 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-8">
@@ -187,7 +183,7 @@ export default function Home() {
       </section>
 
       {/* About the Blueprint */}
-      <section className="px-6 py-20 relative z-10">
+      <section className="px-6 pt-8 sm:pt-10 md:pt-12 pb-12 sm:pb-16 md:pb-20 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6 text-white">
@@ -205,7 +201,7 @@ export default function Home() {
       </section>
 
       {/* Bonuses Section */}
-      <section className="px-6 pt-24 pb-8 md:pb-12 relative z-10">
+      <section className="px-6 pt-12 sm:pt-16 md:pt-20 pb-8 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-0">
@@ -322,7 +318,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="px-6 pt-48 pb-12 relative z-10">
+      <section className="px-6 pt-24 sm:pt-32 md:pt-40 pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-12">
@@ -381,12 +377,11 @@ export default function Home() {
                 alt="Profile"
                 width={160}
                 height={160}
-                className="rounded-full object-cover mb-3"
-                style={{ width: '160px', height: '160px' }}
+                className="rounded-full object-cover mb-3 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40"
               />
               <div className="text-center">
-                <p className="text-white/70 text-sm font-sans mb-1">Contact Details</p>
-                <p className="text-white text-sm font-sans">Support@wayfindercoaching.net</p>
+                <p className="text-white/70 text-xs sm:text-sm font-sans mb-1">Contact Details</p>
+                <p className="text-white text-xs sm:text-sm font-sans">Support@wayfindercoaching.net</p>
               </div>
             </div>
           </div>

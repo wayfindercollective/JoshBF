@@ -944,13 +944,13 @@ export default function ExpandingLines() {
           onClick={() => setSelectedBonus(null)}
         >
           <div 
-            className="bg-black border border-white/10 rounded-sm p-10 mx-auto flex flex-col relative overflow-hidden"
+            className="bg-black border border-white/10 rounded-sm p-4 sm:p-6 md:p-10 mx-auto flex flex-col relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             style={{
               width: '90%',
               maxWidth: '600px',
               maxHeight: '700px',
-              minHeight: '500px',
+              minHeight: 'clamp(400px, 70vh, 500px)',
             }}
           >
             {/* Geometry background canvas */}
@@ -973,7 +973,7 @@ export default function ExpandingLines() {
                 ×
               </button>
             </div>
-             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: '100px', paddingBottom: '100px' }}>
+             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
                {bonusDescriptions[selectedBonus]?.description.map((paragraph, idx) => (
                  <p 
                    key={idx}
@@ -986,19 +986,15 @@ export default function ExpandingLines() {
             
             {/* Tree logo in bottom-right corner */}
             <div 
-              className="absolute bottom-4 right-4 z-20 opacity-50"
-              style={{
-                width: '80px',
-                height: '80px',
-              }}
+              className="absolute bottom-4 right-4 z-20 opacity-50 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20"
             >
               <Image
                 src="/Tree of life.png"
                 alt="Tree Logo"
                 width={80}
                 height={80}
-                className="drop-shadow-sm"
-                style={{ width: '80px', height: '80px', objectFit: 'contain' }}
+                className="drop-shadow-sm w-full h-full"
+                style={{ objectFit: 'contain' }}
               />
             </div>
           </div>
