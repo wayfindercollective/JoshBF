@@ -204,7 +204,7 @@ export default function Home() {
             <div className="flex justify-center mb-8 px-4 sm:px-0">
               <TitleWithBorder padding="px-3 sm:px-6 py-2 sm:py-4">
                 <div className="text-center">
-                  <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white purpose-transformation-title-pulse">
+                  <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white">
                     <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
                   </h2>
                   <p className="text-white/70 text-xs sm:text-sm md:text-base mt-2 font-sans">
