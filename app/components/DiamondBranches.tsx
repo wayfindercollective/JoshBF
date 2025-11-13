@@ -543,7 +543,13 @@ export default function DiamondBranches() {
                         <g
                           style={{
                             animation: 'popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                            cursor: 'pointer',
                           }}
+                          onClick={() => setClickedWeekIndex(index)}
+                          onMouseEnter={() => setHoveredWeekIndex(index)}
+                          onMouseLeave={() => setHoveredWeekIndex(null)}
+                          className="transition-opacity duration-200"
+                          opacity={hoveredWeekIndex === index ? 1 : 0.9}
                         >
                           <text
                             x={textX}
@@ -555,6 +561,11 @@ export default function DiamondBranches() {
                             className="font-heading"
                             dominantBaseline="middle"
                             transform={textAngle !== 0 ? `rotate(${textAngle} ${textX} ${textY})` : ""}
+                            style={{ 
+                              cursor: 'pointer',
+                              filter: hoveredWeekIndex === index ? 'drop-shadow(0 0 8px rgba(255,255,255,0.8))' : 'none',
+                              transition: 'filter 0.2s ease',
+                            }}
                           >
                             <tspan x={textX} dy="0">{getWeekNumber(index)}</tspan>
                             <tspan x={textX} dy={isMobile ? "44.2" : "34"}>{week.label}</tspan>

@@ -5,10 +5,15 @@ import { useState, useEffect, useCallback } from 'react';
 const ACTUAL_TEXT = 'Purpose Transformation Blueprint';
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
 
-export default function EnvelopeWithText() {
+interface EnvelopeWithTextProps {
+  onAnimationComplete?: () => void;
+}
+
+export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTextProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
   const [displayText, setDisplayText] = useState('');
+  const [animationComplete, setAnimationComplete] = useState(false);
 
   // Generate random scrambled text
   const generateScrambled = useCallback(() => {
@@ -47,6 +52,13 @@ export default function EnvelopeWithText() {
         clearInterval(scrambleInterval);
         setIsScrambling(false);
         setDisplayText(ACTUAL_TEXT);
+        // Animation complete: hover (0.3s) + scramble delay (0.35s) + scramble duration (0.5s) = ~1.15s
+        setTimeout(() => {
+          setAnimationComplete(true);
+          if (onAnimationComplete) {
+            onAnimationComplete();
+          }
+        }, 100); // Small buffer after text reveals
       }, 500); // Scramble for 0.5 seconds
     }, 350); // Start scrambling 350ms after hover (when text emerges)
 
@@ -55,11 +67,13 @@ export default function EnvelopeWithText() {
       if (scrambleInterval) clearInterval(scrambleInterval);
       if (revealTimer) clearTimeout(revealTimer);
     };
-  }, [isHovered, generateScrambled]);
+  }, [isHovered, generateScrambled, onAnimationComplete]);
+
+  const [isHoveringText, setIsHoveringText] = useState(false);
 
   return (
     <div 
-      className="inline-block relative"
+      className="inline-block relative cursor-pointer"
     >
       {/* Envelope SVG - More detailed */}
       <div className="relative inline-block w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36">
@@ -113,8 +127,15 @@ export default function EnvelopeWithText() {
           <path
             d="M20 35 L160 95 L300 35 L300 125 L20 125 Z"
             fill="none"
-            stroke="white"
-            strokeWidth="2"
+            stroke={animationComplete ? "rgba(255,255,255,1)" : "white"}
+            strokeWidth={animationComplete ? "2.5" : "2"}
+            className={animationComplete ? "envelope-outline-shine" : ""}
+            style={{
+              filter: animationComplete 
+                ? 'drop-shadow(0 0 8px rgba(255,255,255,0.9)) brightness(1.15)'
+                : 'none',
+              transition: 'filter 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease',
+            }}
           />
           
           {/* Sealed edge detail - dashed line where flap meets envelope */}
@@ -206,11 +227,15 @@ export default function EnvelopeWithText() {
         >
           <div className="relative inline-block" style={{ overflow: 'visible' }}>
             <span 
-              className="font-handwritten font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl relative overflow-hidden inline-block blueprint-text"
+              className={`font-handwritten font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl relative overflow-hidden inline-block blueprint-text ${animationComplete ? 'blueprint-text-shine' : ''}`}
               style={{
                 animation: isHovered ? 'textPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards, textPulse 2s ease-in-out 1.1s infinite' : 'none',
                 padding: 'clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px)',
                 position: 'relative',
+                filter: animationComplete
+                  ? 'drop-shadow(0 0 6px rgba(188,69,0,0.8))'
+                  : 'none',
+                transition: 'filter 0.3s ease',
               }}
             >
               {/* Blueprint grid pattern overlay */}
@@ -226,12 +251,35 @@ export default function EnvelopeWithText() {
                 }}
               />
               {/* Corner marks like blueprint annotations */}
-              <span className="absolute top-0 left-0 w-3 h-3 border-l-2 border-t-2 border-orange-red opacity-60" />
-              <span className="absolute top-0 right-0 w-3 h-3 border-r-2 border-t-2 border-orange-red opacity-60" />
-              <span className="absolute bottom-0 left-0 w-3 h-3 border-l-2 border-b-2 border-orange-red opacity-60" />
-              <span className="absolute bottom-0 right-0 w-3 h-3 border-r-2 border-b-2 border-orange-red opacity-60" />
+              <span className={`absolute top-0 left-0 w-3 h-3 border-l-2 border-t-2 border-orange-red ${animationComplete ? 'opacity-90' : 'opacity-60'} transition-opacity duration-300`} style={animationComplete ? { filter: 'drop-shadow(0 0 3px rgba(188,69,0,0.8))' } : {}} />
+              <span className={`absolute top-0 right-0 w-3 h-3 border-r-2 border-t-2 border-orange-red ${animationComplete ? 'opacity-90' : 'opacity-60'} transition-opacity duration-300`} style={animationComplete ? { filter: 'drop-shadow(0 0 3px rgba(188,69,0,0.8))' } : {}} />
+              <span className={`absolute bottom-0 left-0 w-3 h-3 border-l-2 border-b-2 border-orange-red ${animationComplete ? 'opacity-90' : 'opacity-60'} transition-opacity duration-300`} style={animationComplete ? { filter: 'drop-shadow(0 0 3px rgba(188,69,0,0.8))' } : {}} />
+              <span className={`absolute bottom-0 right-0 w-3 h-3 border-r-2 border-b-2 border-orange-red ${animationComplete ? 'opacity-90' : 'opacity-60'} transition-opacity duration-300`} style={animationComplete ? { filter: 'drop-shadow(0 0 3px rgba(188,69,0,0.8))' } : {}} />
               
-              <span className="relative z-10 text-orange-red drop-shadow-[0_0_8px_rgba(188,69,0,0.8)]">{displayText || ACTUAL_TEXT}</span>
+              <span 
+                className="relative z-10"
+                onMouseEnter={() => setIsHoveringText(true)}
+                onMouseLeave={() => setIsHoveringText(false)}
+                style={{
+                  color: animationComplete ? (isHoveringText ? '#ff6b35' : '#ff6b35') : '#bc4500', // Brighter orange once animation completes
+                  filter: animationComplete
+                    ? isHoveringText
+                      ? 'drop-shadow(0 0 10px rgba(255,107,53,1)) brightness(1.2)'
+                      : 'drop-shadow(0 0 8px rgba(255,107,53,0.9)) brightness(1.15)'
+                    : 'drop-shadow(0 0 8px rgba(188,69,0,0.8))',
+                  fontWeight: animationComplete ? '900' : 'bold',
+                  textShadow: animationComplete
+                    ? isHoveringText
+                      ? '0 0 12px rgba(255,107,53,0.9), 0 0 18px rgba(255,107,53,0.7)'
+                      : '0 0 10px rgba(255,107,53,0.8), 0 0 15px rgba(255,107,53,0.6)'
+                    : 'none',
+                  transform: animationComplete ? (isHoveringText ? 'scale(1.04)' : 'scale(1.03)') : 'scale(1)',
+                  transition: 'filter 0.3s ease, color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease',
+                  display: 'inline-block',
+                }}
+              >
+                {displayText || ACTUAL_TEXT}
+              </span>
               {isHovered && (
                 <span 
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-red/20 to-transparent pointer-events-none"

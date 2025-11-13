@@ -96,6 +96,67 @@ function FAQItem({ faq, index }: FAQItemProps) {
   );
 }
 
+function EnvelopeClickableWrapper() {
+  const [showArrow, setShowArrow] = useState(false);
+
+  const handleScroll = () => {
+    const element = document.getElementById('purchase');
+    if (element) {
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - (window.innerHeight / 2) + (element.offsetHeight / 2);
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  return (
+    <div className="text-xl md:text-2xl mb-12 text-white/90 flex flex-col items-center justify-center mt-20 md:mt-24">
+      <a 
+        href="#purchase"
+        className="cursor-pointer hover:opacity-80 transition-opacity flex flex-col items-center"
+        onClick={(e) => {
+          e.preventDefault();
+          handleScroll();
+        }}
+      >
+        <div onClick={handleScroll}>
+          <EnvelopeWithText onAnimationComplete={() => setShowArrow(true)} />
+        </div>
+        {/* Click me arrow and text - below envelope, only shown after animation */}
+        {showArrow && (
+          <div className="flex flex-col items-center mt-2">
+            <div 
+              className="text-white/70 hover:text-white/90 transition-all duration-300"
+              style={{
+                animation: 'arrowBounceUp 2s ease-in-out infinite',
+              }}
+            >
+              <svg 
+                width="20" 
+                height="20" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+              >
+                <path d="M12 19V5M5 12l7-7 7 7" />
+              </svg>
+            </div>
+            <span className="text-white/60 text-xs sm:text-sm md:text-base font-handwritten mt-1">
+              Click Me
+            </span>
+          </div>
+        )}
+      </a>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-gradient-hero text-white relative overflow-x-hidden">
@@ -132,26 +193,7 @@ export default function Home() {
           </h1>
         </RandomScrollReveal>
         <RandomScrollReveal delay={200} randomDelay={true}>
-          <div className="text-xl md:text-2xl mb-12 text-white/90 flex items-center justify-center mt-20 md:mt-24">
-            <a 
-              href="#purchase"
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={(e) => {
-                e.preventDefault();
-                const element = document.getElementById('purchase');
-                if (element) {
-                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                  const offsetPosition = elementPosition - (window.innerHeight / 2) + (element.offsetHeight / 2);
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                  });
-                }
-              }}
-            >
-              <EnvelopeWithText />
-            </a>
-          </div>
+          <EnvelopeClickableWrapper />
         </RandomScrollReveal>
       </section>
 
@@ -221,8 +263,8 @@ export default function Home() {
           <ExpandingLines />
           {/* Total Value */}
           <RandomScrollReveal delay={400} randomDelay={true}>
-            <div className="flex justify-center mt-4 md:-mt-12">
-              <div className="text-center">
+            <div className="flex justify-center items-center mt-4 md:-mt-12">
+              <div className="text-center w-full max-w-2xl mx-auto">
                 <p 
                   className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl mb-2"
                   style={{
@@ -298,7 +340,7 @@ export default function Home() {
                   </span>
                 </div>
                 {/* Get Started Button */}
-                <div id="purchase" className="flex flex-col items-center justify-center mt-2 md:mt-4">
+                <div id="purchase" className="flex flex-col items-center justify-center mt-2 md:mt-4 w-full">
                   <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
                     <a
                       href="#purchase"
@@ -316,7 +358,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="px-6 pt-24 sm:pt-32 md:pt-40 pb-12 relative z-10">
+      <section className="px-6 pt-32 sm:pt-40 md:pt-48 pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-12 px-4 sm:px-0">
@@ -379,8 +421,21 @@ export default function Home() {
                 style={{ maxWidth: '100%', height: 'auto' }}
               />
               <div className="text-center">
-                <p className="text-white/70 text-xs sm:text-sm font-sans mb-1">Contact Details</p>
-                <p className="text-white text-xs sm:text-sm font-sans">Support@wayfindercoaching.net</p>
+                <p className="text-white/70 text-xs sm:text-sm font-sans mb-3">Contact Details</p>
+                <a
+                  href="mailto:support@wayfindercoaching.net?cc=support@wayfindercoaching.net"
+                  className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-white/10 hover:bg-white/20 border-2 border-white/30 hover:border-white/50 rounded-lg transition-all duration-300 cursor-pointer backdrop-blur-sm"
+                  style={{
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  <div className="text-white font-sans font-semibold text-sm sm:text-base">
+                    Send us a message
+                  </div>
+                  <div className="text-white/60 text-xs mt-1 font-sans">
+                    Click me
+                  </div>
+                </a>
               </div>
             </div>
           </div>
