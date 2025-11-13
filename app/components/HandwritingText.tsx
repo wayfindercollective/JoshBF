@@ -98,7 +98,8 @@ export default function TypewriterText({
               width={78}
               height={78}
               className="inline-block filter brightness-0 invert h-[1.3em] w-auto"
-              style={{ verticalAlign: 'middle' }}
+              style={{ verticalAlign: 'middle', maxWidth: '100%', height: 'auto' }}
+              priority
             />
           </span>
         );

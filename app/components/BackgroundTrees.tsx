@@ -1,8 +1,22 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 export default function BackgroundTrees() {
+  const [isDesktop, setIsDesktop] = useState(false);
+  
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
+
   // Tree positioned at top left corner, aligned with Black Friday sticker
   const trees = [
     {
@@ -14,9 +28,10 @@ export default function BackgroundTrees() {
     },
   ];
 
-  // Responsive tree size - scales proportionally with screen size
-  const treeSizeMobile = 64; // Smaller on mobile
-  const treeSizeDesktop = 96; // Desktop size
+  // Responsive tree size - scales proportionally with screen size (120% increase on mobile, 150% on desktop)
+  const treeSizeMobile = 77; // 64px * 1.2 = 76.8px ≈ 77px
+  const treeSizeDesktop = 144; // 96px * 1.5 = 144px
+  const currentTreeSize = isDesktop ? treeSizeDesktop : treeSizeMobile;
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -32,17 +47,23 @@ export default function BackgroundTrees() {
           <div 
             className="tree-reveal"
             style={{ 
-              width: `${treeSizeMobile}px`, 
-              height: `${treeSizeMobile}px`,
+              width: `${currentTreeSize}px`, 
+              height: `${currentTreeSize}px`,
             }}
           >
             <Image
               src="/Tree of life.png"
               alt="Tree"
-              width={96}
-              height={96}
-              className="drop-shadow-sm tree-image w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24"
-              style={{ objectFit: 'contain' }}
+              width={144}
+              height={144}
+              className="drop-shadow-sm tree-image"
+              style={{ 
+                objectFit: 'contain', 
+                maxWidth: '100%', 
+                height: 'auto',
+                width: `${currentTreeSize}px`,
+                height: `${currentTreeSize}px`,
+              }}
             />
             <div 
               className="tree-brightness-overlay"

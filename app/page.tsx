@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import TypewriterText from './components/HandwritingText';
 import ScrollAnimatedIcon from './components/ScrollAnimatedIcon';
-import BackgroundTrees from './components/BackgroundTrees';
 import EnvelopeWithText from './components/EnvelopeWithText';
 import DiamondBranches from './components/DiamondBranches';
 import RandomScrollReveal from './components/RandomScrollReveal';
@@ -87,7 +86,7 @@ function FAQItem({ faq, index }: FAQItemProps) {
                 width={80}
                 height={80}
                 className="drop-shadow-sm w-full h-full"
-                style={{ objectFit: 'contain' }}
+                style={{ objectFit: 'contain', maxWidth: '100%', height: 'auto' }}
               />
             </div>
           </div>
@@ -99,10 +98,9 @@ function FAQItem({ faq, index }: FAQItemProps) {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-brand-gradient-hero text-white relative">
+    <main className="min-h-screen bg-brand-gradient-hero text-white relative overflow-x-hidden">
       <CountdownTimer />
       <FloatingGeometry />
-      <BackgroundTrees />
       {/* Hero Section */}
       <section className="px-6 pt-24 pb-24 md:pt-28 md:pb-32 lg:pt-28 lg:pb-40 max-w-4xl mx-auto text-center relative z-10">
         <RandomScrollReveal delay={0} randomDelay={true}>
@@ -161,13 +159,13 @@ export default function Home() {
       <section className="px-6 pt-24 pb-8 sm:pb-10 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-8">
-              <TitleWithBorder padding="px-6 py-4">
+            <div className="flex justify-center mb-8 px-4 sm:px-0">
+              <TitleWithBorder padding="px-3 sm:px-6 py-2 sm:py-4">
                 <div className="text-center">
-                  <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-black text-white">
+                  <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white">
                     <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
                   </h2>
-                  <p className="text-white/70 text-sm md:text-base mt-2 font-sans">
+                  <p className="text-white/70 text-xs sm:text-sm md:text-base mt-2 font-sans">
                     <span className="border-b border-white/50 pb-0.5 inline-block">
                       Click on the logo of each week to learn more.
                     </span>
@@ -204,13 +202,13 @@ export default function Home() {
       <section className="px-6 pt-12 sm:pt-16 md:pt-20 pb-8 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-0">
-              <TitleWithBorder padding="px-8 py-4">
+            <div className="flex justify-center mb-0 px-4 sm:px-0">
+              <TitleWithBorder padding="px-3 sm:px-6 md:px-8 py-2 sm:py-4">
                 <div className="text-center">
-                  <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
+                  <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white text-center">
                     <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
                   </h2>
-                  <p className="text-white/70 text-sm md:text-base mt-2 font-sans">
+                  <p className="text-white/70 text-xs sm:text-sm md:text-base mt-2 font-sans">
                     All systems created by Josh Terry.<br />
                     <span className="border-b border-white/50 pb-0.5 inline-block">
                       Click on each title to learn more.
@@ -223,7 +221,7 @@ export default function Home() {
           <ExpandingLines />
           {/* Total Value */}
           <RandomScrollReveal delay={400} randomDelay={true}>
-            <div className="flex justify-center -mt-8 md:-mt-12">
+            <div className="flex justify-center mt-4 md:-mt-12">
               <div className="text-center">
                 <p 
                   className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl mb-2"
@@ -321,10 +319,10 @@ export default function Home() {
       <section className="px-6 pt-24 sm:pt-32 md:pt-40 pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-12">
-              <TitleWithBorder padding="px-8 py-4">
+            <div className="flex justify-center mb-12 px-4 sm:px-0">
+              <TitleWithBorder padding="px-3 sm:px-6 md:px-8 py-2 sm:py-4">
                 <div className="text-center">
-                  <h2 className="font-heading text-4xl md:text-5xl font-black text-white text-center whitespace-nowrap">
+                  <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white text-center">
                     <CharacterPopIn delay={0}>Frequently Asked Questions</CharacterPopIn>
                   </h2>
                 </div>
@@ -378,6 +376,7 @@ export default function Home() {
                 width={160}
                 height={160}
                 className="rounded-full object-cover mb-3 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40"
+                style={{ maxWidth: '100%', height: 'auto' }}
               />
               <div className="text-center">
                 <p className="text-white/70 text-xs sm:text-sm font-sans mb-1">Contact Details</p>

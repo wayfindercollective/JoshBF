@@ -1,6 +1,6 @@
 "use client"; // Line connection fixes deployed
 
-import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback, startTransition } from "react";
 import Image from "next/image";
 
 interface GeometryShape {
@@ -176,6 +176,7 @@ export default function ExpandingLines() {
   const modalGeometryCanvasRef = useRef<HTMLCanvasElement>(null);
   const modalShapesRef = useRef<GeometryShape[]>([]);
   const modalAnimationRef = useRef<number>();
+  const mobileListRef = useRef<HTMLDivElement>(null);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -188,6 +189,33 @@ export default function ExpandingLines() {
     
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Scroll observer for mobile card list
+  useEffect(() => {
+    if (!mobileListRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && isMobile) {
+            setIsVisible(true);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+
+    observer.observe(mobileListRef.current);
+
+    return () => {
+      if (mobileListRef.current) {
+        observer.unobserve(mobileListRef.current);
+      }
+    };
+  }, [isMobile]);
 
   // Scroll-triggered visibility
   useEffect(() => {
@@ -508,14 +536,65 @@ export default function ExpandingLines() {
   }, [selectedBonus]);
 
   return (
-    <div ref={containerRef} className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] py-8 sm:py-10 md:py-12 px-2 sm:px-4 md:px-6">
-      <div className="relative w-full max-w-6xl">
+    <React.Fragment>
+      {/* Mobile card layout - only visible on mobile */}
+      <div ref={mobileListRef} data-bonus-list="true" className="md:hidden mt-8 mb-12">
+        {bonusTexts.map((bonus, index) => (
+          <button
+            key={`mobile-card-${index}`}
+            data-bonus-card="true"
+            onClick={() => setSelectedBonus(index)}
+            style={{
+              opacity: isVisible && popInProgress[index] > 0 ? 1 : 0,
+              transition: 'opacity 0.3s ease-out',
+              transform: `translateY(${(1 - popInProgress[index]) * 10}px)`,
+            }}
+          >
+            <div className="bonus-title">
+              <div className="bonus-title-text">
+                {bonus.title}
+              </div>
+              {bonus.subtitle && (
+                <div className="bonus-subtitle">
+                  {bonus.subtitle}
+                </div>
+              )}
+            </div>
+            <div className="bonus-price">
+              <span style={{ 
+                position: 'relative',
+                display: 'inline-block',
+              }}>
+                {bonusPrices[index] || "$297"}
+                <span
+                  style={{
+                    position: 'absolute',
+                    left: '0%',
+                    right: '0%',
+                    top: '50%',
+                    height: '0.1em',
+                    backgroundColor: '#d9d7b3',
+                    transform: 'translateY(-50%) rotate(-15deg)',
+                    transformOrigin: 'center',
+                    boxShadow: '0 0 4px rgba(217, 215, 179, 0.6)',
+                    width: '120%',
+                  }}
+                />
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Desktop layout - hidden on mobile */}
+      <div ref={containerRef} className="bonus-desktop-layout flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] py-8 sm:py-10 md:py-12 px-2 sm:px-4 md:px-6 overflow-x-hidden">
+        <div className="relative w-full max-w-6xl overflow-x-hidden">
         <svg
           viewBox="0 0 1000 1000"
           width="100%"
           height="auto"
           className="transition-all duration-300"
-          style={{ minHeight: "400px", maxWidth: "100%" }}
+          style={{ minHeight: "400px", maxWidth: "100%", overflow: "hidden" }}
           preserveAspectRatio="xMidYMid meet"
         >
           {/* Upward lines from left side */}
@@ -766,7 +845,11 @@ export default function ExpandingLines() {
             
             // Position titles on the left side but within the column area
             // Calculate left edge of column (between LEFT_POSITION and CENTER_X)
-            const columnLeftX = LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.2); // 20% from left edge of column
+            // On mobile, adjust positioning to keep text within viewport
+            const columnLeftX = isMobile 
+              ? LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.1) // 10% from left on mobile
+              : LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.2); // 20% from left on desktop
+            const maxTextWidth = isMobile ? 'calc(100vw - 2rem)' : '320px';
 
             return (
               <div
@@ -779,7 +862,7 @@ export default function ExpandingLines() {
                   opacity: popInProgress[index] > 0 ? 1 : 0,
                   transition: 'opacity 0.3s ease-out',
                   width: 'max-content',
-                  maxWidth: '320px',
+                  maxWidth: maxTextWidth,
                 }}
               >
                 {/* Text appears on the left side within the column with pop-in animation */}
@@ -801,7 +884,8 @@ export default function ExpandingLines() {
                           border: 'none',
                           padding: '4px 8px',
                           paddingLeft: '0',
-                          width: '100%',
+                          width: isMobile ? 'min(100%, calc(100vw - 3rem))' : '100%',
+                          maxWidth: isMobile ? 'calc(100vw - 3rem)' : 'none',
                         }}
                         onMouseEnter={(e) => {
                           const baseScale = 0.3 + popInProgress[index] * 0.7;
@@ -936,6 +1020,7 @@ export default function ExpandingLines() {
           })}
         </div>
       </div>
+      </div>
 
       {/* Modal for bonus details */}
       {selectedBonus !== null && (
@@ -994,12 +1079,12 @@ export default function ExpandingLines() {
                 width={80}
                 height={80}
                 className="drop-shadow-sm w-full h-full"
-                style={{ objectFit: 'contain' }}
+                style={{ objectFit: 'contain', maxWidth: '100%', height: 'auto' }}
               />
             </div>
           </div>
         </div>
       )}
-    </div>
+    </React.Fragment>
   );
 }

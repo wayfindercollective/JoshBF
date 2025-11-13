@@ -28,7 +28,41 @@ export default function TitleWithBorder({
     const updateDimensions = () => {
       // Measure the content container directly - account for ALL content including subtext
       if (contentRef.current) {
-        // Measure the entire container including all children (title + subtext)
+        const isMobile = window.innerWidth < 768;
+        
+        // On mobile, measure the actual text content width more precisely
+        if (isMobile) {
+          // Find the actual text content element (the div with text-center)
+          const textElement = contentRef.current.querySelector('div');
+          if (textElement) {
+            const textRect = textElement.getBoundingClientRect();
+            const textScrollWidth = textElement.scrollWidth;
+            
+            // Get padding values from the container
+            const containerStyles = window.getComputedStyle(contentRef.current);
+            const paddingLeft = parseFloat(containerStyles.paddingLeft) || 0;
+            const paddingRight = parseFloat(containerStyles.paddingRight) || 0;
+            const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
+            const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
+            
+            // Use the actual text width, add padding, and minimal buffer
+            const borderBuffer = 2; // Smaller buffer on mobile for tighter fit
+            const textWidth = Math.max(textRect.width, textScrollWidth);
+            const width = textWidth + paddingLeft + paddingRight + borderBuffer;
+            const height = Math.max(textElement.scrollHeight, textElement.clientHeight) + paddingTop + paddingBottom + borderBuffer;
+            
+            if (width > 0 && height > 0) {
+              setDimensions({ width, height });
+              setIsReady(true);
+              if (!dimensionsLockedRef.current && width > 10 && height > 10) {
+                dimensionsLockedRef.current = true;
+              }
+            }
+            return;
+          }
+        }
+        
+        // Desktop: use original measurement logic
         const rect = contentRef.current.getBoundingClientRect();
         const scrollWidth = contentRef.current.scrollWidth;
         const scrollHeight = contentRef.current.scrollHeight;
@@ -43,7 +77,9 @@ export default function TitleWithBorder({
         // Use scrollWidth/scrollHeight to ensure we capture all content including subtext
         // Add a small buffer to ensure border doesn't overlap text
         const borderBuffer = 4; // Extra space to prevent border overlap
-        const width = Math.max(rect.width, scrollWidth) + borderBuffer;
+        const maxWidth = Math.min(window.innerWidth - 48, 1200); // Account for padding and max content width
+        const calculatedWidth = Math.max(rect.width, scrollWidth) + borderBuffer;
+        const width = Math.min(calculatedWidth, maxWidth);
         const height = Math.max(rect.height, scrollHeight) + borderBuffer;
         
         if (width > 0 && height > 0) {
@@ -138,12 +174,38 @@ export default function TitleWithBorder({
     
     // Recalculate dimensions one more time before animating to ensure accuracy
     if (contentRef.current) {
-      // Measure entire container including all content (title + subtext)
+      const isMobile = window.innerWidth < 768;
+      
+      if (isMobile) {
+        // Mobile: measure text content precisely
+        const textElement = contentRef.current.querySelector('div');
+        if (textElement) {
+          const textRect = textElement.getBoundingClientRect();
+          const textScrollWidth = textElement.scrollWidth;
+          
+          const containerStyles = window.getComputedStyle(contentRef.current);
+          const paddingLeft = parseFloat(containerStyles.paddingLeft) || 0;
+          const paddingRight = parseFloat(containerStyles.paddingRight) || 0;
+          const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
+          const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
+          
+          const borderBuffer = 2;
+          const textWidth = Math.max(textRect.width, textScrollWidth);
+          const width = textWidth + paddingLeft + paddingRight + borderBuffer;
+          const height = Math.max(textElement.scrollHeight, textElement.clientHeight) + paddingTop + paddingBottom + borderBuffer;
+          
+          if (width > 0 && height > 0 && (width !== dimensions.width || height !== dimensions.height)) {
+            setDimensions({ width, height });
+          }
+          return;
+        }
+      }
+      
+      // Desktop: use original logic
       const rect = contentRef.current.getBoundingClientRect();
       const scrollWidth = contentRef.current.scrollWidth;
       const scrollHeight = contentRef.current.scrollHeight;
       
-      // Add buffer to prevent border overlap
       const borderBuffer = 4;
       const width = Math.max(rect.width, scrollWidth) + borderBuffer;
       const height = Math.max(rect.height, scrollHeight) + borderBuffer;
@@ -249,9 +311,9 @@ export default function TitleWithBorder({
   return (
     <div
       ref={containerRef}
-      className={`inline-block relative ${className}`}
+      className={`inline-block relative ${className} w-auto`}
     >
-      <div ref={contentRef} className={`relative inline-block ${padding}`}>
+      <div ref={contentRef} className={`relative inline-block ${padding} w-auto`}>
         {/* Animated SVG border - positioned to match content area */}
         {isReady && dimensions.width > 0 && dimensions.height > 0 && pathData && (
           <svg

@@ -30,9 +30,10 @@ export default function FloatingGeometry() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size to cover full document
+    // Set canvas size to cover full document - ensure it doesn't exceed viewport width
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
+      const maxWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+      canvas.width = maxWidth;
       canvas.height = Math.max(window.innerHeight, document.documentElement.scrollHeight);
     };
     resizeCanvas();
@@ -393,7 +394,7 @@ export default function FloatingGeometry() {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.9 }}
+      style={{ opacity: 0.9, maxWidth: '100vw', overflow: 'hidden' }}
     />
   );
 }
