@@ -47,15 +47,26 @@ export default function CountdownTimer() {
     return () => clearInterval(timer);
   }, []);
 
-  // Button size: 120% increase on mobile, 150% on desktop (64px * 1.2 = 77px mobile, 96px * 1.5 = 144px desktop)
-  const buttonSizeMobile = 77;
-  const buttonSizeDesktop = 144; // 96px * 1.5 = 144px
+  // Button size: 120% increase on mobile, 150% on desktop, then 120% overall increase
+  const buttonSizeMobile = 92; // 77px * 1.2 = 92.4px
+  const buttonSizeDesktop = 208; // 173px * 1.2 = 207.6px
   const currentButtonSize = isDesktop ? buttonSizeDesktop : buttonSizeMobile;
+  
+  // Text sizes - larger for desktop
+  const blackFridayTextSize = isDesktop 
+    ? 'text-sm md:text-base lg:text-lg' 
+    : 'text-[11px] sm:text-xs md:text-sm lg:text-sm';
+  const timeTextSize = isDesktop 
+    ? 'text-xl md:text-2xl lg:text-3xl' 
+    : 'text-base sm:text-lg md:text-xl lg:text-2xl';
+  const remainingTextSize = isDesktop 
+    ? 'text-xl md:text-2xl lg:text-3xl' 
+    : 'text-base sm:text-lg md:text-xl lg:text-2xl';
 
   return (
     <div className="fixed top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-12 lg:right-16 z-50">
       <div 
-        className="bg-orange-red text-white rounded-full shadow-lg border-2 border-white/20 backdrop-blur-sm flex flex-col items-center justify-center relative overflow-hidden" 
+        className="text-white rounded-full shadow-lg border-2 border-white/20 backdrop-blur-sm flex flex-col items-center justify-center relative overflow-hidden" 
         style={{ 
           width: `${currentButtonSize}px`, 
           height: `${currentButtonSize}px`, 
@@ -63,16 +74,24 @@ export default function CountdownTimer() {
           minHeight: `${currentButtonSize}px`,
         }}
       >
+        {/* Orange background with reduced opacity - subtle background */}
+        <div className="absolute inset-0 bg-orange-red opacity-10 rounded-full z-0"></div>
+        
         {/* Tree logo background with shine effect */}
-        <div className="absolute inset-0 opacity-30 z-0 overflow-hidden rounded-full">
-          <Image
-            src="/Tree of life.png"
-            alt=""
-            width={144}
-            height={144}
-            className="w-full h-full object-contain relative z-0"
-            style={{ objectFit: 'contain' }}
-          />
+        <div className="absolute inset-0 opacity-20 z-0 overflow-hidden rounded-full">
+          <div className="relative w-full h-full">
+            <Image
+              src="/Tree of life.png"
+              alt=""
+              width={144}
+              height={144}
+              className="w-full h-full object-contain relative z-0"
+              style={{ 
+                objectFit: 'contain',
+                filter: 'brightness(0) saturate(100%) invert(48%) sepia(96%) saturate(1352%) hue-rotate(350deg) brightness(1.1) contrast(1)',
+              }}
+            />
+          </div>
           {/* Shine effect overlay - sweeps from bottom to top, only on tree logo */}
           <div 
             className="absolute shine-overlay pointer-events-none z-[1]"
@@ -90,17 +109,17 @@ export default function CountdownTimer() {
         
         {/* Text content */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full px-1">
-          <div className="text-[9px] sm:text-[10px] md:text-[11px] lg:text-xs font-bold uppercase tracking-tight mb-0.5 text-center font-handwritten leading-tight">
+          <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 text-center font-handwritten leading-tight`}>
             Black Friday
           </div>
-          <div className="text-center font-handwritten font-bold text-sm sm:text-base md:text-lg lg:text-xl leading-tight">
+          <div className={`text-center font-handwritten font-bold ${timeTextSize} leading-tight`}>
             <span className="tabular-nums">
               {String(timeRemaining.hours).padStart(2, '0')}:
               {String(timeRemaining.minutes).padStart(2, '0')}:
               {String(timeRemaining.seconds).padStart(2, '0')}
             </span>
           </div>
-          <div className="text-sm sm:text-base md:text-lg lg:text-xl text-center mt-0.5 text-white/80 font-handwritten leading-tight">
+          <div className={`${remainingTextSize} text-center mt-0.5 text-white/80 font-handwritten leading-tight`}>
             Remaining
           </div>
         </div>

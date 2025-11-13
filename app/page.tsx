@@ -20,6 +20,7 @@ interface FAQItemProps {
 
 function FAQItem({ faq, index }: FAQItemProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const isContactQuestion = index === 5;
 
   return (
     <>
@@ -27,15 +28,27 @@ function FAQItem({ faq, index }: FAQItemProps) {
         <div className={`h-full ${index === 5 ? '' : ''}`}>
           <button
             onClick={() => setIsOpen(true)}
-            className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-all duration-300 text-left w-full cursor-pointer group flex flex-col h-full"
+            className={`backdrop-blur-sm border rounded-lg p-6 transition-all duration-300 text-left w-full cursor-pointer group flex flex-col h-full ${
+              isContactQuestion 
+                ? 'bg-orange-red/20 border-orange-red/30 hover:bg-orange-red/30' 
+                : 'bg-white/5 border-white/10 hover:bg-white/10'
+            }`}
           >
-            <h3 className="font-heading text-lg md:text-xl font-bold text-white mb-3 group-hover:text-white/90 transition-colors">
+            <h3 className={`font-heading text-lg md:text-xl font-bold mb-3 group-hover:transition-colors ${
+              isContactQuestion 
+                ? 'text-orange-red group-hover:text-orange-red/90' 
+                : 'text-white group-hover:text-white/90'
+            }`}>
               {faq.question}
             </h3>
-            <p className="text-white/70 text-sm md:text-base font-sans leading-relaxed line-clamp-3 flex-grow">
+            <p className={`text-sm md:text-base font-sans leading-relaxed line-clamp-3 flex-grow ${
+              isContactQuestion ? 'text-orange-red/80' : 'text-white/70'
+            }`}>
               {faq.answer}
             </p>
-            <span className="inline-block mt-2 text-white/50 group-hover:text-white/80 group-hover:translate-x-1 transition-all duration-200">
+            <span className={`inline-block mt-2 group-hover:translate-x-1 transition-all duration-200 ${
+              isContactQuestion ? 'text-orange-red/60 group-hover:text-orange-red/80' : 'text-white/50 group-hover:text-white/80'
+            }`}>
               →
             </span>
           </button>
@@ -57,8 +70,12 @@ function FAQItem({ faq, index }: FAQItemProps) {
               maxHeight: '90vh',
             }}
           >
-            <div className="flex justify-between items-start mb-8 flex-shrink-0 relative z-10">
-              <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold text-white flex-1 pr-4">
+            <div className={`flex justify-between items-start mb-8 flex-shrink-0 relative z-10 ${
+              isContactQuestion ? 'border-b border-orange-red/30 pb-4' : ''
+            }`}>
+              <h3 className={`font-heading text-2xl md:text-3xl lg:text-4xl font-semibold flex-1 pr-4 ${
+                isContactQuestion ? 'text-orange-red' : 'text-white'
+              }`}>
                 {faq.question}
               </h3>
               <button
@@ -71,7 +88,9 @@ function FAQItem({ faq, index }: FAQItemProps) {
               </button>
             </div>
             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(90vh - 120px)', paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
-              <p className="text-white/70 text-lg md:text-xl lg:text-2xl font-sans leading-relaxed">
+              <p className={`text-lg md:text-xl lg:text-2xl font-sans leading-relaxed ${
+                isContactQuestion ? 'text-orange-red/90' : 'text-white/70'
+              }`}>
                 {faq.answer}
               </p>
             </div>
@@ -113,16 +132,16 @@ function EnvelopeClickableWrapper() {
   };
 
   return (
-    <div className="text-xl md:text-2xl mb-12 text-white/90 flex flex-col items-center justify-center mt-20 md:mt-24">
+    <div className="text-xl md:text-2xl mb-12 text-white/90 flex flex-col items-center justify-center mt-20 md:mt-24 w-full">
       <a 
         href="#bonuses"
-        className="cursor-pointer hover:opacity-80 transition-opacity flex flex-col items-center"
+        className="cursor-pointer hover:opacity-80 transition-opacity flex flex-col items-center w-full"
         onClick={(e) => {
           e.preventDefault();
           handleScroll();
         }}
       >
-        <div onClick={handleScroll}>
+        <div onClick={handleScroll} className="flex justify-center w-full">
           <EnvelopeWithText onAnimationComplete={() => setShowArrow(true)} />
         </div>
         {/* Click here arrow and text - below envelope, only shown after animation */}
@@ -289,7 +308,7 @@ export default function Home() {
               </TitleWithBorder>
             </div>
           </RandomScrollReveal>
-          <div className="-mt-2 sm:-mt-3 md:-mt-40">
+          <div className="mt-4 sm:-mt-3 md:-mt-40">
             <ExpandingLines />
           </div>
           {/* Get Started Button */}
@@ -357,8 +376,9 @@ export default function Home() {
           </div>
           
           {/* Contact FAQ - Horizontal */}
-          <div className="mt-12 flex items-start gap-6">
-            <div className="flex-1">
+          <div className="mt-12 grid grid-cols-2 md:flex md:flex-row md:items-start gap-3 md:gap-6">
+            {/* Contact Question - Half screen on mobile */}
+            <div className="md:flex-1">
               <FAQItem 
                 faq={{
                   question: "I have other questions, how can I contact you guys?",
@@ -367,20 +387,21 @@ export default function Home() {
                 index={5} 
               />
             </div>
-            <div className="flex-shrink-0 flex flex-col items-center">
+            {/* Profile Picture and Button - Half screen on mobile */}
+            <div className="md:flex-shrink-0 flex flex-col items-center">
               <Image
                 src="/profile-pic.png"
                 alt="Profile"
                 width={160}
                 height={160}
-                className="rounded-full object-cover mb-3 w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40"
+                className="rounded-full object-cover mb-3 w-20 h-20 sm:w-24 sm:h-24 md:w-40 md:h-40"
                 style={{ maxWidth: '100%', height: 'auto' }}
               />
               <div className="text-center">
                 <p className="text-white/70 text-xs sm:text-sm font-sans mb-3">Contact Details</p>
                 <a
                   href="mailto:support@wayfindercoaching.net?cc=support@wayfindercoaching.net"
-                  className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-white/10 hover:bg-white/20 border-2 border-white/30 hover:border-white/50 rounded-lg transition-all duration-300 cursor-pointer backdrop-blur-sm"
+                  className="inline-block px-4 py-2 sm:px-6 sm:py-3 bg-white/10 hover:bg-white/20 border-2 border-white/30 hover:border-white/50 rounded-lg transition-all duration-300 cursor-pointer backdrop-blur-sm w-full md:w-auto text-center"
                   style={{
                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
                   }}

@@ -73,7 +73,7 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
 
   return (
     <div 
-      className="inline-block relative cursor-pointer"
+      className="block relative cursor-pointer mx-auto"
     >
       {/* Envelope SVG - More detailed */}
       <div className="relative inline-block w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36">
