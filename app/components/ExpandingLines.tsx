@@ -1,4 +1,4 @@
-"use client"; // Line connection fixes deployed
+"use client"; // TypeScript fix deployed - commit 0e3c738
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, startTransition } from "react";
 import Image from "next/image";
