@@ -234,6 +234,20 @@ export default function Home() {
           <RandomScrollReveal delay={200} randomDelay={true} duration={1.2}>
             <DiamondBranches />
           </RandomScrollReveal>
+          {/* Get Started Button */}
+          <RandomScrollReveal delay={400} randomDelay={true}>
+            <div className="flex flex-col items-center justify-center mt-8 sm:mt-10 md:mt-12 mb-6 sm:mb-8 md:mb-10">
+              <div className="text-center w-full max-w-2xl mx-auto">
+                <a
+                  href="#purchase"
+                  className="seal-button text-lg sm:text-xl md:text-2xl lg:text-3xl font-sans"
+                  style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
+                >
+                  <span><CharacterPopIn delay={400}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
+                </a>
+              </div>
+            </div>
+          </RandomScrollReveal>
         </div>
       </section>
 
@@ -256,16 +270,16 @@ export default function Home() {
       </section>
 
       {/* Bonuses Section */}
-      <section id="bonuses" className="px-6 pt-6 sm:pt-8 md:pt-10 pb-4 md:pb-6 relative z-10">
+      <section id="bonuses" className="px-6 pt-6 sm:pt-8 md:pt-20 pb-4 md:pb-6 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-0 px-4 sm:px-0">
-              <TitleWithBorder padding="px-3 sm:px-6 md:px-8 py-2 sm:py-4">
+              <TitleWithBorder padding="px-3 sm:px-6 md:px-8 py-1 sm:py-2 md:py-4">
                 <div className="text-center">
-                  <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white text-center">
+                  <h2 className="font-heading text-lg sm:text-xl md:text-3xl lg:text-4xl font-black text-white text-center">
                     <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
                   </h2>
-                  <p className="text-white/70 text-xs sm:text-sm md:text-base mt-2 font-sans">
+                  <p className="text-white/70 text-xs sm:text-sm md:text-base mt-1 sm:mt-2 font-sans">
                     All systems created by Josh Terry.<br />
                     <span className="border-b border-white/50 pb-0.5 inline-block">
                       Click on each title to learn more.
@@ -275,18 +289,18 @@ export default function Home() {
               </TitleWithBorder>
             </div>
           </RandomScrollReveal>
-          <div className="-mt-2 sm:-mt-3 md:-mt-4">
+          <div className="-mt-2 sm:-mt-3 md:-mt-40">
             <ExpandingLines />
           </div>
           {/* Get Started Button */}
           <RandomScrollReveal delay={400} randomDelay={true}>
-            <div className="flex flex-col items-center justify-center -mt-2 md:-mt-2">
+            <div className="flex flex-col items-center justify-center -mt-2 md:-mt-48">
               <div className="text-center w-full max-w-2xl mx-auto">
                 <div id="purchase" className="flex flex-col items-center justify-center w-full">
                   <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
                     <a
                       href="#purchase"
-                      className="seal-button text-2xl md:text-3xl mb-4 font-sans"
+                      className="seal-button text-lg sm:text-xl md:text-3xl mb-2 sm:mb-4 font-sans"
                       style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                     >
                       <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>

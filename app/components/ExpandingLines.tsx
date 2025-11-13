@@ -28,16 +28,16 @@ interface BranchLine {
 }
 
 // 8 upward lines starting from left side
-// Tighter spacing for columns without subtitles (0-3), more space for columns with subtitles (4-6)
+// Very tight spacing to fit everything on one page - columns tightly wrapped around text
 const upwardLinesDesktop: UpwardLine[] = [
-  { startY: 500, endY: 120 },   // Top (Purpose Transformation - no subtitle)
-  { startY: 500, endY: 210 },   // Upper-top (Goal Setting Workbook - no subtitle, tighter)
-  { startY: 500, endY: 300 },   // Upper-mid (Instinctive Breathwork - no subtitle, tighter)
-  { startY: 500, endY: 390 },   // Mid-upper (Book On How To Make Progress - same spacing as Goal Setting Workbook)
-  { startY: 500, endY: 510 },   // Middle (The Purpose Paradox - HAS subtitle, more space)
-  { startY: 500, endY: 630 },   // Mid-lower (Set Fail-Resistant Goals - HAS subtitle, more space)
-  { startY: 500, endY: 750 },   // Lower-mid (Get Moving Make It Happen Now - HAS subtitle, more space)
-  { startY: 500, endY: 870 },   // Bottom
+  { startY: 500, endY: 200 },   // Top (Purpose Transformation - no subtitle)
+  { startY: 500, endY: 270 },   // Upper-top (Goal Setting Workbook - no subtitle)
+  { startY: 500, endY: 340 },   // Upper-mid (Instinctive Breathwork - no subtitle)
+  { startY: 500, endY: 410 },   // Mid-upper (Book On How To Make Progress)
+  { startY: 500, endY: 490 },   // Middle (The Purpose Paradox - HAS subtitle)
+  { startY: 500, endY: 570 },   // Mid-lower (Set Fail-Resistant Goals - HAS subtitle)
+  { startY: 500, endY: 650 },   // Lower-mid (Get Moving Make It Happen Now - HAS subtitle)
+  { startY: 500, endY: 730 },   // Bottom
 ];
 
 // Increased spacing for mobile - last three columns spread out more evenly
@@ -549,7 +549,7 @@ export default function ExpandingLines() {
   return (
     <React.Fragment>
       {/* Mobile card layout - only visible on mobile */}
-      <div ref={mobileListRef} data-bonus-list="true" className="md:hidden mt-2 mb-12">
+      <div ref={mobileListRef} data-bonus-list="true" className="md:hidden mt-1 mb-4">
         {bonusTexts.map((bonus, index) => (
           <button
             key={`mobile-card-${index}`}
@@ -616,16 +616,16 @@ export default function ExpandingLines() {
         >
           <div className="bonus-title text-center">
             <div 
-              className="bonus-title-text text-xl sm:text-2xl"
+              className="bonus-title-text text-sm"
               style={{ 
                 color: '#ffffff',
-                fontSize: '1.5rem',
+                fontSize: '0.9rem',
               }}
             >
               Total Value
             </div>
           </div>
-          <div className="bonus-price text-center">
+          <div className="bonus-price text-center" style={{ fontSize: '13px' }}>
             <span style={{ 
               position: 'relative',
               display: 'inline-block',
@@ -651,7 +651,7 @@ export default function ExpandingLines() {
       </div>
 
       {/* Desktop layout - hidden on mobile */}
-      <div ref={containerRef} className="bonus-desktop-layout flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] pt-1 sm:pt-2 md:pt-2 pb-4 sm:pb-6 md:pb-8 px-2 sm:px-4 md:px-6 overflow-x-hidden">
+      <div ref={containerRef} className="bonus-desktop-layout flex items-center justify-center min-h-[300px] sm:min-h-[350px] md:min-h-[450px] pt-1 sm:pt-1 md:pt-1 pb-2 sm:pb-3 md:pb-4 px-2 sm:px-4 md:px-6 overflow-x-hidden">
         <div className="relative w-full max-w-6xl overflow-x-hidden">
         <svg
           viewBox="0 0 1000 1000"
@@ -894,14 +894,14 @@ export default function ExpandingLines() {
             let columnCenterY;
             
             if (index === branchLines.length - 1) {
-              // Last column: center between this line and add spacing below (use a fixed offset)
+              // Last column: tighter spacing - use smaller offset
               const prevY = branchLines[index - 1].startY;
-              const spacing = currentY - prevY; // Use the spacing from previous column
-              columnCenterY = currentY + (spacing / 2); // Position below the line with spacing
+              const spacing = currentY - prevY;
+              columnCenterY = currentY + (spacing * 0.3); // Reduced from 0.5 to 0.3 for tighter wrapping
             } else {
-              // All other columns: center between this line and the next line
+              // All other columns: tighter center positioning
               const nextY = branchLines[index + 1].startY;
-              columnCenterY = (currentY + nextY) / 2;
+              columnCenterY = currentY + ((nextY - currentY) * 0.45); // Slightly above center for tighter wrapping
             }
             
             const yPercent = (columnCenterY / 1000) * 100;
@@ -943,7 +943,7 @@ export default function ExpandingLines() {
                             setSelectedBonus(index);
                           }
                         }}
-                        className="text-white text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative"
+                        className={`text-white ${bonusTexts[index].subtitle ? 'text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg' : 'text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl'} leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative`}
                         style={{
                           fontFamily: "'IBM Plex Sans', sans-serif",
                           textShadow: index === 0 
@@ -1024,7 +1024,27 @@ export default function ExpandingLines() {
                             }}
                           >
                             <span style={{ color: index === 0 ? '#bc4500' : 'inherit' }}>
-                              {bonusTexts[index].title}
+                              {index === 3 ? (
+                                <>
+                                  Book On How To Make{' '}
+                                  <span className="inline-flex items-center">
+                                    Progress
+                                    <span 
+                                      className="inline-block ml-1 opacity-50 group-hover:opacity-100 transition-all duration-300"
+                                      style={{ 
+                                        fontSize: '0.7em',
+                                        animation: 'bonusArrowBounceDesktop 2s ease-in-out infinite',
+                                        textShadow: '0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(99,157,240,0.4)',
+                                        filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
+                                      }}
+                                    >
+                                      →
+                                    </span>
+                                  </span>
+                                </>
+                              ) : (
+                                bonusTexts[index].title
+                              )}
                             </span>
                             {/* Click indicator icon with bounce animation */}
                             <span 
@@ -1064,7 +1084,7 @@ export default function ExpandingLines() {
                           </div>
                           {bonusTexts[index].subtitle && (
                             <div 
-                              className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl mt-1.5 group-hover:text-white/90 transition-colors duration-200" 
+                              className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg mt-1 group-hover:text-white/90 transition-colors duration-200" 
                               style={{ fontWeight: 600, whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.2' }}
                             >
                               {bonusTexts[index].subtitle}
@@ -1094,14 +1114,14 @@ export default function ExpandingLines() {
             const currentY = branch.startY;
             let columnCenterY;
             if (index === branchLines.length - 1) {
-              // Last column: use spacing below the line (matching text positioning)
+              // Last column: tighter spacing for prices
               const prevY = branchLines[index - 1].startY;
               const spacing = currentY - prevY;
-              columnCenterY = currentY + (spacing / 2);
+              columnCenterY = currentY + (spacing * 0.3); // Reduced from 0.5 to 0.3
             } else {
-              // All other columns: center between this line and the next line
+              // All other columns: tighter center positioning for prices
               const nextY = branchLines[index + 1].startY;
-              columnCenterY = (currentY + nextY) / 2;
+              columnCenterY = currentY + ((nextY - currentY) * 0.45); // Slightly above center
             }
             const columnCenterYPercent = (columnCenterY / 1000) * 100;
             
@@ -1125,7 +1145,7 @@ export default function ExpandingLines() {
                 }}
               >
                       <span
-                  className="text-white font-mono text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap"
+                  className="text-white font-mono text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap"
                         style={{
                           fontFamily: "'IBM Plex Mono', monospace",
                           textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
@@ -1205,7 +1225,7 @@ export default function ExpandingLines() {
                   }}
                 >
                   <p 
-                    className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl"
+                    className="text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl"
                     style={{
                       fontFamily: "'IBM Plex Sans', sans-serif",
                       textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
@@ -1230,7 +1250,7 @@ export default function ExpandingLines() {
                   }}
                 >
                   <span
-                    className="text-white font-mono text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap"
+                    className="text-white font-mono text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 2xl:text-4xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap"
                     style={{
                       fontFamily: "'IBM Plex Mono', monospace",
                       textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
