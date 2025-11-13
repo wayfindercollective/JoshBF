@@ -879,7 +879,7 @@ export default function ExpandingLines() {
                           wordBreak: 'break-word',
                           transform: `scale(${0.3 + popInProgress[index] * 0.7}) translateY(${(1 - popInProgress[index]) * 20}px)`,
                           opacity: popInProgress[index] > 0 ? 1 : 0,
-                          transition: popInProgress[index] === 0 ? 'none' : 'all 0.2s ease-out',
+                          transition: popInProgress[index] === 0 ? 'none' : 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                           background: 'none',
                           border: 'none',
                           padding: '4px 8px',
@@ -889,19 +889,21 @@ export default function ExpandingLines() {
                         }}
                         onMouseEnter={(e) => {
                           const baseScale = 0.3 + popInProgress[index] * 0.7;
-                          e.currentTarget.style.textShadow = '0 0 12px rgba(255,255,255,0.9), 0 0 18px rgba(99,157,240,0.7)';
-                          e.currentTarget.style.transform = `scale(${baseScale * 1.05}) translateY(${(1 - popInProgress[index]) * 20}px)`;
+                          e.currentTarget.style.textShadow = '0 0 16px rgba(255,255,255,1), 0 0 24px rgba(99,157,240,0.8), 0 0 32px rgba(99,157,240,0.6)';
+                          e.currentTarget.style.filter = 'drop-shadow(0 0 8px rgba(255,255,255,0.8))';
+                          e.currentTarget.style.transform = `scale(${baseScale * 1.08}) translateY(${(1 - popInProgress[index]) * 20}px)`;
                         }}
                         onMouseLeave={(e) => {
                           const baseScale = 0.3 + popInProgress[index] * 0.7;
                           e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)';
+                          e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(255,255,255,0.5))';
                           e.currentTarget.style.transform = `scale(${baseScale}) translateY(${(1 - popInProgress[index]) * 20}px)`;
                         }}
                       >
                         <div className="block relative" style={{ lineHeight: '1.2' }}>
-                          {/* Always-visible clickable indicator - subtle underline */}
+                          {/* Always-visible clickable indicator - subtle underline with animation */}
                           <div 
-                            className="group-hover:opacity-100 transition-all duration-200"
+                            className="group-hover:opacity-100 transition-all duration-300"
                             style={{ 
                               whiteSpace: 'normal', 
                               wordBreak: 'break-word',
@@ -909,13 +911,32 @@ export default function ExpandingLines() {
                               paddingBottom: '2px',
                               display: 'inline-block',
                               width: 'fit-content',
+                              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                              animation: popInProgress[index] > 0.9 ? 'bonusDesktopTitlePulse 2.5s ease-in-out infinite' : 'none',
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.8)';
+                              e.currentTarget.style.borderBottomWidth = '3px';
+                              e.currentTarget.style.paddingBottom = '3px';
+                              e.currentTarget.style.animation = 'none';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.3)';
+                              e.currentTarget.style.borderBottomWidth = '2px';
+                              e.currentTarget.style.paddingBottom = '2px';
+                              if (popInProgress[index] > 0.9) {
+                                e.currentTarget.style.animation = 'bonusDesktopTitlePulse 2.5s ease-in-out infinite';
+                              }
                             }}
                           >
                             {bonusTexts[index].title}
-                            {/* Click indicator icon */}
+                            {/* Click indicator icon with bounce animation */}
                             <span 
-                              className="inline-block ml-2 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200"
-                              style={{ fontSize: '0.7em' }}
+                              className="inline-block ml-2 opacity-50 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300"
+                              style={{ 
+                                fontSize: '0.7em',
+                                animation: 'bonusArrowBounceDesktop 2s ease-in-out infinite',
+                              }}
                             >
                               →
                             </span>

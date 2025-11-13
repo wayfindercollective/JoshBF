@@ -261,24 +261,32 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
                 onMouseEnter={() => setIsHoveringText(true)}
                 onMouseLeave={() => setIsHoveringText(false)}
                 style={{
-                  color: animationComplete ? (isHoveringText ? '#ff6b35' : '#ff6b35') : '#bc4500', // Brighter orange once animation completes
-                  filter: animationComplete
-                    ? isHoveringText
-                      ? 'drop-shadow(0 0 10px rgba(255,107,53,1)) brightness(1.2)'
-                      : 'drop-shadow(0 0 8px rgba(255,107,53,0.9)) brightness(1.15)'
-                    : 'drop-shadow(0 0 8px rgba(188,69,0,0.8))',
-                  fontWeight: animationComplete ? '900' : 'bold',
-                  textShadow: animationComplete
-                    ? isHoveringText
-                      ? '0 0 12px rgba(255,107,53,0.9), 0 0 18px rgba(255,107,53,0.7)'
-                      : '0 0 10px rgba(255,107,53,0.8), 0 0 15px rgba(255,107,53,0.6)'
-                    : 'none',
-                  transform: animationComplete ? (isHoveringText ? 'scale(1.04)' : 'scale(1.03)') : 'scale(1)',
-                  transition: 'filter 0.3s ease, color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease',
                   display: 'inline-block',
+                  animation: animationComplete && !isHoveringText ? 'envelopeTextPulse 2.5s ease-in-out infinite' : 'none',
+                  transform: isHoveringText ? 'scale(1.04)' : 'scale(1)',
+                  transition: 'transform 0.3s ease',
                 }}
               >
-                {displayText || ACTUAL_TEXT}
+                <span
+                  style={{
+                    color: animationComplete ? (isHoveringText ? '#ff6b35' : '#ff6b35') : '#bc4500', // Brighter orange once animation completes
+                    filter: animationComplete
+                      ? isHoveringText
+                        ? 'drop-shadow(0 0 10px rgba(255,107,53,1)) brightness(1.2)'
+                        : 'drop-shadow(0 0 8px rgba(255,107,53,0.9)) brightness(1.15)'
+                      : 'drop-shadow(0 0 8px rgba(188,69,0,0.8))',
+                    fontWeight: animationComplete ? '900' : 'bold',
+                    textShadow: animationComplete
+                      ? isHoveringText
+                        ? '0 0 12px rgba(255,107,53,0.9), 0 0 18px rgba(255,107,53,0.7)'
+                        : '0 0 10px rgba(255,107,53,0.8), 0 0 15px rgba(255,107,53,0.6)'
+                      : 'none',
+                    transition: 'filter 0.3s ease, color 0.3s ease, text-shadow 0.3s ease',
+                    display: 'inline-block',
+                  }}
+                >
+                  {displayText || ACTUAL_TEXT}
+                </span>
               </span>
               {isHovered && (
                 <span 

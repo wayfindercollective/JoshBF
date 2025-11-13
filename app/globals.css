@@ -708,21 +708,36 @@
     justify-content: space-between;
     gap: 12px;
     cursor: pointer;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     isolation: isolate;
     overflow: visible;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     text-align: left;
+    position: relative;
+    transform: scale(1);
   }
 
   [data-bonus-card]:last-child {
     margin-bottom: 0;
   }
 
-  [data-bonus-card]:active {
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+  /* Hover state - expand and glow */
+  [data-bonus-card]:hover,
+  [data-bonus-card]:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25), 0 0 30px rgba(99, 157, 240, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
   }
+
+  /* Active/touch state */
+  [data-bonus-card]:active {
+    border-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 6px 24px rgba(255, 255, 255, 0.35), 0 0 40px rgba(99, 157, 240, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(0.98);
+  }
+
 
   [data-bonus-card] .bonus-title {
     flex: 1;
@@ -741,6 +756,65 @@
     overflow-wrap: break-word;
     word-break: normal;
     hyphens: auto;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1);
+    display: inline-block;
+    position: relative;
+    animation: bonusTitlePulse 2.5s ease-in-out infinite;
+  }
+
+  /* Pulsating expansion animation for title text */
+  @keyframes bonusTitlePulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.03);
+    }
+  }
+
+  /* Text expansion on hover - override pulse animation */
+  [data-bonus-card]:hover .bonus-title-text,
+  [data-bonus-card]:focus .bonus-title-text {
+    animation: none;
+    transform: scale(1.05);
+    text-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 18px rgba(99,157,240,0.7), 0 0 24px rgba(99,157,240,0.5);
+    color: #ffffff;
+  }
+
+  /* Active state - slight scale down */
+  [data-bonus-card]:active .bonus-title-text {
+    animation: none;
+    transform: scale(0.98);
+  }
+
+  /* Click indicator arrow animation */
+  @keyframes bonusArrowBounce {
+    0%, 100% {
+      transform: translateX(0);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateX(4px);
+      opacity: 1;
+    }
+  }
+
+  /* Add click indicator arrow after title text */
+  [data-bonus-card] .bonus-title-text::after {
+    content: ' →';
+    display: inline-block;
+    margin-left: 4px;
+    opacity: 0.5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: bonusArrowBounce 2s ease-in-out infinite;
+  }
+
+  [data-bonus-card]:hover .bonus-title-text::after,
+  [data-bonus-card]:focus .bonus-title-text::after {
+    opacity: 1;
+    transform: translateX(4px);
+    animation: none;
   }
 
   [data-bonus-card] .bonus-subtitle {
@@ -755,6 +829,12 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: color 0.3s ease;
+  }
+
+  [data-bonus-card]:hover .bonus-subtitle,
+  [data-bonus-card]:focus .bonus-subtitle {
+    color: rgba(255, 255, 255, 0.9);
   }
 
   [data-bonus-card] .bonus-price {
@@ -765,6 +845,18 @@
     color: #ffffff;
     text-shadow: 0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4);
     white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1);
+  }
+
+  [data-bonus-card]:hover .bonus-price,
+  [data-bonus-card]:focus .bonus-price {
+    transform: scale(1.1);
+    text-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 18px rgba(99,157,240,0.7);
+  }
+
+  [data-bonus-card]:active .bonus-price {
+    transform: scale(0.95);
   }
 
   /* Hide mobile cards on desktop */
@@ -779,6 +871,225 @@
     .bonus-desktop-layout {
       display: none !important;
     }
+  }
+
+  /* Desktop bonus title arrow animation */
+  @keyframes bonusArrowBounceDesktop {
+    0%, 100% {
+      transform: translateX(0);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translateX(6px);
+      opacity: 0.8;
+    }
+  }
+
+  /* Desktop bonus title pulsating expansion animation */
+  @keyframes bonusDesktopTitlePulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.04);
+    }
+  }
+
+  .bonus-desktop-title-pulse {
+    animation: bonusDesktopTitlePulse 2.5s ease-in-out infinite;
+  }
+
+  .bonus-desktop-title-pulse:hover {
+    animation: none;
+  }
+
+  /* Envelope text pulsating expansion animation */
+  @keyframes envelopeTextPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.03);
+    }
+  }
+
+  .envelope-text-pulse:hover {
+    animation: none !important;
+  }
+
+  /* Purpose Transformation title pulsating expansion animation */
+  @keyframes purposeTransformationPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.04);
+    }
+  }
+
+  .purpose-transformation-title-pulse {
+    animation: purposeTransformationPulse 2.5s ease-in-out infinite;
+    display: inline-block;
+  }
+
+  .purpose-transformation-title-pulse:hover {
+    animation: none;
+  }
+}
+
+/* Responsive Design - Mobile First Approach */
+/* Base styles are for mobile (360px - 480px) */
+/* Use percentage and rem-based widths, avoid fixed pixels larger than viewport */
+
+/* Ensure all containers use flexible widths */
+html {
+  font-size: 16px; /* Base font size for rem calculations */
+}
+
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Responsive typography scaling */
+@media (max-width: 480px) {
+  html {
+    font-size: clamp(14px, 4vw, 16px);
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+  
+  /* Ensure containers scale properly */
+  .max-w-4xl,
+  .max-w-5xl,
+  .max-w-3xl,
+  .max-w-2xl {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  html {
+    font-size: 16px;
+  }
+  
+  /* Restore max-widths for desktop */
+  .max-w-4xl {
+    max-width: 56rem; /* 896px */
+  }
+  
+  .max-w-5xl {
+    max-width: 64rem; /* 1024px */
+  }
+  
+  .max-w-3xl {
+    max-width: 48rem; /* 768px */
+  }
+  
+  .max-w-2xl {
+    max-width: 42rem; /* 672px */
+  }
+}
+
+/* Ensure all fixed pixel widths in components are responsive */
+/* Override any fixed widths larger than 480px on mobile */
+@media (max-width: 480px) {
+  * {
+    max-width: 100%;
+  }
+  
+  /* Ensure images scale */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Ensure canvas elements don't overflow */
+  canvas {
+    max-width: 100vw !important;
+  }
+  
+  /* Ensure modals and overlays fit viewport */
+  [class*="fixed"] {
+    max-width: 100vw;
+  }
+}
+
+/* Responsive padding adjustments */
+@media (max-width: 480px) {
+  .px-6 {
+    padding-left: clamp(1rem, 4vw, 1.5rem);
+    padding-right: clamp(1rem, 4vw, 1.5rem);
+  }
+  
+  .p-4 {
+    padding: clamp(0.75rem, 3vw, 1rem);
+  }
+  
+  .p-6 {
+    padding: clamp(1rem, 4vw, 1.5rem);
+  }
+}
+
+/* Responsive font sizes */
+@media (max-width: 480px) {
+  .text-5xl {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+  
+  .text-6xl {
+    font-size: clamp(2.5rem, 10vw, 3.75rem);
+  }
+  
+  .text-7xl {
+    font-size: clamp(3rem, 12vw, 4.5rem);
+  }
+  
+  .text-8xl {
+    font-size: clamp(3.5rem, 14vw, 5rem);
+  }
+}
+
+/* Ensure flexbox and grid layouts are responsive */
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .flex {
+    flex-wrap: wrap;
+  }
+}
+
+/* Tablet grid adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Desktop grid adjustments */
+@media (min-width: 1024px) {
+  .grid-cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .lg\:grid-cols-5 {
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 

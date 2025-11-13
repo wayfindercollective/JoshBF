@@ -30,41 +30,30 @@ export default function FloatingGeometry() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size to cover full document - ensure it doesn't exceed viewport width
-    const resizeCanvas = () => {
-      const maxWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
-      canvas.width = maxWidth;
-      canvas.height = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+    // Grid cell dimensions - responsive based on viewport width
+    // Mobile (360px): ~120px cells, Tablet (768px+): ~150px cells, Desktop (1024px+): ~200px cells
+    const getGridCellWidth = () => {
+      const viewportWidth = window.innerWidth;
+      if (viewportWidth >= 1024) return 200; // Desktop
+      if (viewportWidth >= 768) return 150;  // Tablet
+      return Math.max(100, Math.min(120, viewportWidth * 0.33)); // Mobile: 33% of viewport, min 100px, max 120px
     };
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    // Update canvas height when document height changes and generate shapes for new areas
-    const updateCanvasHeight = () => {
-      const newHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
-      if (newHeight > canvas.height) {
-        const oldHeight = canvas.height;
-        canvas.height = newHeight;
-        // Generate shapes only for the truly new area (will skip already-generated rows)
-        const newShapes = generateShapesForRegion(oldHeight, newHeight);
-        shapesRef.current.push(...newShapes);
-      }
+    const getGridCellHeight = () => {
+      const viewportWidth = window.innerWidth;
+      if (viewportWidth >= 1024) return 200; // Desktop
+      if (viewportWidth >= 768) return 150;  // Tablet
+      return Math.max(100, Math.min(120, viewportWidth * 0.33)); // Mobile: 33% of viewport, min 100px, max 120px
     };
-    
-    // Check document height periodically
-    const heightCheckInterval = setInterval(updateCanvasHeight, 500);
-
-    // Grid cell dimensions - shared across all generation functions
-    const gridCellWidth = 200;
-    const gridCellHeight = 200;
 
     // Generate shapes for the entire document height with even distribution
     const generateShapesForFullPage = (pageHeight: number): Shape[] => {
       const shapes: Shape[] = [];
       
       // Grid-based distribution for even spacing
-      const cols = Math.ceil(canvas.width / gridCellWidth);
-      const rows = Math.ceil(pageHeight / gridCellHeight);
+      const currentGridCellWidth = getGridCellWidth();
+      const currentGridCellHeight = getGridCellHeight();
+      const cols = Math.ceil(canvas.width / currentGridCellWidth);
+      const rows = Math.ceil(pageHeight / currentGridCellHeight);
       
       // Generate shapes evenly distributed across grid
       const types: Shape['type'][] = ['triangle', 'square', 'circle'];
@@ -76,10 +65,10 @@ export default function FloatingGeometry() {
         
         for (let col = 0; col < cols; col++) {
           // Place one shape per grid cell with slight random offset
-          const baseX = col * gridCellWidth + gridCellWidth / 2;
-          const baseY = row * gridCellHeight + gridCellHeight / 2;
-          const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.6; // Max 30% offset
-          const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.6;
+          const baseX = col * currentGridCellWidth + currentGridCellWidth / 2;
+          const baseY = row * currentGridCellHeight + currentGridCellHeight / 2;
+          const offsetX = (Math.random() - 0.5) * currentGridCellWidth * 0.6; // Max 30% offset
+          const offsetY = (Math.random() - 0.5) * currentGridCellHeight * 0.6;
           
           const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
           const y = Math.max(0, Math.min(pageHeight, baseY + offsetY));
@@ -104,15 +93,15 @@ export default function FloatingGeometry() {
       }
 
       // Add connecting lines evenly distributed
-      const lineCols = Math.ceil(canvas.width / (gridCellWidth * 1.5));
-      const lineRows = Math.ceil(pageHeight / (gridCellHeight * 1.5));
+      const lineCols = Math.ceil(canvas.width / (currentGridCellWidth * 1.5));
+      const lineRows = Math.ceil(pageHeight / (currentGridCellHeight * 1.5));
       
       for (let row = 0; row < lineRows; row++) {
         for (let col = 0; col < lineCols; col++) {
-          const baseX = col * gridCellWidth * 1.5 + gridCellWidth * 0.75;
-          const baseY = row * gridCellHeight * 1.5 + gridCellHeight * 0.75;
-          const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.8;
-          const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.8;
+          const baseX = col * currentGridCellWidth * 1.5 + currentGridCellWidth * 0.75;
+          const baseY = row * currentGridCellHeight * 1.5 + currentGridCellHeight * 0.75;
+          const offsetX = (Math.random() - 0.5) * currentGridCellWidth * 0.8;
+          const offsetY = (Math.random() - 0.5) * currentGridCellHeight * 0.8;
           
           const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
           const y = Math.max(0, Math.min(pageHeight, baseY + offsetY));
@@ -140,11 +129,14 @@ export default function FloatingGeometry() {
       const shapes: Shape[] = [];
       const regionHeight = regionEnd - regionStart;
       
-      // Calculate which grid rows this region covers
-      const startRow = Math.floor(regionStart / gridCellHeight);
-      const endRow = Math.ceil(regionEnd / gridCellHeight);
+      const currentGridCellWidth = getGridCellWidth();
+      const currentGridCellHeight = getGridCellHeight();
       
-      const cols = Math.ceil(canvas.width / gridCellWidth);
+      // Calculate which grid rows this region covers
+      const startRow = Math.floor(regionStart / currentGridCellHeight);
+      const endRow = Math.ceil(regionEnd / currentGridCellHeight);
+      
+      const cols = Math.ceil(canvas.width / currentGridCellWidth);
       const types: Shape['type'][] = ['triangle', 'square', 'circle'];
       let shapeIndex = 0;
       
@@ -160,10 +152,10 @@ export default function FloatingGeometry() {
         
         for (let col = 0; col < cols; col++) {
           // Place one shape per grid cell with slight random offset
-          const baseX = col * gridCellWidth + gridCellWidth / 2;
-          const baseY = row * gridCellHeight + gridCellHeight / 2;
-          const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.6; // Max 30% offset
-          const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.6;
+          const baseX = col * currentGridCellWidth + currentGridCellWidth / 2;
+          const baseY = row * currentGridCellHeight + currentGridCellHeight / 2;
+          const offsetX = (Math.random() - 0.5) * currentGridCellWidth * 0.6; // Max 30% offset
+          const offsetY = (Math.random() - 0.5) * currentGridCellHeight * 0.6;
           
           const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
           const y = Math.max(regionStart, Math.min(regionEnd, baseY + offsetY));
@@ -188,19 +180,19 @@ export default function FloatingGeometry() {
       }
 
       // Add connecting lines evenly distributed (only for new rows)
-      const lineCols = Math.ceil(canvas.width / (gridCellWidth * 1.5));
-      const lineStartRow = Math.floor(regionStart / (gridCellHeight * 1.5));
-      const lineEndRow = Math.ceil(regionEnd / (gridCellHeight * 1.5));
+      const lineCols = Math.ceil(canvas.width / (currentGridCellWidth * 1.5));
+      const lineStartRow = Math.floor(regionStart / (currentGridCellHeight * 1.5));
+      const lineEndRow = Math.ceil(regionEnd / (currentGridCellHeight * 1.5));
       
       for (let row = lineStartRow; row < lineEndRow; row++) {
         for (let col = 0; col < lineCols; col++) {
-          const baseX = col * gridCellWidth * 1.5 + gridCellWidth * 0.75;
-          const baseY = row * gridCellHeight * 1.5 + gridCellHeight * 0.75;
+          const baseX = col * currentGridCellWidth * 1.5 + currentGridCellWidth * 0.75;
+          const baseY = row * currentGridCellHeight * 1.5 + currentGridCellHeight * 0.75;
           
           // Only add if this line is in the new region
           if (baseY >= regionStart && baseY <= regionEnd) {
-            const offsetX = (Math.random() - 0.5) * gridCellWidth * 0.8;
-            const offsetY = (Math.random() - 0.5) * gridCellHeight * 0.8;
+            const offsetX = (Math.random() - 0.5) * currentGridCellWidth * 0.8;
+            const offsetY = (Math.random() - 0.5) * currentGridCellHeight * 0.8;
             
             const x = Math.max(0, Math.min(canvas.width, baseX + offsetX));
             const y = Math.max(regionStart, Math.min(regionEnd, baseY + offsetY));
@@ -224,9 +216,35 @@ export default function FloatingGeometry() {
       return shapes;
     };
 
-    // Initial generation for full page
-    const initialPageHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
-    shapesRef.current = generateShapesForFullPage(initialPageHeight);
+    // Set canvas size to cover full document - ensure it doesn't exceed viewport width
+    const resizeCanvas = () => {
+      const maxWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+      canvas.width = maxWidth;
+      canvas.height = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+      // Regenerate shapes with new grid cell sizes when viewport changes
+      const newPageHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+      shapesRef.current = generateShapesForFullPage(newPageHeight);
+      generatedGridRowsRef.current.clear();
+    };
+    
+    // Update canvas height when document height changes and generate shapes for new areas
+    const updateCanvasHeight = () => {
+      const newHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+      if (newHeight > canvas.height) {
+        const oldHeight = canvas.height;
+        canvas.height = newHeight;
+        // Generate shapes only for the truly new area (will skip already-generated rows)
+        const newShapes = generateShapesForRegion(oldHeight, newHeight);
+        shapesRef.current.push(...newShapes);
+      }
+    };
+    
+    // Initial setup
+    resizeCanvas(); // This will generate initial shapes
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Check document height periodically
+    const heightCheckInterval = setInterval(updateCanvasHeight, 500);
 
     // Draw functions
     const drawTriangle = (shape: Shape) => {
@@ -356,7 +374,9 @@ export default function FloatingGeometry() {
     const handleMouseMove = (e: MouseEvent) => {
       const mouseX = e.clientX;
       const mouseY = e.clientY + window.scrollY; // Account for scroll position
-      const hoverRadius = 150;
+      // Responsive hover radius: smaller on mobile
+      const viewportWidth = window.innerWidth;
+      const hoverRadius = viewportWidth >= 1024 ? 150 : viewportWidth >= 768 ? 120 : 100;
 
       shapesRef.current.forEach((shape) => {
         const distance = Math.sqrt(
