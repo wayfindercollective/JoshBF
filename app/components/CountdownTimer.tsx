@@ -53,6 +53,9 @@ export default function CountdownTimer() {
   const currentButtonSize = isDesktop ? buttonSizeDesktop : buttonSizeMobile;
   
   // Text sizes - larger for desktop
+  const phase1TextSize = isDesktop 
+    ? 'text-base md:text-lg lg:text-xl' 
+    : 'text-xs sm:text-sm md:text-base lg:text-base';
   const blackFridayTextSize = isDesktop 
     ? 'text-sm md:text-base lg:text-lg' 
     : 'text-[11px] sm:text-xs md:text-sm lg:text-sm';
@@ -109,6 +112,9 @@ export default function CountdownTimer() {
         
         {/* Text content */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full h-full px-1">
+          <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 text-center font-handwritten leading-tight`}>
+            Phase 1
+          </div>
           <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 text-center font-handwritten leading-tight`}>
             Black Friday
           </div>

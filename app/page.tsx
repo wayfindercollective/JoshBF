@@ -228,7 +228,9 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center mt-8 sm:mt-10 md:mt-12 mb-6 sm:mb-8 md:mb-10">
               <div className="text-center w-full max-w-2xl mx-auto">
                 <a
-                  href="#purchase"
+                  href="https://bookmyeventnow.com/register?a=new&p=26"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="seal-button text-lg sm:text-xl md:text-2xl lg:text-3xl font-sans"
                   style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                 >
@@ -245,7 +247,7 @@ export default function Home() {
         <div className="max-w-3xl mx-auto text-center">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6 text-white">
-              <CharacterPopIn delay={0}>About the Blueprint</CharacterPopIn>
+              <CharacterPopIn delay={0}>What Is Purpose Transformation?</CharacterPopIn>
             </h2>
           </RandomScrollReveal>
           <RandomScrollReveal delay={200} randomDelay={true}>
@@ -288,7 +290,9 @@ export default function Home() {
                 <div id="purchase" className="flex flex-col items-center justify-center w-full">
                   <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
                     <a
-                      href="#purchase"
+                      href="https://bookmyeventnow.com/register?a=new&p=26"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="seal-button text-lg sm:text-xl md:text-3xl mb-2 sm:mb-4 font-sans"
                       style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                     >

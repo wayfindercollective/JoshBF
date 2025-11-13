@@ -81,7 +81,7 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
     ]
   },
   {
-    title: "Instinctive Breathwork: Access the breath you need",
+    title: "Instinctive breathwork: Deeper Awareness",
     description: [
       "Learn a simple discovery method that unlocks the full range of your breathing.",
       "Use it to reach the state you need in the moment. Calm. Focus. Endurance. Recovery.",
@@ -880,6 +880,57 @@ export default function ExpandingLines() {
             />
             );
           })()}
+
+          {/* Hand-drawn arrow pointing at Purpose Transformation row */}
+          {isVisible && scriptComplete && popInProgress[0] > 0 && (() => {
+            // Purpose Transformation row is at index 0
+            const purposeTransformationY = upwardLines[0].endY; // Y position of the first row (200 for desktop, 60 for mobile)
+            
+            // Arrow starts from the right side and points left toward the row
+            const arrowStartX = RIGHT_POSITION + 40; // Start a bit to the right of the table
+            const arrowEndX = CENTER_X + 50; // Point toward the center-left area near the text
+            const arrowY = purposeTransformationY; // Point at the Purpose Transformation row
+            
+            // Hand-drawn style: slightly wobbly curved path
+            const midX = (arrowStartX + arrowEndX) / 2;
+            const wobble = 3; // Small wobble for hand-drawn effect
+            
+            return (
+              <g 
+                opacity={popInProgress[0] > 0.5 ? popInProgress[0] : 0}
+                style={{
+                  transition: 'opacity 0.5s ease-out',
+                  filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.4))',
+                }}
+              >
+                {/* Arrow shaft with slight wobble for hand-drawn effect */}
+                <path
+                  d={`M ${arrowStartX} ${arrowY} Q ${midX + wobble} ${arrowY - 2} ${arrowEndX} ${arrowY}`}
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.7"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.3))',
+                  }}
+                />
+                {/* Arrowhead - hand-drawn style */}
+                <path
+                  d={`M ${arrowEndX} ${arrowY} L ${arrowEndX - 12} ${arrowY - 6} M ${arrowEndX} ${arrowY} L ${arrowEndX - 12} ${arrowY + 6}`}
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.3))',
+                  }}
+                />
+              </g>
+            );
+          })()}
         </svg>
 
         {/* Content areas - text and prices centered within columns */}
@@ -943,7 +994,7 @@ export default function ExpandingLines() {
                             setSelectedBonus(index);
                           }
                         }}
-                        className={`text-white ${bonusTexts[index].subtitle ? 'text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg' : 'text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl'} leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative`}
+                        className={`text-white ${index === 4 ? 'text-xs sm:text-xs md:text-xs lg:text-sm xl:text-base' : (bonusTexts[index].subtitle ? 'text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg' : 'text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl')} leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative`}
                         style={{
                           fontFamily: "'IBM Plex Sans', sans-serif",
                           textShadow: index === 0 
@@ -1084,7 +1135,7 @@ export default function ExpandingLines() {
                           </div>
                           {bonusTexts[index].subtitle && (
                             <div 
-                              className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg mt-1 group-hover:text-white/90 transition-colors duration-200" 
+                              className={`${index === 4 ? 'text-[10px] sm:text-[10px] md:text-xs lg:text-xs xl:text-sm' : 'text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg'} mt-1 group-hover:text-white/90 transition-colors duration-200`}
                               style={{ fontWeight: 600, whiteSpace: 'normal', wordBreak: 'break-word', lineHeight: '1.2' }}
                             >
                               {bonusTexts[index].subtitle}
@@ -1302,8 +1353,6 @@ export default function ExpandingLines() {
             style={{
               width: '90%',
               maxWidth: '600px',
-              maxHeight: '700px',
-              minHeight: 'clamp(400px, 70vh, 500px)',
             }}
           >
             {/* Geometry background canvas */}
@@ -1313,8 +1362,8 @@ export default function ExpandingLines() {
               style={{ opacity: 0.6 }}
             />
             
-             <div className="flex justify-between items-start mb-8 flex-shrink-0 relative z-10">
-               <h3 className="font-heading text-3xl md:text-4xl lg:text-5xl font-semibold text-white flex-1 pr-4">
+             <div className="flex justify-between items-start mb-6 flex-shrink-0 relative z-10">
+               <h3 className="font-heading text-2xl md:text-3xl lg:text-4xl font-semibold text-white flex-1 pr-4">
                  {bonusDescriptions[selectedBonus]?.title}
                </h3>
               <button
@@ -1326,11 +1375,11 @@ export default function ExpandingLines() {
                 ×
               </button>
             </div>
-             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(700px - 120px)', paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
+             <div className="space-y-5 flex-1 relative z-10" style={{ paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
                {bonusDescriptions[selectedBonus]?.description.map((paragraph, idx) => (
                  <p 
                    key={idx}
-                   className="text-white/70 text-xl md:text-2xl lg:text-3xl font-sans leading-relaxed"
+                   className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed"
                  >
                    {paragraph}
                  </p>
