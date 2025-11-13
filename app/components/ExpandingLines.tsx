@@ -881,6 +881,7 @@ export default function ExpandingLines() {
             );
           })()}
 
+<<<<<<< HEAD
           {/* Hand-drawn arrow pointing at Purpose Transformation row */}
           {isVisible && scriptComplete && popInProgress[0] > 0 && (() => {
             // Purpose Transformation row is at index 0
@@ -926,6 +927,74 @@ export default function ExpandingLines() {
                   strokeLinejoin="round"
                   style={{
                     filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.3))',
+=======
+          {/* Curved arrow from Bonuses box to Purpose Transformation row */}
+          {isVisible && scriptComplete && popInProgress[0] > 0 && (() => {
+            // Calculate positions for the arrow
+            // Start point: At the level of "Click to learn more" text, well outside the Bonuses box
+            const startX = CENTER_X - 200; // Far to the left, outside the Bonuses box
+            const startY = 140; // At the level of "Click to learn more" text, below the Bonuses title
+            
+            // End point: Purpose Transformation row (first column, index 0)
+            const columnLeftX = isMobile 
+              ? LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.1)
+              : LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.2);
+            const currentY = branchLines[0].startY;
+            const nextY = branchLines[1].startY;
+            const columnCenterY = currentY + ((nextY - currentY) * 0.45);
+            
+            // End point is well to the left of the column (outside the column structure)
+            // LEFT_POSITION is 180, so we want to stay well to the left of that
+            const endX = LEFT_POSITION - 8; // Position to the left of the leftmost line, moved more to the right
+            const endY = columnCenterY;
+            
+            // Control points for a curved path that goes around the columns and Bonuses box
+            // First control point: sharp curve down and far to the left (outside column area and Bonuses box)
+            const controlX1 = LEFT_POSITION - 120; // Curve far left, well outside columns and box
+            const controlY1 = startY + 60; // Curve down from the start point
+            // Second control point: gentle curve back right toward the target, staying outside
+            const controlX2 = LEFT_POSITION - 40; // Curve around, still outside columns
+            const controlY2 = endY - 15; // Approach from slightly above
+            
+            // Arrow head size and angle calculation
+            // Arrow should point toward the Purpose Transformation text (to the right)
+            const arrowSize = 12;
+            // Calculate angle pointing from end point toward the Purpose Transformation text
+            // Purpose Transformation text is at columnLeftX, columnCenterY
+            const targetX = columnLeftX;
+            const targetY = columnCenterY;
+            const arrowAngle = Math.atan2(targetY - endY, targetX - endX);
+            
+            return (
+              <g>
+                {/* Curved arrow path */}
+                <path
+                  d={`M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`}
+                  fill="none"
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.8"
+                  strokeLinecap="round"
+                  style={{
+                    filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
+                    opacity: popInProgress[0] > 0 ? 1 : 0,
+                    transition: 'opacity 0.3s ease-out',
+                  }}
+                />
+                {/* Arrow head - pointing toward Purpose Transformation */}
+                <path
+                  d={`M ${endX + 3} ${endY - 1.5} L ${endX + 3 - arrowSize * Math.cos(arrowAngle - Math.PI / 6)} ${endY - 1.5 - arrowSize * Math.sin(arrowAngle - Math.PI / 6)} M ${endX + 3} ${endY - 1.5} L ${endX + 3 - arrowSize * Math.cos(arrowAngle + Math.PI / 6)} ${endY - 1.5 - arrowSize * Math.sin(arrowAngle + Math.PI / 6)}`}
+                  stroke="#ffffff"
+                  strokeWidth="2.5"
+                  strokeOpacity="0.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                  style={{
+                    filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
+                    opacity: popInProgress[0] > 0 ? 1 : 0,
+                    transition: 'opacity 0.3s ease-out',
+>>>>>>> dev
                   }}
                 />
               </g>
@@ -1074,29 +1143,20 @@ export default function ExpandingLines() {
                               }
                             }}
                           >
-                            <span style={{ color: index === 0 ? '#bc4500' : 'inherit' }}>
-                              {index === 3 ? (
-                                <>
-                                  Book On How To Make{' '}
-                                  <span className="inline-flex items-center">
-                                    Progress
-                                    <span 
-                                      className="inline-block ml-1 opacity-50 group-hover:opacity-100 transition-all duration-300"
-                                      style={{ 
-                                        fontSize: '0.7em',
-                                        animation: 'bonusArrowBounceDesktop 2s ease-in-out infinite',
-                                        textShadow: '0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(99,157,240,0.4)',
-                                        filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
-                                      }}
-                                    >
-                                      →
-                                    </span>
-                                  </span>
-                                </>
-                              ) : (
-                                bonusTexts[index].title
-                              )}
-                            </span>
+                            {index === 3 ? (
+                              <>
+                                <span style={{ color: index === 0 ? '#bc4500' : 'inherit', display: 'block' }}>
+                                  Book On How To Make
+                                </span>
+                                <span style={{ color: index === 0 ? '#bc4500' : 'inherit', display: 'inline-block', verticalAlign: 'baseline' }}>
+                                  Progress
+                                </span>
+                              </>
+                            ) : (
+                              <span style={{ color: index === 0 ? '#bc4500' : 'inherit' }}>
+                                {bonusTexts[index].title}
+                              </span>
+                            )}
                             {/* Click indicator icon with bounce animation */}
                             <span 
                               className="inline-block ml-2 opacity-50 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300"
@@ -1110,6 +1170,7 @@ export default function ExpandingLines() {
                                 filter: index === 0
                                   ? 'drop-shadow(0 0 2px rgba(188,69,0,0.7))'
                                   : 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
+                                verticalAlign: 'baseline',
                               }}
                               onMouseEnter={(e) => {
                                 if (index === 0) {
