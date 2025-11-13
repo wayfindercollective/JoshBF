@@ -63,7 +63,7 @@ function FAQItem({ faq, index }: FAQItemProps) {
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-white/50 hover:text-white/80 text-3xl font-light flex-shrink-0 transition-colors leading-none"
+                className="text-white/50 hover:text-white/80 text-6xl font-light flex-shrink-0 transition-colors leading-none"
                 aria-label="Close"
                 style={{ lineHeight: '1' }}
               >
@@ -124,7 +124,7 @@ function EnvelopeClickableWrapper() {
         <div onClick={handleScroll}>
           <EnvelopeWithText onAnimationComplete={() => setShowArrow(true)} />
         </div>
-        {/* Click me arrow and text - below envelope, only shown after animation */}
+        {/* Click here arrow and text - below envelope, only shown after animation */}
         {showArrow && (
           <div className="flex flex-col items-center mt-2">
             <div 
@@ -148,7 +148,7 @@ function EnvelopeClickableWrapper() {
               </svg>
             </div>
             <span className="text-white/60 text-xs sm:text-sm md:text-base font-handwritten mt-1">
-              Click Me
+              Click here
             </span>
           </div>
         )}
@@ -198,22 +198,36 @@ export default function Home() {
       </section>
 
       {/* Purpose Transformation - Diamond Branches */}
-      <section className="px-6 pt-24 pb-8 sm:pb-10 md:pb-12 relative z-10">
+      <section id="purpose-transformation" className="px-6 pt-24 pb-8 sm:pb-10 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex justify-center mb-8 px-4 sm:px-0">
+            <div className="flex flex-col items-center mb-2 px-4 sm:px-0">
               <TitleWithBorder padding="px-3 sm:px-6 py-2 sm:py-4">
                 <div className="text-center">
                   <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white">
                     <CharacterPopIn delay={0}>Purpose Transformation</CharacterPopIn>
                   </h2>
-                  <p className="text-white/70 text-xs sm:text-sm md:text-base mt-2 font-sans">
-                    <span className="border-b border-white/50 pb-0.5 inline-block">
-                      Click on the logo of each week to learn more.
-                    </span>
-                  </p>
                 </div>
               </TitleWithBorder>
+              <div className="flex flex-col items-center mt-4">
+                <p className="text-xs sm:text-sm md:text-base font-sans text-center" style={{ color: '#ff6b35' }}>
+                  Click on the logo of each week to learn more.
+                </p>
+                <svg 
+                  width="40" 
+                  height="80" 
+                  viewBox="0 0 24 48" 
+                  fill="none" 
+                  stroke="white" 
+                  strokeWidth="3" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                  className="mt-2 sm:w-10 sm:h-20 md:w-12 md:h-24 arrow-point-down"
+                  style={{ color: 'white' }}
+                >
+                  <path d="M12 0v40M20 32l-8 8-8-8" />
+                </svg>
+              </div>
             </div>
           </RandomScrollReveal>
           <RandomScrollReveal delay={200} randomDelay={true} duration={1.2}>
@@ -241,7 +255,7 @@ export default function Home() {
       </section>
 
       {/* Bonuses Section */}
-      <section className="px-6 pt-12 sm:pt-16 md:pt-20 pb-8 md:pb-12 relative z-10">
+      <section className="px-6 pt-6 sm:pt-8 md:pt-10 pb-4 md:pb-6 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-0 px-4 sm:px-0">
@@ -260,87 +274,14 @@ export default function Home() {
               </TitleWithBorder>
             </div>
           </RandomScrollReveal>
-          <ExpandingLines />
-          {/* Total Value */}
+          <div className="-mt-2 sm:-mt-3 md:-mt-4">
+            <ExpandingLines />
+          </div>
+          {/* Get Started Button */}
           <RandomScrollReveal delay={400} randomDelay={true}>
-            <div className="flex justify-center items-center mt-4 md:-mt-12">
+            <div className="flex flex-col items-center justify-center -mt-2 md:-mt-2">
               <div className="text-center w-full max-w-2xl mx-auto">
-                <p 
-                  className="text-white text-lg sm:text-xl md:text-2xl lg:text-3xl mb-2"
-                  style={{
-                    fontFamily: "'IBM Plex Sans', sans-serif",
-                    textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0.5px 0.5px 0.5px rgba(0,0,0,0.3), -0.5px -0.5px 0.5px rgba(0,0,0,0.3)',
-                    filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
-                    fontWeight: 900,
-                    letterSpacing: '0.02em',
-                    WebkitTextStroke: '0.5px rgba(0,0,0,0.4)',
-                    WebkitTextFillColor: '#ffffff',
-                  }}
-                >
-                  Total Value
-                </p>
-                {/* Value Breakdown */}
-                <div className="mb-4 space-y-2">
-                  <p className="text-white/90 text-base sm:text-lg md:text-xl font-sans font-semibold">
-                    Purpose Transformation: <span className="font-bold text-white">$1,000</span>
-                  </p>
-                  <p className="text-white/80 text-sm sm:text-base md:text-lg font-sans">
-                    Bonuses: <span className="font-bold text-white/90">$1,677</span>
-                  </p>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <span 
-                    className="text-white font-mono text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold inline-block relative"
-                    style={{
-                      fontFamily: "'IBM Plex Mono', monospace",
-                      textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0.5px 0.5px 0.5px rgba(0,0,0,0.3), -0.5px -0.5px 0.5px rgba(0,0,0,0.3)',
-                      filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
-                      WebkitTextStroke: '0.5px rgba(0,0,0,0.4)',
-                      WebkitTextFillColor: '#ffffff',
-                    }}
-                  >
-                    <span style={{ 
-                      position: 'relative',
-                      display: 'inline-block',
-                    }}>
-                      $2,677
-                      {/* Diagonal strikethrough line */}
-                      <span
-                        style={{
-                          position: 'absolute',
-                          left: '0%',
-                          right: '0%',
-                          top: '50%',
-                          height: '0.1em',
-                          backgroundColor: '#d9d7b3',
-                          transform: 'translateY(-50%) rotate(-15deg)',
-                          transformOrigin: 'center',
-                          boxShadow: '0 0 4px rgba(217, 215, 179, 0.6)',
-                          width: '120%',
-                        }}
-                      />
-                    </span>
-                  </span>
-                </div>
-                {/* Downward Arrow */}
-                <div className="flex justify-center mt-8 md:mt-12 mb-2">
-                  <span 
-                    className="inline-block transition-all duration-200"
-                    style={{ 
-                      fontSize: '7rem',
-                      display: 'inline-block',
-                      opacity: 0.8,
-                      color: '#ffffff',
-                      textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4), 0 0 16px rgba(255,255,255,0.3)',
-                      filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
-                      animation: 'arrowBounce 2s ease-in-out infinite',
-                    }}
-                  >
-                    →
-                  </span>
-                </div>
-                {/* Get Started Button */}
-                <div id="purchase" className="flex flex-col items-center justify-center mt-2 md:mt-4 w-full">
+                <div id="purchase" className="flex flex-col items-center justify-center w-full">
                   <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
                     <a
                       href="#purchase"
@@ -433,7 +374,7 @@ export default function Home() {
                     Send us a message
                   </div>
                   <div className="text-white/60 text-xs mt-1 font-sans">
-                    Click me
+                    Click here
                   </div>
                 </a>
               </div>

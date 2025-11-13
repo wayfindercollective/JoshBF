@@ -27,21 +27,23 @@ interface BranchLine {
   endX: number;    // Ending X (branching to the right)
 }
 
-// 7 upward lines starting from left side
-// Adjusted spacing - last three columns spread out more evenly
+// 8 upward lines starting from left side
+// Tighter spacing for columns without subtitles (0-3), more space for columns with subtitles (4-6)
 const upwardLinesDesktop: UpwardLine[] = [
-  { startY: 500, endY: 180 },   // Top
-  { startY: 500, endY: 284 },   // Upper-mid
-  { startY: 500, endY: 388 },   // Mid-upper
-  { startY: 500, endY: 500 },   // Middle
-  { startY: 500, endY: 620 },   // Mid-lower (spread out more)
-  { startY: 500, endY: 740 },   // Lower-mid (spread out more)
-  { startY: 500, endY: 860 },   // Bottom (spread out more)
+  { startY: 500, endY: 120 },   // Top (Purpose Transformation - no subtitle)
+  { startY: 500, endY: 210 },   // Upper-top (Goal Setting Workbook - no subtitle, tighter)
+  { startY: 500, endY: 300 },   // Upper-mid (Instinctive Breathwork - no subtitle, tighter)
+  { startY: 500, endY: 390 },   // Mid-upper (Book On How To Make Progress - same spacing as Goal Setting Workbook)
+  { startY: 500, endY: 510 },   // Middle (The Purpose Paradox - HAS subtitle, more space)
+  { startY: 500, endY: 630 },   // Mid-lower (Set Fail-Resistant Goals - HAS subtitle, more space)
+  { startY: 500, endY: 750 },   // Lower-mid (Get Moving Make It Happen Now - HAS subtitle, more space)
+  { startY: 500, endY: 870 },   // Bottom
 ];
 
 // Increased spacing for mobile - last three columns spread out more evenly
 const upwardLinesMobile: UpwardLine[] = [
-  { startY: 500, endY: 120 },   // Top
+  { startY: 500, endY: 60 },    // Top (new)
+  { startY: 500, endY: 120 },   // Upper-top
   { startY: 500, endY: 246 },   // Upper-mid
   { startY: 500, endY: 373 },   // Mid-upper
   { startY: 500, endY: 500 },   // Middle
@@ -52,6 +54,7 @@ const upwardLinesMobile: UpwardLine[] = [
 
 // Bonus content text for each column - split into title and subtitle
 const bonusTexts: { title: string; subtitle?: string }[] = [
+  { title: "Purpose Transformation" },  // New top column
   { title: "Goal Setting Workbook" },
   { title: "Instinctive Breathwork" },
   { title: "Book On How To Make Progress" },
@@ -62,6 +65,13 @@ const bonusTexts: { title: string; subtitle?: string }[] = [
 
 // Detailed descriptions for each bonus item
 const bonusDescriptions: { title: string; description: string[] }[] = [
+  {
+    title: "Purpose Transformation",
+    description: [
+      "8 weeks of self guided training that moves you from uncertainty to clarity with a simple plan you can apply on your own.",
+      "Self paced and flexible."
+    ]
+  },
   {
     title: "Goal Setting Workbook",
     description: [
@@ -112,6 +122,7 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
 
 // Prices for each bonus item (matching order of bonusTexts)
 const bonusPrices: string[] = [
+  "$1,000", // Purpose Transformation
   "$200",   // Goal Setting Workbook
   "$497",   // Instinctive Breathwork
   "$89",    // How To Make Progress Book (10-minute workbook)
@@ -157,15 +168,15 @@ export default function ExpandingLines() {
   );
   
   // Lines are always fully drawn when visible (no animation)
-  const upwardProgress = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
-  const upwardProgressRight = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
-  const branchProgress = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
-  const branchProgressRight = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
-  const [textVisible, setTextVisible] = useState<boolean[]>(new Array(7).fill(false));
-  const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(7).fill(false)); // Price for each column
+  const upwardProgress = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
+  const upwardProgressRight = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
+  const branchProgress = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
+  const branchProgressRight = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
+  const [textVisible, setTextVisible] = useState<boolean[]>(new Array(8).fill(false));
+  const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(8).fill(false)); // Price for each column
   const [scriptComplete, setScriptComplete] = useState(false); // Track when script animation is complete
   const [verticalLineProgress, setVerticalLineProgress] = useState(0); // Track vertical line animation progress
-  const [popInProgress, setPopInProgress] = useState<number[]>(new Array(7).fill(0)); // Track pop-in animation for each item (0-1)
+  const [popInProgress, setPopInProgress] = useState<number[]>(new Array(8).fill(0)); // Track pop-in animation for each item (0-1)
   const [selectedBonus, setSelectedBonus] = useState<number | null>(null); // Track which bonus is clicked
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
@@ -227,11 +238,11 @@ export default function ExpandingLines() {
           } else {
             // Reset animation when out of view
             setIsVisible(false);
-            setTextVisible(new Array(7).fill(false));
-            setPriceVisible(new Array(7).fill(false));
+            setTextVisible(new Array(8).fill(false));
+            setPriceVisible(new Array(8).fill(false));
             setScriptComplete(false);
             setVerticalLineProgress(0);
-            setPopInProgress(new Array(7).fill(0));
+            setPopInProgress(new Array(8).fill(0));
             // Clear any ongoing animations
             if (animationRef.current) {
               cancelAnimationFrame(animationRef.current);
@@ -268,11 +279,11 @@ export default function ExpandingLines() {
   useEffect(() => {
     if (!isVisible) {
       // Reset all states when not visible
-      setTextVisible(new Array(7).fill(false));
-      setPriceVisible(new Array(7).fill(false));
+      setTextVisible(new Array(8).fill(false));
+      setPriceVisible(new Array(8).fill(false));
       setScriptComplete(false);
       setVerticalLineProgress(0);
-      setPopInProgress(new Array(7).fill(0));
+      setPopInProgress(new Array(8).fill(0));
       return;
     }
 
@@ -324,10 +335,10 @@ export default function ExpandingLines() {
       requestAnimationFrame(animateLine);
     };
 
-    // Pop-in animation: items pop up in order 0, 1, 2, 3, 4, 5
+    // Pop-in animation: items pop up in order 0, 1, 2, 3, 4, 5, 6
     const animatePopIn = () => {
-      // Animate all indices: 0, 1, 2, 3, 4, 5
-      const indices = [0, 1, 2, 3, 4, 5];
+      // Animate all indices: 0, 1, 2, 3, 4, 5, 6 (all bonus items)
+      const indices = [0, 1, 2, 3, 4, 5, 6];
       const delayBetweenItems = 30; // Smooth cascading
       const popDuration = 120; // 120ms for each pop animation - smooth and fast
       
@@ -538,12 +549,22 @@ export default function ExpandingLines() {
   return (
     <React.Fragment>
       {/* Mobile card layout - only visible on mobile */}
-      <div ref={mobileListRef} data-bonus-list="true" className="md:hidden mt-8 mb-12">
+      <div ref={mobileListRef} data-bonus-list="true" className="md:hidden mt-2 mb-12">
         {bonusTexts.map((bonus, index) => (
           <button
             key={`mobile-card-${index}`}
             data-bonus-card="true"
-            onClick={() => setSelectedBonus(index)}
+            onClick={() => {
+              if (index === 0) {
+                // Scroll to Purpose Transformation section
+                const element = document.getElementById('purpose-transformation');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              } else {
+                setSelectedBonus(index);
+              }
+            }}
             style={{
               opacity: isVisible && popInProgress[index] > 0 ? 1 : 0,
               transition: 'opacity 0.3s ease-out',
@@ -551,7 +572,7 @@ export default function ExpandingLines() {
             }}
           >
             <div className="bonus-title">
-              <div className="bonus-title-text">
+              <div className="bonus-title-text" style={{ color: index === 0 ? '#bc4500' : '#ffffff' }}>
                 {bonus.title}
               </div>
               {bonus.subtitle && (
@@ -584,10 +605,53 @@ export default function ExpandingLines() {
             </div>
           </button>
         ))}
+        
+        {/* Total Value for mobile - positioned after last card, centered */}
+        <div 
+          className="md:hidden flex flex-col items-center"
+          style={{
+            opacity: isVisible && popInProgress[bonusTexts.length - 1] > 0 ? 1 : 0,
+            transition: 'opacity 0.3s ease-out',
+          }}
+        >
+          <div className="bonus-title text-center">
+            <div 
+              className="bonus-title-text text-xl sm:text-2xl"
+              style={{ 
+                color: '#ffffff',
+                fontSize: '1.5rem',
+              }}
+            >
+              Total Value
+            </div>
+          </div>
+          <div className="bonus-price text-center">
+            <span style={{ 
+              position: 'relative',
+              display: 'inline-block',
+            }}>
+              $2,677
+              <span
+                style={{
+                  position: 'absolute',
+                  left: '0%',
+                  right: '0%',
+                  top: '50%',
+                  height: '0.1em',
+                  backgroundColor: '#d9d7b3',
+                  transform: 'translateY(-50%) rotate(-15deg)',
+                  transformOrigin: 'center',
+                  boxShadow: '0 0 4px rgba(217, 215, 179, 0.6)',
+                  width: '120%',
+                }}
+              />
+            </span>
+          </div>
+        </div>
       </div>
 
       {/* Desktop layout - hidden on mobile */}
-      <div ref={containerRef} className="bonus-desktop-layout flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] py-8 sm:py-10 md:py-12 px-2 sm:px-4 md:px-6 overflow-x-hidden">
+      <div ref={containerRef} className="bonus-desktop-layout flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[600px] pt-1 sm:pt-2 md:pt-2 pb-4 sm:pb-6 md:pb-8 px-2 sm:px-4 md:px-6 overflow-x-hidden">
         <div className="relative w-full max-w-6xl overflow-x-hidden">
         <svg
           viewBox="0 0 1000 1000"
@@ -866,14 +930,28 @@ export default function ExpandingLines() {
                 }}
               >
                 {/* Text appears on the left side within the column with pop-in animation */}
-                  {bonusTexts[index] && (
+                  {bonusTexts[index] && bonusTexts[index].title && (
                       <button
-                        onClick={() => setSelectedBonus(index)}
+                        onClick={() => {
+                          if (index === 0) {
+                            // Scroll to Purpose Transformation section
+                            const element = document.getElementById('purpose-transformation');
+                            if (element) {
+                              element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                          } else {
+                            setSelectedBonus(index);
+                          }
+                        }}
                         className="text-white text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative"
                         style={{
                           fontFamily: "'IBM Plex Sans', sans-serif",
-                          textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
-                          filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                          textShadow: index === 0 
+                            ? '0 0 8px rgba(188,69,0,0.8), 0 0 12px rgba(188,69,0,0.6), 0 0 16px rgba(188,69,0,0.4)'
+                            : '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
+                          filter: index === 0
+                            ? 'drop-shadow(0 0 4px rgba(188,69,0,0.7))'
+                            : 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
                           fontWeight: 900,
                           letterSpacing: '0.02em',
                           wordBreak: 'break-word',
@@ -889,14 +967,24 @@ export default function ExpandingLines() {
                         }}
                         onMouseEnter={(e) => {
                           const baseScale = 0.3 + popInProgress[index] * 0.7;
-                          e.currentTarget.style.textShadow = '0 0 16px rgba(255,255,255,1), 0 0 24px rgba(99,157,240,0.8), 0 0 32px rgba(99,157,240,0.6)';
-                          e.currentTarget.style.filter = 'drop-shadow(0 0 8px rgba(255,255,255,0.8))';
+                          if (index === 0) {
+                            e.currentTarget.style.textShadow = '0 0 16px rgba(188,69,0,1), 0 0 24px rgba(188,69,0,0.9), 0 0 32px rgba(188,69,0,0.7)';
+                            e.currentTarget.style.filter = 'drop-shadow(0 0 8px rgba(188,69,0,0.9))';
+                          } else {
+                            e.currentTarget.style.textShadow = '0 0 16px rgba(255,255,255,1), 0 0 24px rgba(99,157,240,0.8), 0 0 32px rgba(99,157,240,0.6)';
+                            e.currentTarget.style.filter = 'drop-shadow(0 0 8px rgba(255,255,255,0.8))';
+                          }
                           e.currentTarget.style.transform = `scale(${baseScale * 1.08}) translateY(${(1 - popInProgress[index]) * 20}px)`;
                         }}
                         onMouseLeave={(e) => {
                           const baseScale = 0.3 + popInProgress[index] * 0.7;
-                          e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)';
-                          e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(255,255,255,0.5))';
+                          if (index === 0) {
+                            e.currentTarget.style.textShadow = '0 0 8px rgba(188,69,0,0.8), 0 0 12px rgba(188,69,0,0.6), 0 0 16px rgba(188,69,0,0.4)';
+                            e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(188,69,0,0.7))';
+                          } else {
+                            e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)';
+                            e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(255,255,255,0.5))';
+                          }
                           e.currentTarget.style.transform = `scale(${baseScale}) translateY(${(1 - popInProgress[index]) * 20}px)`;
                         }}
                       >
@@ -907,7 +995,9 @@ export default function ExpandingLines() {
                             style={{ 
                               whiteSpace: 'normal', 
                               wordBreak: 'break-word',
-                              borderBottom: '2px solid rgba(255, 255, 255, 0.3)',
+                              borderBottom: index === 0 
+                                ? '2px solid rgba(188, 69, 0, 0.5)'
+                                : '2px solid rgba(255, 255, 255, 0.3)',
                               paddingBottom: '2px',
                               display: 'inline-block',
                               width: 'fit-content',
@@ -915,13 +1005,17 @@ export default function ExpandingLines() {
                               animation: popInProgress[index] > 0.9 ? 'bonusDesktopTitlePulse 2.5s ease-in-out infinite' : 'none',
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.8)';
+                              e.currentTarget.style.borderBottomColor = index === 0 
+                                ? 'rgba(188, 69, 0, 0.9)'
+                                : 'rgba(255, 255, 255, 0.8)';
                               e.currentTarget.style.borderBottomWidth = '3px';
                               e.currentTarget.style.paddingBottom = '3px';
                               e.currentTarget.style.animation = 'none';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.borderBottomColor = 'rgba(255, 255, 255, 0.3)';
+                              e.currentTarget.style.borderBottomColor = index === 0 
+                                ? 'rgba(188, 69, 0, 0.5)'
+                                : 'rgba(255, 255, 255, 0.3)';
                               e.currentTarget.style.borderBottomWidth = '2px';
                               e.currentTarget.style.paddingBottom = '2px';
                               if (popInProgress[index] > 0.9) {
@@ -929,13 +1023,40 @@ export default function ExpandingLines() {
                               }
                             }}
                           >
-                            {bonusTexts[index].title}
+                            <span style={{ color: index === 0 ? '#bc4500' : 'inherit' }}>
+                              {bonusTexts[index].title}
+                            </span>
                             {/* Click indicator icon with bounce animation */}
                             <span 
                               className="inline-block ml-2 opacity-50 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300"
                               style={{ 
                                 fontSize: '0.7em',
                                 animation: 'bonusArrowBounceDesktop 2s ease-in-out infinite',
+                                color: index === 0 ? '#bc4500' : 'inherit',
+                                textShadow: index === 0 
+                                  ? '0 0 4px rgba(188,69,0,0.8), 0 0 8px rgba(188,69,0,0.6)'
+                                  : '0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(99,157,240,0.4)',
+                                filter: index === 0
+                                  ? 'drop-shadow(0 0 2px rgba(188,69,0,0.7))'
+                                  : 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (index === 0) {
+                                  e.currentTarget.style.textShadow = '0 0 8px rgba(188,69,0,1), 0 0 12px rgba(188,69,0,0.8)';
+                                  e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(188,69,0,0.9))';
+                                } else {
+                                  e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,1), 0 0 12px rgba(99,157,240,0.8)';
+                                  e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(255,255,255,0.8))';
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (index === 0) {
+                                  e.currentTarget.style.textShadow = '0 0 4px rgba(188,69,0,0.8), 0 0 8px rgba(188,69,0,0.6)';
+                                  e.currentTarget.style.filter = 'drop-shadow(0 0 2px rgba(188,69,0,0.7))';
+                                } else {
+                                  e.currentTarget.style.textShadow = '0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(99,157,240,0.4)';
+                                  e.currentTarget.style.filter = 'drop-shadow(0 0 2px rgba(255,255,255,0.5))';
+                                }
                               }}
                             >
                               →
@@ -1040,6 +1161,112 @@ export default function ExpandingLines() {
             );
           })}
         </div>
+
+        {/* Total Value section - positioned below the last column */}
+        <div className="absolute inset-0 pointer-events-none">
+          {(() => {
+            // Find the last column index (Get Moving Make It Happen Now)
+            const lastIndex = bonusTexts.length - 1;
+            if (lastIndex < 0) return null;
+            
+            const branch = branchLines[lastIndex];
+            if (!branch) return null;
+            
+            const currentY = branch.startY;
+            // Position below the last column - use spacing similar to column positioning
+            const prevY = lastIndex > 0 ? branchLines[lastIndex - 1].startY : currentY;
+            const spacing = currentY - prevY;
+            // Position below the last column with extra spacing (1.5x spacing for more distance)
+            const totalValueY = currentY + (spacing * 1.5);
+            const totalValueYPercent = (totalValueY / 1000) * 100;
+            
+            // Position on the left side, aligned with other titles
+            const columnLeftX = isMobile 
+              ? LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.1)
+              : LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.2);
+            
+            // Position price on the right side, aligned with other prices
+            const verticalLineX = CENTER_X + 170;
+            const priceCenterX = (verticalLineX + RIGHT_POSITION) / 2;
+            
+            return (
+              <>
+                {/* Total Value Title */}
+                <div
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: `${(columnLeftX / 1000) * 100}%`,
+                    top: `${totalValueYPercent}%`,
+                    transform: 'translate(0%, -50%)',
+                    opacity: popInProgress[lastIndex] > 0 ? 1 : 0,
+                    transition: 'opacity 0.3s ease-out',
+                    width: 'max-content',
+                    maxWidth: isMobile ? 'calc(100vw - 2rem)' : '320px',
+                  }}
+                >
+                  <p 
+                    className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl"
+                    style={{
+                      fontFamily: "'IBM Plex Sans', sans-serif",
+                      textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
+                      filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                      fontWeight: 900,
+                      letterSpacing: '0.02em',
+                    }}
+                  >
+                    Total Value
+                  </p>
+                </div>
+                
+                {/* Total Value Price */}
+                <div
+                  className="absolute pointer-events-auto"
+                  style={{
+                    left: `${(priceCenterX / 1000) * 100}%`,
+                    top: `${totalValueYPercent}%`,
+                    transform: 'translate(-50%, -50%)',
+                    opacity: popInProgress[lastIndex] > 0 ? 1 : 0,
+                    transition: 'opacity 0.3s ease-out',
+                  }}
+                >
+                  <span
+                    className="text-white font-mono text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap"
+                    style={{
+                      fontFamily: "'IBM Plex Mono', monospace",
+                      textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
+                      filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                      opacity: popInProgress[lastIndex] > 0 ? 1 : 0,
+                      transform: `scale(${0.3 + popInProgress[lastIndex] * 0.7}) translateY(${(1 - popInProgress[lastIndex]) * 20}px)`,
+                      transition: popInProgress[lastIndex] === 0 ? 'none' : 'transform 0.1s ease-out',
+                    }}
+                  >
+                    <span style={{ 
+                      position: 'relative',
+                      display: 'inline-block',
+                    }}>
+                      $2,677
+                      {/* Diagonal strikethrough line */}
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: '0%',
+                          right: '0%',
+                          top: '50%',
+                          height: '0.1em',
+                          backgroundColor: '#d9d7b3',
+                          transform: 'translateY(-50%) rotate(-15deg)',
+                          transformOrigin: 'center',
+                          boxShadow: '0 0 4px rgba(217, 215, 179, 0.6)',
+                          width: '120%',
+                        }}
+                      />
+                    </span>
+                  </span>
+                </div>
+              </>
+            );
+          })()}
+        </div>
       </div>
       </div>
 
@@ -1072,7 +1299,7 @@ export default function ExpandingLines() {
                </h3>
               <button
                 onClick={() => setSelectedBonus(null)}
-                className="text-white/50 hover:text-white/80 text-3xl font-light flex-shrink-0 transition-colors leading-none"
+                className="text-white/50 hover:text-white/80 text-6xl font-light flex-shrink-0 transition-colors leading-none"
                 aria-label="Close"
                 style={{ lineHeight: '1' }}
               >

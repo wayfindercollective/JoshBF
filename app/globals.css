@@ -763,6 +763,11 @@
     animation: bonusTitlePulse 2.5s ease-in-out infinite;
   }
 
+  /* Orange-red glow for Purpose Transformation (first card) base state */
+  [data-bonus-card]:first-child .bonus-title-text {
+    text-shadow: 0 0 8px rgba(188,69,0,0.8), 0 0 12px rgba(188,69,0,0.6), 0 0 16px rgba(188,69,0,0.4);
+  }
+
   /* Pulsating expansion animation for title text */
   @keyframes bonusTitlePulse {
     0%, 100% {
@@ -778,6 +783,17 @@
   [data-bonus-card]:focus .bonus-title-text {
     animation: none;
     transform: scale(1.05);
+  }
+
+  /* Orange-red glow for Purpose Transformation (first card) */
+  [data-bonus-card]:first-child:hover .bonus-title-text,
+  [data-bonus-card]:first-child:focus .bonus-title-text {
+    text-shadow: 0 0 12px rgba(188,69,0,1), 0 0 18px rgba(188,69,0,0.8), 0 0 24px rgba(188,69,0,0.6);
+  }
+
+  /* White glow for other cards */
+  [data-bonus-card]:not(:first-child):hover .bonus-title-text,
+  [data-bonus-card]:not(:first-child):focus .bonus-title-text {
     text-shadow: 0 0 12px rgba(255,255,255,0.9), 0 0 18px rgba(99,157,240,0.7), 0 0 24px rgba(99,157,240,0.5);
     color: #ffffff;
   }
@@ -808,6 +824,15 @@
     opacity: 0.5;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     animation: bonusArrowBounce 2s ease-in-out infinite;
+    text-shadow: 0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(99,157,240,0.4);
+    filter: drop-shadow(0 0 2px rgba(255,255,255,0.5));
+  }
+
+  /* Orange-red glow for Purpose Transformation arrow (first card) */
+  [data-bonus-card]:first-child .bonus-title-text::after {
+    color: #bc4500;
+    text-shadow: 0 0 4px rgba(188,69,0,0.8), 0 0 8px rgba(188,69,0,0.6);
+    filter: drop-shadow(0 0 2px rgba(188,69,0,0.7));
   }
 
   [data-bonus-card]:hover .bonus-title-text::after,
@@ -815,6 +840,20 @@
     opacity: 1;
     transform: translateX(4px);
     animation: none;
+  }
+
+  /* Enhanced orange-red glow on hover for Purpose Transformation arrow */
+  [data-bonus-card]:first-child:hover .bonus-title-text::after,
+  [data-bonus-card]:first-child:focus .bonus-title-text::after {
+    text-shadow: 0 0 8px rgba(188,69,0,1), 0 0 12px rgba(188,69,0,0.8);
+    filter: drop-shadow(0 0 4px rgba(188,69,0,0.9));
+  }
+
+  /* White glow on hover for other cards */
+  [data-bonus-card]:not(:first-child):hover .bonus-title-text::after,
+  [data-bonus-card]:not(:first-child):focus .bonus-title-text::after {
+    text-shadow: 0 0 8px rgba(255,255,255,1), 0 0 12px rgba(99,157,240,0.8);
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.8));
   }
 
   [data-bonus-card] .bonus-subtitle {
@@ -934,6 +973,23 @@
 
   .purpose-transformation-title-pulse:hover {
     animation: none;
+  }
+
+  /* Arrow pointing down animation */
+  @keyframes arrowPointDown {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(12px) scale(1.1);
+      opacity: 0.9;
+    }
+  }
+
+  .arrow-point-down {
+    animation: arrowPointDown 1.2s ease-in-out infinite;
+    transform-origin: center top;
   }
 }
 

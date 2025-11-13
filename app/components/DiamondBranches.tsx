@@ -422,7 +422,7 @@ export default function DiamondBranches() {
                </div>
               <button
                 onClick={() => setClickedWeekIndex(null)}
-                className="text-white/50 hover:text-white/80 text-3xl font-light flex-shrink-0 transition-colors leading-none"
+                className="text-white/50 hover:text-white/80 text-6xl font-light flex-shrink-0 transition-colors leading-none"
                 aria-label="Close"
                 style={{ lineHeight: '1' }}
               >
