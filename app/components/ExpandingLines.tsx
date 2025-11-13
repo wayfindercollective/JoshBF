@@ -881,53 +881,6 @@ export default function ExpandingLines() {
             );
           })()}
 
-<<<<<<< HEAD
-          {/* Hand-drawn arrow pointing at Purpose Transformation row */}
-          {isVisible && scriptComplete && popInProgress[0] > 0 && (() => {
-            // Purpose Transformation row is at index 0
-            const purposeTransformationY = upwardLines[0].endY; // Y position of the first row (200 for desktop, 60 for mobile)
-            
-            // Arrow starts from the right side and points left toward the row
-            const arrowStartX = RIGHT_POSITION + 40; // Start a bit to the right of the table
-            const arrowEndX = CENTER_X + 50; // Point toward the center-left area near the text
-            const arrowY = purposeTransformationY; // Point at the Purpose Transformation row
-            
-            // Hand-drawn style: slightly wobbly curved path
-            const midX = (arrowStartX + arrowEndX) / 2;
-            const wobble = 3; // Small wobble for hand-drawn effect
-            
-            return (
-              <g 
-                opacity={popInProgress[0] > 0.5 ? popInProgress[0] : 0}
-                style={{
-                  transition: 'opacity 0.5s ease-out',
-                  filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.4))',
-                }}
-              >
-                {/* Arrow shaft with slight wobble for hand-drawn effect */}
-                <path
-                  d={`M ${arrowStartX} ${arrowY} Q ${midX + wobble} ${arrowY - 2} ${arrowEndX} ${arrowY}`}
-                  stroke="#ffffff"
-                  strokeWidth="2.5"
-                  strokeOpacity="0.7"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{
-                    filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.3))',
-                  }}
-                />
-                {/* Arrowhead - hand-drawn style */}
-                <path
-                  d={`M ${arrowEndX} ${arrowY} L ${arrowEndX - 12} ${arrowY - 6} M ${arrowEndX} ${arrowY} L ${arrowEndX - 12} ${arrowY + 6}`}
-                  stroke="#ffffff"
-                  strokeWidth="2.5"
-                  strokeOpacity="0.7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  style={{
-                    filter: 'drop-shadow(0 0 3px rgba(255,255,255,0.3))',
-=======
           {/* Curved arrow from Bonuses box to Purpose Transformation row */}
           {isVisible && scriptComplete && popInProgress[0] > 0 && (() => {
             // Calculate positions for the arrow
@@ -994,7 +947,6 @@ export default function ExpandingLines() {
                     filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
                     opacity: popInProgress[0] > 0 ? 1 : 0,
                     transition: 'opacity 0.3s ease-out',
->>>>>>> dev
                   }}
                 />
               </g>
