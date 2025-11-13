@@ -100,9 +100,10 @@ function EnvelopeClickableWrapper() {
   const [showArrow, setShowArrow] = useState(false);
 
   const handleScroll = () => {
-    const element = document.getElementById('purchase');
+    const element = document.getElementById('bonuses');
     if (element) {
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      // Center the Bonuses section in the viewport
       const offsetPosition = elementPosition - (window.innerHeight / 2) + (element.offsetHeight / 2);
       window.scrollTo({
         top: offsetPosition,
@@ -114,7 +115,7 @@ function EnvelopeClickableWrapper() {
   return (
     <div className="text-xl md:text-2xl mb-12 text-white/90 flex flex-col items-center justify-center mt-20 md:mt-24">
       <a 
-        href="#purchase"
+        href="#bonuses"
         className="cursor-pointer hover:opacity-80 transition-opacity flex flex-col items-center"
         onClick={(e) => {
           e.preventDefault();
@@ -255,7 +256,7 @@ export default function Home() {
       </section>
 
       {/* Bonuses Section */}
-      <section className="px-6 pt-6 sm:pt-8 md:pt-10 pb-4 md:pb-6 relative z-10">
+      <section id="bonuses" className="px-6 pt-6 sm:pt-8 md:pt-10 pb-4 md:pb-6 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-0 px-4 sm:px-0">
