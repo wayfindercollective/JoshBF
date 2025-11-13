@@ -514,15 +514,13 @@ export default function DiamondBranches() {
                       const scaleFactor = isMobile ? 1.3 : 1.0;
                       const logoRadius = isMobile ? 78 : 60;
                       const baseTextDistance = week.distance + logoRadius + (40 * scaleFactor);
-                      const textDistance = week.angle === 180 ? baseTextDistance - (20 * scaleFactor) : baseTextDistance;
+                      // Week 3 and Week 7 positioned closer to logo
+                      const textDistance = (week.angle === 0 || week.angle === 180) 
+                        ? baseTextDistance - (65 * scaleFactor) 
+                        : baseTextDistance;
                       const textRad = (week.angle * Math.PI) / 180;
                       let textX = 500 + Math.cos(textRad) * textDistance;
                       const textY = 500 + Math.sin(textRad) * textDistance;
-                      
-                      // Move Week 7 text to the left to avoid logo overlap
-                      if (week.angle === 180) {
-                        textX -= (20 * scaleFactor);
-                      }
                       
                       // Determine text rotation based on angle
                       let textAngle = 0;
@@ -532,8 +530,8 @@ export default function DiamondBranches() {
                       } else if (week.angle === 45 || week.angle === 225) {
                         textAngle = -45;
                       } else if (week.angle === 180) {
-                        // Week Seven - left side, use "middle" anchor to center the text
-                        textAnchor = "middle";
+                        // Week Seven - left side, use "end" anchor to mirror Week 3's "start" anchor
+                        textAnchor = "end";
                       } else if (week.angle === 0) {
                         // Week Three - right side, use "start" anchor
                         textAnchor = "start";
@@ -555,7 +553,9 @@ export default function DiamondBranches() {
                             x={textX}
                             y={textY}
                             fill="#ffffff"
-                            fontSize={isMobile ? "37.44" : "28.8"}
+                            fontSize={week.angle === 180 
+                              ? (isMobile ? "31.8" : "24.5") 
+                              : (isMobile ? "37.44" : "28.8")}
                             fontWeight="bold"
                             textAnchor={textAnchor}
                             className="font-heading"
@@ -568,7 +568,9 @@ export default function DiamondBranches() {
                             }}
                           >
                             <tspan x={textX} dy="0">{getWeekNumber(index)}</tspan>
-                            <tspan x={textX} dy={isMobile ? "44.2" : "34"}>{week.label}</tspan>
+                            <tspan x={textX} dy={week.angle === 180 
+                              ? (isMobile ? "37.6" : "28.9") 
+                              : (isMobile ? "44.2" : "34")}>{week.label}</tspan>
                           </text>
                         </g>
                       );

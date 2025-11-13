@@ -46,7 +46,7 @@ export default function TitleWithBorder({
             const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
             
             // Use the actual text width, add padding, and minimal buffer
-            const borderBuffer = 2; // Smaller buffer on mobile for tighter fit
+            const borderBuffer = 1; // Minimal buffer for tight wrapping
             const textWidth = Math.max(textRect.width, textScrollWidth);
             const width = textWidth + paddingLeft + paddingRight + borderBuffer;
             const height = Math.max(textElement.scrollHeight, textElement.clientHeight) + paddingTop + paddingBottom + borderBuffer;
@@ -76,7 +76,7 @@ export default function TitleWithBorder({
         
         // Use scrollWidth/scrollHeight to ensure we capture all content including subtext
         // Add a small buffer to ensure border doesn't overlap text
-        const borderBuffer = 4; // Extra space to prevent border overlap
+        const borderBuffer = 1; // Minimal buffer for tight wrapping
         const maxWidth = Math.min(window.innerWidth - 48, 1200); // Account for padding and max content width
         const calculatedWidth = Math.max(rect.width, scrollWidth) + borderBuffer;
         const width = Math.min(calculatedWidth, maxWidth);
@@ -189,7 +189,7 @@ export default function TitleWithBorder({
           const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
           const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
           
-          const borderBuffer = 2;
+          const borderBuffer = 1;
           const textWidth = Math.max(textRect.width, textScrollWidth);
           const width = textWidth + paddingLeft + paddingRight + borderBuffer;
           const height = Math.max(textElement.scrollHeight, textElement.clientHeight) + paddingTop + paddingBottom + borderBuffer;
@@ -206,7 +206,7 @@ export default function TitleWithBorder({
       const scrollWidth = contentRef.current.scrollWidth;
       const scrollHeight = contentRef.current.scrollHeight;
       
-      const borderBuffer = 4;
+      const borderBuffer = 1;
       const width = Math.max(rect.width, scrollWidth) + borderBuffer;
       const height = Math.max(rect.height, scrollHeight) + borderBuffer;
       
