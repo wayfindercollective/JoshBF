@@ -1094,6 +1094,7 @@ export default function ExpandingLines() {
                               }
                             }}
                           >
+                            {/* Special formatting for Book On How To Make Progress title */}
                             {index === 3 ? (
                               <>
                                 <span style={{ color: 'inherit', display: 'block' }}>
