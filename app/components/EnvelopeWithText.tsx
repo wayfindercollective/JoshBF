@@ -14,6 +14,19 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
   const [isScrambling, setIsScrambling] = useState(false);
   const [displayText, setDisplayText] = useState('');
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Generate random scrambled text
   const generateScrambled = useCallback(() => {
@@ -73,12 +86,13 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
 
   return (
     <div 
-      className="block relative cursor-pointer mx-auto"
+      className="block relative cursor-pointer mx-auto w-full"
     >
-      {/* Envelope SVG - More detailed */}
-      <div className="relative inline-block w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36">
-        {/* Envelope base SVG */}
-        <svg
+      {/* Envelope SVG - More detailed - hide completely when animation complete */}
+      {!animationComplete && (
+        <div className="relative inline-block w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36">
+          {/* Envelope base SVG */}
+          <svg
           width="100%"
           height="100%"
           viewBox="0 0 320 140"
@@ -211,31 +225,42 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
             <ellipse cx="157" cy="62" rx="2" ry="1.5" fill="rgba(255, 255, 255, 0.4)" />
           </g>
         </svg>
+        </div>
+      )}
 
-        {/* Text - emerges from envelope with dramatic animation */}
+      {/* Text - emerges from envelope with dramatic animation */}
         <div
-          className={`absolute left-1/2 whitespace-nowrap ${
+          className={`absolute ${isMobile ? 'left-1/2 right-auto' : 'left-1/2'} ${isMobile ? 'whitespace-normal' : 'whitespace-nowrap'} ${
             isHovered 
               ? 'opacity-100' 
               : 'opacity-0'
           }`}
           style={{
-            top: 'clamp(56px, 18vw, 70px)', // Responsive top position
-            transform: isHovered ? 'translate(-50%, -140px) scale(1.25)' : 'translate(-50%, -20px) scale(0.5)',
+            top: isMobile ? 'clamp(40px, 12vw, 60px)' : 'clamp(56px, 18vw, 70px)', // Responsive top position
+            transform: isHovered 
+              ? `translate(-50%, ${isMobile ? '-100px' : '-140px'}) scale(${isMobile ? '1.0' : '1.25'})` 
+              : 'translate(-50%, -20px) scale(0.5)',
             transition: isHovered ? 'opacity 0.4s ease-out 0.3s, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s' : 'opacity 0.3s ease-out, transform 0.3s ease-out',
+            width: isMobile ? 'min(calc(100vw - 2rem), 320px)' : 'auto',
+            maxWidth: isMobile ? 'min(calc(100vw - 2rem), 320px)' : 'none',
           }}
         >
-          <div className="relative inline-block" style={{ overflow: 'visible' }}>
+          <div className="relative" style={{ overflow: 'visible', width: '100%', textAlign: 'center' }}>
             <span 
-              className={`font-handwritten font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl relative overflow-hidden inline-block blueprint-text ${animationComplete ? 'blueprint-text-shine' : ''}`}
+              className={`font-handwritten font-bold text-white ${isMobile ? 'text-lg' : 'text-2xl'} sm:text-xl md:text-xl lg:text-2xl relative overflow-visible inline-block blueprint-text ${animationComplete && !isMobile ? 'blueprint-text-shine' : ''}`}
               style={{
                 animation: isHovered ? 'textPopIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards, textPulse 2s ease-in-out 1.1s infinite' : 'none',
-                padding: 'clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px)',
+                padding: isMobile ? 'clamp(8px, 2vw, 12px) clamp(14px, 3.5vw, 22px)' : 'clamp(8px, 2vw, 12px) clamp(16px, 4vw, 24px)',
                 position: 'relative',
                 filter: animationComplete
                   ? 'drop-shadow(0 0 6px rgba(188,69,0,0.8))'
                   : 'none',
                 transition: 'filter 0.3s ease',
+                display: 'inline-block',
+                textAlign: 'center',
+                wordBreak: isMobile ? 'break-word' : 'normal',
+                whiteSpace: isMobile ? 'normal' : 'nowrap',
+                maxWidth: '100%',
               }}
             >
               {/* Blueprint grid pattern overlay */}
@@ -268,6 +293,7 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
                 }}
               >
                 <span
+                  className="mobile-text-shift-left"
                   style={{
                     color: animationComplete ? (isHoveringText ? '#ff6b35' : '#ff6b35') : '#bc4500', // Brighter orange once animation completes
                     filter: animationComplete
@@ -288,7 +314,7 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
                   {displayText || ACTUAL_TEXT}
                 </span>
               </span>
-              {isHovered && (
+              {isHovered && !isMobile && (
                 <span 
                   className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-red/20 to-transparent pointer-events-none"
                   style={{
@@ -299,7 +325,6 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
             </span>
           </div>
         </div>
-      </div>
     </div>
   );
 }
