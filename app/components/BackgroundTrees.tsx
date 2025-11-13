@@ -35,8 +35,6 @@ export default function BackgroundTrees() {
               width: `${treeSizeMobile}px`, 
               height: `${treeSizeMobile}px`,
             }}
-            // Use CSS classes for responsive sizing
-            // Tailwind will handle the responsive breakpoints
           >
             <Image
               src="/Tree of life.png"
@@ -46,7 +44,13 @@ export default function BackgroundTrees() {
               className="drop-shadow-sm tree-image w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24"
               style={{ objectFit: 'contain' }}
             />
-            <div className="tree-brightness-overlay"></div>
+            <div 
+              className="tree-brightness-overlay"
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+            />
           </div>
         </div>
       ))}

@@ -177,10 +177,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/Tree of life.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
   mix-blend-mode: screen;
   pointer-events: none;
   z-index: 2;
