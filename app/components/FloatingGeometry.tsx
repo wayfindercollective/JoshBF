@@ -332,31 +332,26 @@ export default function FloatingGeometry() {
         if (shape.x < -shape.size) shape.x = canvas.width + shape.size;
         if (shape.x > canvas.width + shape.size) shape.x = -shape.size;
 
-        // Draw all shapes relative to scroll position (with buffer for smooth scrolling)
-        const viewportTop = scrollY - viewportHeight;
-        const viewportBottom = scrollY + viewportHeight * 2;
+        // Draw shape relative to scroll position
+        const drawY = shape.y - scrollY;
         
-        if (shape.y >= viewportTop && shape.y <= viewportBottom) {
-          // Draw shape relative to scroll position
-          const drawY = shape.y - scrollY;
-          
-          // Only draw if in visible viewport
-          if (drawY >= -viewportHeight && drawY <= viewportHeight * 2) {
-            // Draw shape
-            switch (shape.type) {
-              case 'triangle':
-                drawTriangle({ ...shape, y: drawY });
-                break;
-              case 'square':
-                drawSquare({ ...shape, y: drawY });
-                break;
-              case 'circle':
-                drawCircle({ ...shape, y: drawY });
-                break;
-              case 'line':
-                drawLine({ ...shape, y: drawY });
-                break;
-            }
+        // Draw if shape is within viewport buffer (one viewport above and two below)
+        // This ensures smooth animation even when scrolling
+        if (drawY >= -viewportHeight && drawY <= viewportHeight * 2) {
+          // Draw shape
+          switch (shape.type) {
+            case 'triangle':
+              drawTriangle({ ...shape, y: drawY });
+              break;
+            case 'square':
+              drawSquare({ ...shape, y: drawY });
+              break;
+            case 'circle':
+              drawCircle({ ...shape, y: drawY });
+              break;
+            case 'line':
+              drawLine({ ...shape, y: drawY });
+              break;
           }
         }
       });
