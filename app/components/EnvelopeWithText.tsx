@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-const ACTUAL_TEXT = 'Purpose Transformation Blueprint';
+const ACTUAL_TEXT = 'Purpose Transformation Blueprint'; // Animation removed
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
 
 interface EnvelopeWithTextProps {
