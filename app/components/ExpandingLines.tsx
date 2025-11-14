@@ -302,9 +302,9 @@ export default function ExpandingLines() {
       setScriptComplete(true);
       
       // Start pop-in animation immediately
-      setTimeout(() => {
-        animatePopIn();
-      }, 50); // Small delay before pop-in
+          setTimeout(() => {
+            animatePopIn();
+          }, 50); // Small delay before pop-in
     };
 
     // Pop-in animation: items pop up in order 0, 1, 2, 3, 4, 5, 6
