@@ -1,4 +1,4 @@
-"use client"; // TypeScript fix deployed - commit 0e3c738
+"use client"; // Line connection fixes deployed
 
 import React, { useState, useEffect, useRef, useMemo, useCallback, startTransition } from "react";
 import Image from "next/image";
@@ -175,7 +175,6 @@ export default function ExpandingLines() {
   const [textVisible, setTextVisible] = useState<boolean[]>(new Array(8).fill(false));
   const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(8).fill(false)); // Price for each column
   const [scriptComplete, setScriptComplete] = useState(false); // Track when script animation is complete
-  const [verticalLineProgress, setVerticalLineProgress] = useState(0); // Track vertical line animation progress
   const [popInProgress, setPopInProgress] = useState<number[]>(new Array(8).fill(0)); // Track pop-in animation for each item (0-1)
   const [selectedBonus, setSelectedBonus] = useState<number | null>(null); // Track which bonus is clicked
   const containerRef = useRef<HTMLDivElement>(null);
@@ -241,7 +240,6 @@ export default function ExpandingLines() {
             setTextVisible(new Array(8).fill(false));
             setPriceVisible(new Array(8).fill(false));
             setScriptComplete(false);
-            setVerticalLineProgress(0);
             setPopInProgress(new Array(8).fill(0));
             // Clear any ongoing animations
             if (animationRef.current) {
@@ -275,14 +273,13 @@ export default function ExpandingLines() {
     };
   }, []);
 
-  // Animation sequence: lines appear instantly, then vertical line and pop-in
+  // Animation sequence: lines appear instantly, then pop-in
   useEffect(() => {
     if (!isVisible) {
       // Reset all states when not visible
       setTextVisible(new Array(8).fill(false));
       setPriceVisible(new Array(8).fill(false));
       setScriptComplete(false);
-      setVerticalLineProgress(0);
       setPopInProgress(new Array(8).fill(0));
       return;
     }
@@ -299,40 +296,15 @@ export default function ExpandingLines() {
     // Reset throttle timer for smooth animation start
     lastUpdateTime.current = performance.now();
 
-    // Lines appear instantly, then animate vertical line and pop-in
+    // Lines appear instantly, then start pop-in animation
     const startAnimations = () => {
       // Mark script as complete immediately (lines are already visible)
       setScriptComplete(true);
       
-      // Animate vertical line from top to bottom
-      const startTime = performance.now();
-      const duration = 200; // Smooth vertical line animation
-      
-      const animateLine = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = 1 - Math.pow(1 - progress, 2); // Smooth ease-out
-        
-        // Throttle updates to prevent excessive re-renders
-        if (currentTime - lastUpdateTime.current >= updateThrottle || progress >= 1) {
-          lastUpdateTime.current = currentTime;
-          
-          // Use startTransition for non-blocking state update
-          startTransition(() => {
-            setVerticalLineProgress(easedProgress);
-          });
-        }
-        
-        if (progress < 1) {
-          requestAnimationFrame(animateLine);
-        } else {
-          // After vertical line completes, start pop-in animation
-          setTimeout(() => {
-            animatePopIn();
-          }, 50); // Small delay before pop-in
-        }
-      };
-      requestAnimationFrame(animateLine);
+      // Start pop-in animation immediately
+      setTimeout(() => {
+        animatePopIn();
+      }, 50); // Small delay before pop-in
     };
 
     // Pop-in animation: items pop up in order 0, 1, 2, 3, 4, 5, 6
@@ -849,37 +821,6 @@ export default function ExpandingLines() {
             );
           })}
 
-          {/* Distinctive vertical line to the left of prices - only show after script is complete */}
-          {isVisible && scriptComplete && (() => {
-            // Position vertical line just to the left of prices
-            // Prices are at CENTER_X (500) + 200px offset, so line should be at ~500 + 170px
-            const verticalLineX = CENTER_X + 170; // Just to the left of prices, moved more to the right
-            
-            // Calculate top and bottom Y positions based on branch lines (not exceeding outer lines)
-            // Use the Y positions of the branch lines (which are at upwardLines.endY)
-            const branchYPositions = upwardLines.map(line => line.endY);
-            const topY = Math.min(...branchYPositions); // Topmost branch line
-            const bottomY = Math.max(...branchYPositions); // Bottommost branch line
-            
-            // Animate line from top to bottom
-            const currentBottomY = topY + (bottomY - topY) * verticalLineProgress;
-            
-            return (
-              <line
-                x1={verticalLineX}
-                y1={topY}
-                x2={verticalLineX}
-                y2={currentBottomY}
-                stroke="#ffffff"
-                strokeWidth="2"
-                strokeOpacity={verticalLineProgress > 0 ? 0.6 : 0}
-                className="transition-opacity duration-300"
-              style={{
-                  filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
-              }}
-            />
-            );
-          })()}
 
           {/* Curved arrow from Bonuses box to Purpose Transformation row */}
           {isVisible && scriptComplete && popInProgress[0] > 0 && (() => {
@@ -894,7 +835,7 @@ export default function ExpandingLines() {
               : LEFT_POSITION + ((CENTER_X - LEFT_POSITION) * 0.2);
             const currentY = branchLines[0].startY;
             const nextY = branchLines[1].startY;
-            const columnCenterY = currentY + ((nextY - currentY) * 0.25); // Use same calculation as text positioning (0.25 for first row)
+            const columnCenterY = currentY + ((nextY - currentY) * 0.45);
             
             // End point is well to the left of the column (outside the column structure)
             // LEFT_POSITION is 180, so we want to stay well to the left of that
@@ -918,11 +859,8 @@ export default function ExpandingLines() {
             const targetY = columnCenterY;
             const arrowAngle = Math.atan2(targetY - endY, targetX - endX);
             
-            // Only show arrow if popInProgress[0] is greater than 0
-            const arrowOpacity = popInProgress[0] > 0 ? 1 : 0;
-            
             return (
-              <g style={{ opacity: arrowOpacity, transition: 'opacity 0.3s ease-out' }}>
+              <g>
                 {/* Curved arrow path */}
                 <path
                   d={`M ${startX} ${startY} C ${controlX1} ${controlY1}, ${controlX2} ${controlY2}, ${endX} ${endY}`}
@@ -933,11 +871,13 @@ export default function ExpandingLines() {
                   strokeLinecap="round"
                   style={{
                     filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
+                    opacity: popInProgress[0] > 0 ? 1 : 0,
+                    transition: 'opacity 0.3s ease-out',
                   }}
                 />
                 {/* Arrow head - pointing toward Purpose Transformation */}
                 <path
-                  d={`M ${endX + 3} ${endY} L ${endX + 3 - arrowSize * Math.cos(arrowAngle - Math.PI / 6)} ${endY - arrowSize * Math.sin(arrowAngle - Math.PI / 6)} M ${endX + 3} ${endY} L ${endX + 3 - arrowSize * Math.cos(arrowAngle + Math.PI / 6)} ${endY - arrowSize * Math.sin(arrowAngle + Math.PI / 6)}`}
+                  d={`M ${endX + 3} ${endY - 1.5} L ${endX + 3 - arrowSize * Math.cos(arrowAngle - Math.PI / 6)} ${endY - 1.5 - arrowSize * Math.sin(arrowAngle - Math.PI / 6)} M ${endX + 3} ${endY - 1.5} L ${endX + 3 - arrowSize * Math.cos(arrowAngle + Math.PI / 6)} ${endY - 1.5 - arrowSize * Math.sin(arrowAngle + Math.PI / 6)}`}
                   stroke="#ffffff"
                   strokeWidth="2.5"
                   strokeOpacity="0.8"
@@ -946,6 +886,8 @@ export default function ExpandingLines() {
                   fill="none"
                   style={{
                     filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
+                    opacity: popInProgress[0] > 0 ? 1 : 0,
+                    transition: 'opacity 0.3s ease-out',
                   }}
                 />
               </g>
@@ -1094,13 +1036,12 @@ export default function ExpandingLines() {
                               }
                             }}
                           >
-                            {/* Special formatting for Book On How To Make Progress title */}
                             {index === 3 ? (
                               <>
-                                <span style={{ color: 'inherit', display: 'block' }}>
+                                <span style={{ color: index === 0 ? '#bc4500' : 'inherit', display: 'block' }}>
                                   Book On How To Make
                                 </span>
-                                <span style={{ color: 'inherit', display: 'inline-block', verticalAlign: 'baseline' }}>
+                                <span style={{ color: index === 0 ? '#bc4500' : 'inherit', display: 'inline-block', verticalAlign: 'baseline' }}>
                                   Progress
                                 </span>
                               </>

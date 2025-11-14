@@ -102,53 +102,44 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
           className="transition-all duration-300"
           preserveAspectRatio="xMidYMid meet"
         >
-          {/* Envelope back/base - main body - hide bottom part when animation complete */}
+          {/* Envelope back/base - main body */}
           <path
-            d={animationComplete ? "M20 35 L160 95 L300 35 Z" : "M20 35 L160 95 L300 35 L300 125 L20 125 Z"}
+            d="M20 35 L160 95 L300 35 L300 125 L20 125 Z"
             fill="rgba(255, 255, 255, 0.1)"
             stroke="white"
             strokeWidth="2"
-            style={{
-              transition: 'd 0.5s ease-out',
-            }}
           />
           
-          {/* Left side fold detail - hide bottom part when animation complete */}
-          {!animationComplete && (
-            <path
-              d="M20 35 L20 125"
-              stroke="white"
-              strokeWidth="2"
-              opacity="0.7"
-            />
-          )}
-          
-          {/* Right side fold detail - hide bottom part when animation complete */}
-          {!animationComplete && (
-            <path
-              d="M300 35 L300 125"
-              stroke="white"
-              strokeWidth="2"
-              opacity="0.7"
-            />
-          )}
-          
-          {/* Bottom fold line - hide when animation complete */}
-          {!animationComplete && (
-            <line
-              x1="20"
-              y1="125"
-              x2="300"
-              y2="125"
-              stroke="white"
-              strokeWidth="2"
-              opacity="0.7"
-            />
-          )}
-          
-          {/* Envelope front outline - hide bottom part when animation complete */}
+          {/* Left side fold detail */}
           <path
-            d={animationComplete ? "M20 35 L160 95 L300 35 Z" : "M20 35 L160 95 L300 35 L300 125 L20 125 Z"}
+            d="M20 35 L20 125"
+            stroke="white"
+            strokeWidth="2"
+            opacity="0.7"
+          />
+          
+          {/* Right side fold detail */}
+          <path
+            d="M300 35 L300 125"
+            stroke="white"
+            strokeWidth="2"
+            opacity="0.7"
+          />
+          
+          {/* Bottom fold line */}
+          <line
+            x1="20"
+            y1="125"
+            x2="300"
+            y2="125"
+            stroke="white"
+            strokeWidth="2"
+            opacity="0.7"
+          />
+          
+          {/* Envelope front outline */}
+          <path
+            d="M20 35 L160 95 L300 35 L300 125 L20 125 Z"
             fill="none"
             stroke={animationComplete ? "rgba(255,255,255,1)" : "white"}
             strokeWidth={animationComplete ? "2.5" : "2"}
@@ -157,7 +148,7 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
               filter: animationComplete 
                 ? 'drop-shadow(0 0 8px rgba(255,255,255,0.9)) brightness(1.15)'
                 : 'none',
-              transition: 'filter 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease, d 0.5s ease-out',
+              transition: 'filter 0.3s ease, stroke-width 0.3s ease, stroke 0.3s ease',
             }}
           />
           
@@ -184,8 +175,8 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
           className="absolute top-0 left-0"
           style={{
             transform: isHovered ? 'translateY(-80px)' : 'translateY(0px)',
-            opacity: animationComplete ? 0 : (isHovered ? 0 : 1),
-            transition: animationComplete ? 'opacity 0s' : 'transform 0.6s ease-out, opacity 0.5s ease-out',
+            opacity: isHovered ? 0 : 1,
+            transition: 'transform 0.6s ease-out, opacity 0.5s ease-out',
             pointerEvents: 'none',
           }}
           preserveAspectRatio="xMidYMid meet"
@@ -323,53 +314,9 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
                   {displayText || ACTUAL_TEXT}
                 </span>
               </span>
-              {isHovered && !isMobile && (
-                <span 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-red/20 to-transparent pointer-events-none"
-                  style={{
-                    animation: 'shimmer 2s ease-in-out infinite',
-                  }}
-                />
-              )}
             </span>
           </div>
         </div>
-
-      {/* Arrow and "Click here" text - appears in place of lower envelope when animation complete */}
-      {animationComplete && (
-        <div 
-          className="absolute left-1/2 flex flex-col items-center"
-          style={{
-            top: 'clamp(30px, 10vw, 50px)', // Position at the bottom of where envelope was
-            transform: 'translateX(-50%)',
-            transition: 'opacity 0.5s ease-out',
-          }}
-        >
-          <div 
-            className="text-white/70 hover:text-white/90 transition-all duration-300"
-            style={{
-              animation: 'arrowBounceUp 2s ease-in-out infinite',
-            }}
-          >
-            <svg 
-              width="20" 
-              height="20" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-              className="sm:w-5 sm:h-5 md:w-6 md:h-6"
-            >
-              <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg>
-          </div>
-          <span className="text-white/60 text-xs sm:text-sm md:text-base font-handwritten mt-1">
-            Click here
-          </span>
-        </div>
-      )}
     </div>
   );
 }
