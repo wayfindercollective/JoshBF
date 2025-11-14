@@ -111,21 +111,21 @@ export default function CountdownTimer() {
         </div>
         
         {/* Text content */}
-        <div className="relative z-10 flex flex-col items-center justify-center w-full h-full px-1">
-          <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 text-center font-handwritten leading-tight`}>
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ textAlign: 'center', padding: 0, margin: 0, left: 0, right: 0 }}>
+          <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
             Phase 1
           </div>
-          <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 text-center font-handwritten leading-tight`}>
+          <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
             Black Friday
           </div>
-          <div className={`text-center font-handwritten font-bold ${timeTextSize} leading-tight`}>
-            <span className="tabular-nums">
+          <div className={`font-handwritten font-bold ${timeTextSize} leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
+            <span className="tabular-nums" style={{ display: 'inline-block', textAlign: 'center' }}>
               {String(timeRemaining.hours).padStart(2, '0')}:
               {String(timeRemaining.minutes).padStart(2, '0')}:
               {String(timeRemaining.seconds).padStart(2, '0')}
             </span>
           </div>
-          <div className={`${remainingTextSize} text-center mt-0.5 text-white/80 font-handwritten leading-tight`}>
+          <div className={`${remainingTextSize} mt-0.5 text-white/80 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
             Remaining
           </div>
         </div>
