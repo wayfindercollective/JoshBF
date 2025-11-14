@@ -31,18 +31,19 @@ export default function FloatingGeometry() {
     if (!ctx) return;
 
     // Grid cell dimensions - responsive based on viewport width
-    // Mobile (360px): ~120px cells, Tablet (768px+): ~150px cells, Desktop (1024px+): ~200px cells
+    // Increased cell sizes to reduce total shape count for better performance
+    // Mobile (360px): ~180px cells, Tablet (768px+): ~250px cells, Desktop (1024px+): ~300px cells
     const getGridCellWidth = () => {
       const viewportWidth = window.innerWidth;
-      if (viewportWidth >= 1024) return 200; // Desktop
-      if (viewportWidth >= 768) return 150;  // Tablet
-      return Math.max(100, Math.min(120, viewportWidth * 0.33)); // Mobile: 33% of viewport, min 100px, max 120px
+      if (viewportWidth >= 1024) return 300; // Desktop - increased from 200
+      if (viewportWidth >= 768) return 250;  // Tablet - increased from 150
+      return Math.max(150, Math.min(180, viewportWidth * 0.5)); // Mobile: 50% of viewport, min 150px, max 180px
     };
     const getGridCellHeight = () => {
       const viewportWidth = window.innerWidth;
-      if (viewportWidth >= 1024) return 200; // Desktop
-      if (viewportWidth >= 768) return 150;  // Tablet
-      return Math.max(100, Math.min(120, viewportWidth * 0.33)); // Mobile: 33% of viewport, min 100px, max 120px
+      if (viewportWidth >= 1024) return 300; // Desktop - increased from 200
+      if (viewportWidth >= 768) return 250;  // Tablet - increased from 150
+      return Math.max(150, Math.min(180, viewportWidth * 0.5)); // Mobile: 50% of viewport, min 150px, max 180px
     };
 
     // Generate shapes for the entire document height with even distribution
@@ -92,9 +93,9 @@ export default function FloatingGeometry() {
         }
       }
 
-      // Add connecting lines evenly distributed
-      const lineCols = Math.ceil(canvas.width / (currentGridCellWidth * 1.5));
-      const lineRows = Math.ceil(pageHeight / (currentGridCellHeight * 1.5));
+      // Add connecting lines evenly distributed - reduced frequency for performance
+      const lineCols = Math.ceil(canvas.width / (currentGridCellWidth * 2.5)); // Increased spacing from 1.5 to 2.5
+      const lineRows = Math.ceil(pageHeight / (currentGridCellHeight * 2.5)); // Increased spacing from 1.5 to 2.5
       
       for (let row = 0; row < lineRows; row++) {
         for (let col = 0; col < lineCols; col++) {
@@ -217,14 +218,21 @@ export default function FloatingGeometry() {
     };
 
     // Set canvas size to cover full document - ensure it doesn't exceed viewport width
+    // Throttled for performance
+    let resizeTimeout: NodeJS.Timeout | null = null;
     const resizeCanvas = () => {
-      const maxWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
-      canvas.width = maxWidth;
-      canvas.height = Math.max(window.innerHeight, document.documentElement.scrollHeight);
-      // Regenerate shapes with new grid cell sizes when viewport changes
-      const newPageHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
-      shapesRef.current = generateShapesForFullPage(newPageHeight);
-      generatedGridRowsRef.current.clear();
+      if (resizeTimeout) return;
+      
+      resizeTimeout = setTimeout(() => {
+        const maxWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+        canvas.width = maxWidth;
+        canvas.height = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+        // Regenerate shapes with new grid cell sizes when viewport changes
+        const newPageHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+        shapesRef.current = generateShapesForFullPage(newPageHeight);
+        generatedGridRowsRef.current.clear();
+        resizeTimeout = null;
+      }, 200); // Throttle resize to 200ms
     };
     
     // Update canvas height when document height changes and generate shapes for new areas
@@ -239,12 +247,64 @@ export default function FloatingGeometry() {
       }
     };
     
-    // Initial setup
-    resizeCanvas(); // This will generate initial shapes
-    window.addEventListener('resize', resizeCanvas);
+    // Initial setup - wait for page to fully load to get accurate document height
+    const initializeCanvas = () => {
+      const maxWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+      const fullPageHeight = Math.max(
+        window.innerHeight, 
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+        3000 // Minimum height to ensure we cover the page
+      );
+      
+      canvas.width = maxWidth;
+      canvas.height = fullPageHeight;
+      
+      // Set canvas CSS height to match
+      canvas.style.height = `${fullPageHeight}px`;
+      
+      // Generate all shapes for the entire page upfront
+      shapesRef.current = generateShapesForFullPage(fullPageHeight);
+      generatedGridRowsRef.current.clear();
+      
+      // Pre-render all shapes immediately
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      shapesRef.current.forEach((shape) => {
+        switch (shape.type) {
+          case 'triangle':
+            drawTriangle(shape);
+            break;
+          case 'square':
+            drawSquare(shape);
+            break;
+          case 'circle':
+            drawCircle(shape);
+            break;
+          case 'line':
+            drawLine(shape);
+            break;
+        }
+      });
+    };
     
-    // Check document height periodically
-    const heightCheckInterval = setInterval(updateCanvasHeight, 500);
+    // Initialize after a short delay to ensure page is loaded
+    let initTimeout: NodeJS.Timeout | null = null;
+    const startInit = () => {
+      initTimeout = setTimeout(() => {
+        initializeCanvas();
+        // Also check again after page fully loads
+        if (document.readyState !== 'complete') {
+          window.addEventListener('load', initializeCanvas, { once: true });
+        }
+        initTimeout = null;
+      }, 200);
+    };
+    startInit();
+    
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+    
+    // Check document height periodically - increased interval for performance
+    const heightCheckInterval = setInterval(updateCanvasHeight, 2000); // Increased to 2 seconds
 
     // Draw functions
     const drawTriangle = (shape: Shape) => {
@@ -302,28 +362,69 @@ export default function FloatingGeometry() {
 
     // Handle scroll - only update canvas height, don't generate shapes on scroll
     // Shapes are only generated when page height actually increases
+    // Throttled for performance
+    let scrollTimeout: NodeJS.Timeout | null = null;
     const handleScroll = () => {
-      const currentPageHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+      if (scrollTimeout) return;
       
-      // Update canvas height if page grew
-      if (currentPageHeight > canvas.height) {
-        const oldHeight = canvas.height;
-        canvas.height = currentPageHeight;
-        // Generate shapes only for the truly new area
-        const newShapes = generateShapesForRegion(oldHeight, currentPageHeight);
-        shapesRef.current.push(...newShapes);
-      }
+      scrollTimeout = setTimeout(() => {
+        const currentPageHeight = Math.max(window.innerHeight, document.documentElement.scrollHeight);
+        
+        // Update canvas height if page grew
+        if (currentPageHeight > canvas.height) {
+          const oldHeight = canvas.height;
+          canvas.height = currentPageHeight;
+          // Generate shapes only for the truly new area
+          const newShapes = generateShapesForRegion(oldHeight, currentPageHeight);
+          shapesRef.current.push(...newShapes);
+        }
+        scrollTimeout = null;
+      }, 100); // Throttle scroll handler to 100ms
     };
 
-    // Animation loop
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Animation loop - runs continuously without throttling for smooth animation
+    let lastScrollY = window.scrollY;
+    let isScrolling = false;
+    let scrollEndTimeout: NodeJS.Timeout | null = null;
+    
+    // Track scroll position continuously without throttling to avoid lag
+    const handleScrollUpdate = () => {
+      lastScrollY = window.scrollY;
+      isScrolling = true;
       
+      // Clear any existing timeout
+      if (scrollEndTimeout) {
+        clearTimeout(scrollEndTimeout);
+      }
+      
+      // Mark scrolling as ended after a short delay
+      scrollEndTimeout = setTimeout(() => {
+        isScrolling = false;
+        scrollEndTimeout = null;
+      }, 150);
+    };
+    
+    window.addEventListener('scroll', handleScrollUpdate, { passive: true });
+    
+    const animate = () => {
+      // Read scroll position directly - it's fast and ensures smooth updates
       const scrollY = window.scrollY;
+      lastScrollY = scrollY;
       const viewportHeight = window.innerHeight;
+      const viewportTop = scrollY;
+      const viewportBottom = scrollY + viewportHeight;
+      const viewportBuffer = viewportHeight * 0.5; // Buffer for smooth edges
 
+      // Calculate visible region
+      const visibleTop = Math.max(0, viewportTop - viewportBuffer);
+      const visibleBottom = Math.min(canvas.height, viewportBottom + viewportBuffer);
+      
+      // Always clear and redraw - animation never pauses
+      ctx.clearRect(0, visibleTop, canvas.width, visibleBottom - visibleTop);
+
+      // Always update shape positions - animation never pauses
       shapesRef.current.forEach((shape) => {
-        // Update position
+        // Update position continuously - animation never pauses
         shape.x += shape.speedX;
         shape.y += shape.speedY;
         shape.rotation += shape.rotationSpeed;
@@ -332,30 +433,27 @@ export default function FloatingGeometry() {
         if (shape.x < -shape.size) shape.x = canvas.width + shape.size;
         if (shape.x > canvas.width + shape.size) shape.x = -shape.size;
 
-        // Draw shape relative to scroll position
-        const drawY = shape.y - scrollY;
-        
-        // Draw if shape is within viewport buffer (one viewport above and two below)
-        // This ensures smooth animation even when scrolling
-        if (drawY >= -viewportHeight && drawY <= viewportHeight * 2) {
-          // Draw shape
+        // Draw shapes in the visible viewport (using absolute positions)
+        if (shape.y >= visibleTop && shape.y <= visibleBottom) {
+          // Draw shape at its absolute position on the canvas
           switch (shape.type) {
             case 'triangle':
-              drawTriangle({ ...shape, y: drawY });
+              drawTriangle(shape);
               break;
             case 'square':
-              drawSquare({ ...shape, y: drawY });
+              drawSquare(shape);
               break;
             case 'circle':
-              drawCircle({ ...shape, y: drawY });
+              drawCircle(shape);
               break;
             case 'line':
-              drawLine({ ...shape, y: drawY });
+              drawLine(shape);
               break;
           }
         }
       });
 
+      // Continue animation immediately - no throttling, no delays
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
@@ -366,30 +464,46 @@ export default function FloatingGeometry() {
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     // Handle mouse hover - slightly increase opacity of nearby shapes
+    // Throttled for performance
+    let mouseMoveTimeout: NodeJS.Timeout | null = null;
     const handleMouseMove = (e: MouseEvent) => {
-      const mouseX = e.clientX;
-      const mouseY = e.clientY + window.scrollY; // Account for scroll position
-      // Responsive hover radius: smaller on mobile
-      const viewportWidth = window.innerWidth;
-      const hoverRadius = viewportWidth >= 1024 ? 150 : viewportWidth >= 768 ? 120 : 100;
+      if (mouseMoveTimeout) return;
+      
+      mouseMoveTimeout = setTimeout(() => {
+        const mouseX = e.clientX;
+        const mouseY = e.clientY + window.scrollY; // Account for scroll position
+        // Responsive hover radius: smaller on mobile
+        const viewportWidth = window.innerWidth;
+        const hoverRadius = viewportWidth >= 1024 ? 150 : viewportWidth >= 768 ? 120 : 100;
 
-      shapesRef.current.forEach((shape) => {
-        const distance = Math.sqrt(
-          Math.pow(shape.x - mouseX, 2) + Math.pow(shape.y - mouseY, 2)
-        );
+        // Only check shapes in viewport for performance
+        const scrollY = window.scrollY;
+        const viewportHeight = window.innerHeight;
+        const viewportBuffer = viewportHeight * 1.5;
 
-        if (distance < hoverRadius) {
-          // Temporarily increase opacity on hover
-          const originalOpacity = shape.opacity;
-          const hoverOpacity = Math.min(originalOpacity * 2, 0.6);
-          shape.opacity = hoverOpacity;
+        shapesRef.current.forEach((shape) => {
+          const drawY = shape.y - scrollY;
+          // Skip shapes outside viewport
+          if (drawY < -viewportBuffer || drawY > viewportBuffer) return;
           
-          // Reset after a short delay
-          setTimeout(() => {
-            shape.opacity = originalOpacity;
-          }, 100);
-        }
-      });
+          const distance = Math.sqrt(
+            Math.pow(shape.x - mouseX, 2) + Math.pow(shape.y - mouseY, 2)
+          );
+
+          if (distance < hoverRadius) {
+            // Temporarily increase opacity on hover
+            const originalOpacity = shape.opacity;
+            const hoverOpacity = Math.min(originalOpacity * 2, 0.6);
+            shape.opacity = hoverOpacity;
+            
+            // Reset after a short delay
+            setTimeout(() => {
+              shape.opacity = originalOpacity;
+            }, 100);
+          }
+        });
+        mouseMoveTimeout = null;
+      }, 50); // Throttle mouse move to 50ms
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -398,9 +512,16 @@ export default function FloatingGeometry() {
 
     return () => {
       clearInterval(heightCheckInterval);
+      if (initTimeout) clearTimeout(initTimeout);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      if (scrollEndTimeout) clearTimeout(scrollEndTimeout);
+      if (mouseMoveTimeout) clearTimeout(mouseMoveTimeout);
+      if (resizeTimeout) clearTimeout(resizeTimeout);
       window.removeEventListener('resize', resizeCanvas);
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScrollUpdate);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('load', initializeCanvas);
       if (currentAnimationFrame) {
         cancelAnimationFrame(currentAnimationFrame);
       }
@@ -410,8 +531,21 @@ export default function FloatingGeometry() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.9, maxWidth: '100vw', overflow: 'hidden' }}
+      className="fixed top-0 left-0 pointer-events-none z-0"
+      style={{ 
+        opacity: 0.9, 
+        width: '100%',
+        maxWidth: '100vw', 
+        willChange: 'transform',
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+        WebkitTransform: 'translateZ(0)',
+        touchAction: 'none',
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+      }}
     />
   );
 }

@@ -116,15 +116,20 @@ export default function RandomScrollReveal({
       }
     };
 
-    // Check on scroll
+    // Check on scroll - throttled for performance
+    let scrollTimeout: NodeJS.Timeout | null = null;
     const handleScroll = () => {
-      checkVisibility();
+      if (scrollTimeout) return;
+      scrollTimeout = setTimeout(() => {
+        checkVisibility();
+        scrollTimeout = null;
+      }, 100); // Throttle to 100ms
     };
 
     // Initial check
     checkVisibility();
 
-    // Use IntersectionObserver for efficiency, but also check scroll position
+    // Use IntersectionObserver for efficiency - this is the primary method
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -133,7 +138,7 @@ export default function RandomScrollReveal({
       },
       {
         threshold: [0, 0.1, 0.5, 1],
-        rootMargin: '0px',
+        rootMargin: '100px', // Add margin to trigger slightly before viewport
       }
     );
 
@@ -142,9 +147,11 @@ export default function RandomScrollReveal({
       observer.observe(currentContainer);
     }
 
+    // Only add scroll listener as fallback - IntersectionObserver should handle most cases
     window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
+      if (scrollTimeout) clearTimeout(scrollTimeout);
       window.removeEventListener('scroll', handleScroll);
       if (currentContainer) {
         observer.unobserve(currentContainer);

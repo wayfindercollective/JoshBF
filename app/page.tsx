@@ -1,17 +1,19 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import TypewriterText from './components/HandwritingText';
 import ScrollAnimatedIcon from './components/ScrollAnimatedIcon';
 import EnvelopeWithText from './components/EnvelopeWithText';
-import DiamondBranches from './components/DiamondBranches';
 import RandomScrollReveal from './components/RandomScrollReveal';
 import CharacterPopIn from './components/CharacterPopIn';
 import FloatingGeometry from './components/FloatingGeometry';
 import TitleWithBorder from './components/TitleWithBorder';
-import ExpandingLines from './components/ExpandingLines';
 import CountdownTimer from './components/CountdownTimer';
 import Image from 'next/image';
+
+// Lazy load below-the-fold components for better initial load performance
+const DiamondBranches = lazy(() => import('./components/DiamondBranches'));
+const ExpandingLines = lazy(() => import('./components/ExpandingLines'));
 
 interface FAQItemProps {
   faq: { question: string; answer: string };
@@ -221,7 +223,9 @@ export default function Home() {
             </div>
           </RandomScrollReveal>
           <RandomScrollReveal delay={200} randomDelay={true} duration={1.2}>
-            <DiamondBranches />
+            <Suspense fallback={<div className="min-h-[400px] sm:min-h-[500px] md:min-h-[640px]" />}>
+              <DiamondBranches />
+            </Suspense>
           </RandomScrollReveal>
           {/* Get Started Button */}
           <RandomScrollReveal delay={400} randomDelay={true}>
@@ -281,7 +285,9 @@ export default function Home() {
             </div>
           </RandomScrollReveal>
           <div className="mt-4 sm:-mt-3 md:-mt-40">
-            <ExpandingLines />
+            <Suspense fallback={<div className="min-h-[300px] sm:min-h-[350px] md:min-h-[450px]" />}>
+              <ExpandingLines />
+            </Suspense>
           </div>
           {/* Get Started Button */}
           <RandomScrollReveal delay={400} randomDelay={true}>

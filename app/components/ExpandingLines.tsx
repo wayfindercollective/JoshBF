@@ -951,6 +951,57 @@ export default function ExpandingLines() {
               </g>
             );
           })()}
+
+          {/* Vertical line separating columns from prices */}
+          {isVisible && (() => {
+            // Calculate the column boundaries based on where prices actually are
+            // Use the same calculation as prices to align perfectly
+            const firstBranch = branchLines[0];
+            const lastBranch = branchLines[branchLines.length - 1];
+            
+            if (!firstBranch || !lastBranch) return null;
+            
+            // Calculate Y positions the same way prices are calculated
+            const getColumnCenterY = (index: number) => {
+              const currentY = branchLines[index].startY;
+              if (index === branchLines.length - 1) {
+                const prevY = branchLines[index - 1].startY;
+                const spacing = currentY - prevY;
+                return currentY + (spacing * 0.3);
+              } else {
+                const nextY = branchLines[index + 1].startY;
+                return currentY + ((nextY - currentY) * 0.45);
+              }
+            };
+            
+            // Apply same offset as prices
+            const getPriceY = (index: number) => {
+              const columnCenterY = getColumnCenterY(index);
+              const textOffsetY = isMobile ? 0 : (index === branchLines.length - 1 
+                ? (branchLines[index - 1] ? (branchLines[index].startY - branchLines[index - 1].startY) * 0.85 : 0)
+                : (branchLines[index + 1] ? (branchLines[index + 1].startY - branchLines[index].startY) * 0.4 : 0));
+              return columnCenterY + textOffsetY;
+            };
+            
+            const topY = getPriceY(0) - 37; // Moderate padding above first price
+            const bottomY = getPriceY(bonusTexts.length - 1) + 30; // Small padding below last price
+            
+            return (
+              <line
+                x1={CENTER_X + 170}
+                y1={topY}
+                x2={CENTER_X + 170}
+                y2={bottomY}
+                stroke="#ffffff"
+                strokeWidth="2.5"
+                strokeOpacity="0.8"
+                strokeLinecap="butt"
+                style={{
+                  filter: "drop-shadow(0 0 8px rgba(255,255,255,0.6))",
+                }}
+              />
+            );
+          })()}
         </svg>
 
         {/* Content areas - text and prices centered within columns */}
@@ -965,17 +1016,23 @@ export default function ExpandingLines() {
             let columnCenterY;
             
             if (index === branchLines.length - 1) {
-              // Last column: tighter spacing - use smaller offset
+              // Last column: tighter spacing - use smaller offset (keep original for lines)
               const prevY = branchLines[index - 1].startY;
               const spacing = currentY - prevY;
-              columnCenterY = currentY + (spacing * 0.3); // Reduced from 0.5 to 0.3 for tighter wrapping
+              columnCenterY = currentY + (spacing * 0.3); // Keep original for line positioning
             } else {
-              // All other columns: tighter center positioning
+              // All other columns: tighter center positioning (keep original for lines)
               const nextY = branchLines[index + 1].startY;
-              columnCenterY = currentY + ((nextY - currentY) * 0.45); // Slightly above center for tighter wrapping
+              columnCenterY = currentY + ((nextY - currentY) * 0.45); // Keep original for line positioning
             }
             
-            const yPercent = (columnCenterY / 1000) * 100;
+            // For desktop, add offset to move text down to better center it in the column
+            // Calculate text Y position separately from line position
+            const textOffsetY = isMobile ? 0 : (index === branchLines.length - 1 
+              ? (branchLines[index - 1] ? (branchLines[index].startY - branchLines[index - 1].startY) * 0.85 : 0)
+              : (branchLines[index + 1] ? (branchLines[index + 1].startY - branchLines[index].startY) * 0.4 : 0));
+            const textCenterY = columnCenterY + textOffsetY;
+            const yPercent = (textCenterY / 1000) * 100;
             const columnCenterX = CENTER_X; // Center of the column where lines meet
             
             // Position titles on the left side but within the column area
@@ -1178,16 +1235,22 @@ export default function ExpandingLines() {
             const currentY = branch.startY;
             let columnCenterY;
             if (index === branchLines.length - 1) {
-              // Last column: tighter spacing for prices
+              // Last column: tighter spacing (keep original for line positioning)
               const prevY = branchLines[index - 1].startY;
               const spacing = currentY - prevY;
-              columnCenterY = currentY + (spacing * 0.3); // Reduced from 0.5 to 0.3
+              columnCenterY = currentY + (spacing * 0.3); // Keep original for line positioning
             } else {
-              // All other columns: tighter center positioning for prices
+              // All other columns: tighter center positioning (keep original for line positioning)
               const nextY = branchLines[index + 1].startY;
-              columnCenterY = currentY + ((nextY - currentY) * 0.45); // Slightly above center
+              columnCenterY = currentY + ((nextY - currentY) * 0.45); // Keep original for line positioning
             }
-            const columnCenterYPercent = (columnCenterY / 1000) * 100;
+            
+            // Apply same offset as text to align prices with text
+            const textOffsetY = isMobile ? 0 : (index === branchLines.length - 1 
+              ? (branchLines[index - 1] ? (branchLines[index].startY - branchLines[index - 1].startY) * 0.85 : 0)
+              : (branchLines[index + 1] ? (branchLines[index + 1].startY - branchLines[index].startY) * 0.4 : 0));
+            const textCenterY = columnCenterY + textOffsetY;
+            const columnCenterYPercent = (textCenterY / 1000) * 100;
             
             // Center prices horizontally in the space between vertical line and right edge
             // Vertical line is at CENTER_X + 170 = 670
