@@ -339,8 +339,7 @@
   border-style: solid;
   border-width: 2px;
   box-shadow: 
-    0 0 0 1px rgba(109, 137, 212, 0.3),
-    0 4px 15px rgba(0, 0, 0, 0.3);
+    inset 0 0 0 1px rgba(109, 137, 212, 0.3);
   transition: all 0.3s ease;
   cursor: pointer;
   text-decoration: none;
@@ -380,12 +379,10 @@
 }
 
 .seal-button:hover {
-  transform: translateY(-2px);
   background-color: #1a1a1a;
   border-color: #6d89d4;
   box-shadow: 
-    0 0 0 1px rgba(109, 137, 212, 0.5),
-    0 6px 20px rgba(0, 0, 0, 0.5);
+    inset 0 0 0 1px rgba(109, 137, 212, 0.5);
   color: #ffffff;
 }
 
