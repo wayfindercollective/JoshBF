@@ -314,14 +314,6 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
                   {displayText || ACTUAL_TEXT}
                 </span>
               </span>
-              {isHovered && !isMobile && (
-                <span 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-red/20 to-transparent pointer-events-none"
-                  style={{
-                    animation: 'shimmer 2s ease-in-out infinite',
-                  }}
-                />
-              )}
             </span>
           </div>
         </div>
