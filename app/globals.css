@@ -572,15 +572,6 @@
   }
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%) skewX(-15deg);
-  }
-  100% {
-    transform: translateX(200%) skewX(-15deg);
-  }
-}
-
 @keyframes shinySweep {
   0% {
     transform: translateX(-100%) translateY(-100%) skewX(-20deg);
