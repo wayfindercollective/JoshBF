@@ -637,9 +637,25 @@ export default function ExpandingLines() {
           {upwardLines.map((line, index) => {
             const progress = upwardProgress[index] || 0;
             const currentEndY = line.startY + (line.endY - line.startY) * progress;
+            
+            // Calculate branch line position (same calculation as branch lines)
+            const currentY = line.endY; // This is branch.startY
+            let columnCenterY;
+            if (index === upwardLines.length - 1) {
+              const prevY = index > 0 ? upwardLines[index - 1].endY : currentY;
+              const spacing = currentY - prevY;
+              columnCenterY = currentY + (spacing * 0.3);
+            } else {
+              const nextY = upwardLines[index + 1].endY;
+              columnCenterY = currentY + ((nextY - currentY) * 0.45);
+            }
+            
+            // Position branch line slightly above text (matching branch line calculation)
+            const lineOffset = isMobile ? 6 : 8;
+            const branchLineY = columnCenterY - lineOffset;
+            
             // Upward line must extend to exactly where branch line starts for perfect connection
-            // All lines extend 1px past line.endY to ensure connection with branch lines
-            const upwardEndY = progress >= 1 ? line.endY + 1 : currentEndY;
+            const upwardEndY = progress >= 1 ? branchLineY : currentEndY;
             const upwardX = LEFT_POSITION;
 
             return (
@@ -682,9 +698,25 @@ export default function ExpandingLines() {
           {upwardLines.map((line, index) => {
             const progress = upwardProgressRight[index] || 0;
             const currentEndY = line.startY + (line.endY - line.startY) * progress;
+            
+            // Calculate branch line position (same calculation as branch lines)
+            const currentY = line.endY; // This is branch.startY
+            let columnCenterY;
+            if (index === upwardLines.length - 1) {
+              const prevY = index > 0 ? upwardLines[index - 1].endY : currentY;
+              const spacing = currentY - prevY;
+              columnCenterY = currentY + (spacing * 0.3);
+            } else {
+              const nextY = upwardLines[index + 1].endY;
+              columnCenterY = currentY + ((nextY - currentY) * 0.45);
+            }
+            
+            // Position branch line slightly above text (matching branch line calculation)
+            const lineOffset = isMobile ? 6 : 8;
+            const branchLineY = columnCenterY - lineOffset;
+            
             // Upward line must extend to exactly where branch line starts for perfect connection
-            // All lines extend 1px past line.endY to ensure connection with branch lines
-            const upwardEndY = progress >= 1 ? line.endY + 1 : currentEndY;
+            const upwardEndY = progress >= 1 ? branchLineY : currentEndY;
             const upwardX = RIGHT_POSITION;
 
             return (
@@ -729,11 +761,25 @@ export default function ExpandingLines() {
             // Extend to center to ensure connection with right line
             const currentEndX = branch.startX + (branch.endX - branch.startX) * progress;
             const extendedEndX = progress >= 1 ? CENTER_X : currentEndX;
-            // Branch line starts at line.endY to connect with upward line
-            // Upward line extends to line.endY + 1, so branch starts at line.endY (branch.startY) for perfect connection
-            // All lines use consistent connection point
+            
+            // Calculate text position to position branch line tightly above it
+            const currentY = branch.startY;
+            let columnCenterY;
+            if (index === branchLines.length - 1) {
+              const prevY = branchLines[index - 1].startY;
+              const spacing = currentY - prevY;
+              columnCenterY = currentY + (spacing * 0.3);
+            } else {
+              const nextY = branchLines[index + 1].startY;
+              columnCenterY = currentY + ((nextY - currentY) * 0.45);
+            }
+            
+            // Position branch line slightly above text (tightly wrapped)
+            // On desktop, position line 8-10px above text center for tight wrapping
+            // On mobile, use smaller offset since text is smaller
+            const lineOffset = isMobile ? 6 : 8;
             const branchStartX = branch.startX;
-            const branchStartY = branch.startY; // This equals line.endY, upward line extends 1px past this
+            const branchStartY = columnCenterY - lineOffset; // Position above text, tightly wrapped
 
             return (
               <g key={`branch-left-${index}`}>
@@ -778,11 +824,23 @@ export default function ExpandingLines() {
             // Extend to center to ensure connection with left line
             const currentEndX = branch.startX + (branch.endX - branch.startX) * progress;
             const extendedEndX = progress >= 1 ? CENTER_X : currentEndX;
-            // Branch line starts at line.endY to connect with upward line
-            // Upward line extends to line.endY + 1, so branch starts at line.endY (branch.startY) for perfect connection
-            // All lines use consistent connection point
+            
+            // Calculate text position to position branch line tightly above it (same as left side)
+            const currentY = branch.startY;
+            let columnCenterY;
+            if (index === branchLines.length - 1) {
+              const prevY = branchLines[index - 1].startY;
+              const spacing = currentY - prevY;
+              columnCenterY = currentY + (spacing * 0.3);
+            } else {
+              const nextY = branchLines[index + 1].startY;
+              columnCenterY = currentY + ((nextY - currentY) * 0.45);
+            }
+            
+            // Position branch line slightly above text (tightly wrapped, matching left side)
+            const lineOffset = isMobile ? 6 : 8;
             const branchStartX = branch.startX;
-            const branchStartY = branch.startY; // This equals line.endY, upward line extends 1px past this
+            const branchStartY = columnCenterY - lineOffset; // Position above text, tightly wrapped
 
             return (
               <g key={`branch-right-${index}`}>
@@ -940,6 +998,7 @@ export default function ExpandingLines() {
                   transition: 'opacity 0.3s ease-out',
                   width: 'max-content',
                   maxWidth: maxTextWidth,
+                  zIndex: 10, // Ensure text appears above lines
                 }}
               >
                 {/* Text appears on the left side within the column with pop-in animation */}
@@ -1147,6 +1206,7 @@ export default function ExpandingLines() {
                   transform: 'translate(-50%, -50%)', // Center both horizontally and vertically within column space
                   opacity: popInProgress[index] > 0 ? 1 : 0,
                   transition: 'opacity 0.3s ease-out',
+                  zIndex: 10, // Ensure price appears above lines
                 }}
               >
                       <span
