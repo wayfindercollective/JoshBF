@@ -452,7 +452,7 @@ export default function DiamondBranches() {
 
       <div 
         ref={containerRef}
-        className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[640px] pt-4 sm:pt-6 md:pt-8 pb-4 sm:pb-6 md:pb-8 px-4 md:px-0 overflow-hidden"
+        className="flex items-center justify-center min-h-[400px] sm:min-h-[500px] md:min-h-[640px] pt-0 sm:pt-6 md:pt-8 pb-4 sm:pb-6 md:pb-8 px-4 md:px-0 overflow-hidden -mt-20 sm:mt-0"
       >
         <div className="relative w-full max-w-5xl scale-[1.105] sm:scale-[1.3] md:scale-[1.2] mx-auto flex justify-center overflow-hidden">
         <svg

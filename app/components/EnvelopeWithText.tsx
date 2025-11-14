@@ -293,7 +293,6 @@ export default function EnvelopeWithText({ onAnimationComplete }: EnvelopeWithTe
                 }}
               >
                 <span
-                  className="mobile-text-shift-left"
                   style={{
                     color: animationComplete ? (isHoveringText ? '#ff6b35' : '#ff6b35') : '#bc4500', // Brighter orange once animation completes
                     filter: animationComplete
