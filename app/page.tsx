@@ -118,6 +118,8 @@ function FAQItem({ faq, index }: FAQItemProps) {
 }
 
 function EnvelopeClickableWrapper() {
+  const [animationComplete, setAnimationComplete] = useState(false);
+
   const handleScroll = () => {
     const element = document.getElementById('bonuses');
     if (element) {
@@ -142,9 +144,30 @@ function EnvelopeClickableWrapper() {
         }}
       >
         <div onClick={handleScroll} className="flex justify-center w-full">
-          <EnvelopeWithText />
+          <EnvelopeWithText onAnimationComplete={() => setAnimationComplete(true)} />
         </div>
       </a>
+      {/* Click here button with arrow - appears after animation completes */}
+      {animationComplete && (
+        <button
+          onClick={handleScroll}
+          className="mt-6 text-white/80 hover:text-white transition-all duration-300 flex flex-col items-center gap-2 group"
+          style={{
+            opacity: animationComplete ? 1 : 0,
+            animation: animationComplete ? 'fadeInUp 0.5s ease-out' : 'none',
+          }}
+        >
+          <span 
+            className="inline-block transition-transform group-hover:-translate-y-1 text-2xl sm:text-3xl"
+            style={{
+              animation: 'arrowBounceUp 2s ease-in-out infinite',
+            }}
+          >
+            ↑
+          </span>
+          <span className="font-handwritten text-xl sm:text-2xl">Click here</span>
+        </button>
+      )}
     </div>
   );
 }

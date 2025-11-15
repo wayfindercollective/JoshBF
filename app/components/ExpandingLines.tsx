@@ -125,7 +125,7 @@ const bonusPrices: string[] = [
   "$1,000", // Purpose Transformation
   "$200",   // Goal Setting Workbook
   "$497",   // Instinctive Breathwork
-  "$89",    // How To Make Progress Book (10-minute workbook)
+  "$60",    // How To Make Progress Book (10-minute workbook)
   "$297",   // The Purpose Paradox
   "$297",   // Set Fail-Resistant Goals
   "$297",   // Get Moving Make It Happen Now
@@ -602,7 +602,7 @@ export default function ExpandingLines() {
               position: 'relative',
               display: 'inline-block',
             }}>
-              $2,677
+              $2,648
               <span
                 style={{
                   position: 'absolute',
@@ -1392,7 +1392,7 @@ export default function ExpandingLines() {
                       position: 'relative',
                       display: 'inline-block',
                     }}>
-                      $2,677
+                      $2,648
                       {/* Diagonal strikethrough line */}
                       <span
                         style={{
