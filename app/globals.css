@@ -275,6 +275,28 @@
   }
 }
 
+@keyframes arrowBounceRight {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateX(6px);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes envelopeOutlineShine {
   0%, 100% {
     filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
