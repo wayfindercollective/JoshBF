@@ -10,10 +10,11 @@ import FloatingGeometry from './components/FloatingGeometry';
 import TitleWithBorder from './components/TitleWithBorder';
 import CountdownTimer from './components/CountdownTimer';
 import Image from 'next/image';
+import { TotalValue } from './components/BonusesGrid';
 
 // Lazy load below-the-fold components for better initial load performance
 const DiamondBranches = lazy(() => import('./components/DiamondBranches'));
-const ExpandingLines = lazy(() => import('./components/ExpandingLines'));
+const BonusesGrid = lazy(() => import('./components/BonusesGrid'));
 
 interface FAQItemProps {
   faq: { question: string; answer: string };
@@ -288,16 +289,16 @@ export default function Home() {
       </section>
 
       {/* Bonuses Section */}
-      <section id="bonuses" className="px-6 pt-6 sm:pt-8 md:pt-20 pb-4 md:pb-6 relative z-10">
-        <div className="max-w-5xl mx-auto">
+      <section id="bonuses" className="px-6 pt-1 sm:pt-4 md:pt-3 pb-1 md:pb-3 relative z-10">
+        <div className="max-w-4xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-0 px-4 sm:px-0">
-              <TitleWithBorder padding="px-3 sm:px-6 md:px-8 py-1 sm:py-2 md:py-4">
+              <TitleWithBorder padding="px-3 sm:px-6 md:px-6 py-0.5 sm:py-1 md:py-1">
                 <div className="text-center">
-                  <h2 className="font-heading text-lg sm:text-xl md:text-3xl lg:text-4xl font-black text-white text-center">
+                  <h2 className="font-heading text-lg sm:text-xl md:text-xl lg:text-2xl font-black text-white text-center">
                     <CharacterPopIn delay={0}>Bonuses</CharacterPopIn>
                   </h2>
-                  <p className="text-white/70 text-xs sm:text-sm md:text-base mt-1 sm:mt-2 font-sans">
+                  <p className="text-white/70 text-xs sm:text-sm md:text-sm mt-0.5 sm:mt-1 md:mt-0.5 font-sans">
                     All systems created by Josh Terry.<br />
                     <span className="border-b border-white/50 pb-0.5 inline-block">
                       Click on each title to learn more.
@@ -307,31 +308,61 @@ export default function Home() {
               </TitleWithBorder>
             </div>
           </RandomScrollReveal>
-          <div className="mt-4 sm:-mt-3 md:-mt-40">
-            <Suspense fallback={<div className="min-h-[300px] sm:min-h-[350px] md:min-h-[450px]" />}>
-              <ExpandingLines />
+          <div className="mt-1 sm:mt-3 md:mt-3">
+            <Suspense fallback={<div className="min-h-[300px]" />}>
+              <BonusesGrid />
             </Suspense>
           </div>
-          {/* Get Started Button */}
-          <RandomScrollReveal delay={400} randomDelay={true}>
-            <div className="flex flex-col items-center justify-center -mt-2 md:-mt-48">
-              <div className="text-center w-full max-w-2xl mx-auto">
-                <div id="purchase" className="flex flex-col items-center justify-center w-full">
-                  <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
-                    <a
-                      href="https://bookmyeventnow.com/register?a=new&p=26"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="seal-button text-lg sm:text-xl md:text-3xl mb-2 sm:mb-4 font-sans"
-                      style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
-                    >
-                      <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
-                    </a>
-                  </RandomScrollReveal>
-                </div>
+          {/* Mobile: Stacked layout - Total Value centered, Get Started below */}
+          <div className="flex flex-col items-center md:hidden relative mt-1 gap-2">
+            <Suspense fallback={null}>
+              <TotalValue />
+            </Suspense>
+            <RandomScrollReveal delay={400} randomDelay={true}>
+              <div id="purchase" className="flex-shrink-0">
+                <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
+                  <a
+                    href="https://bookmyeventnow.com/register?a=new&p=26"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="seal-button text-lg font-sans"
+                    style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
+                  >
+                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
+                  </a>
+                </RandomScrollReveal>
+              </div>
+            </RandomScrollReveal>
+          </div>
+          {/* Desktop: Side by Side */}
+          <div className="hidden md:flex flex-row items-center relative mt-0 gap-4">
+            {/* Left spacer for centering */}
+            <div className="flex-1"></div>
+            {/* Get Started Button - Centered */}
+            <RandomScrollReveal delay={400} randomDelay={true}>
+              <div id="purchase" className="flex-shrink-0">
+                <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
+                  <a
+                    href="https://bookmyeventnow.com/register?a=new&p=26"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="seal-button text-xl lg:text-2xl font-sans"
+                    style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
+                  >
+                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
+                  </a>
+                </RandomScrollReveal>
+              </div>
+            </RandomScrollReveal>
+            {/* Right spacer with Total Value */}
+            <div className="flex-1 flex justify-end items-center">
+              <div className="flex-shrink-0">
+                <Suspense fallback={null}>
+                  <TotalValue />
+                </Suspense>
               </div>
             </div>
-          </RandomScrollReveal>
+          </div>
         </div>
       </section>
 
