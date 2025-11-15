@@ -56,12 +56,13 @@ export default function TitleWithBorder({
           const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
           const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
           
-          // Use the actual text dimensions, add padding, and minimal buffer for tight wrapping
-          const borderBuffer = 2; // Small buffer to prevent text from touching border
+          // Use the actual text dimensions, add padding, and buffer for border width
+          // Buffer needs to account for border width so stroke stays within bounds
+          const borderBuffer = isMobile ? 3 : 6; // Buffer accounts for border width (2.5px mobile, 5px desktop)
           const textWidth = Math.max(textRect.width, textScrollWidth);
           const textHeight = Math.max(textRect.height, textScrollHeight);
           
-          // Calculate dimensions: text size + padding + minimal buffer
+          // Calculate dimensions: text size + padding + border buffer
           const width = textWidth + paddingLeft + paddingRight + borderBuffer;
           const height = textHeight + paddingTop + paddingBottom + borderBuffer;
           
@@ -86,7 +87,7 @@ export default function TitleWithBorder({
         const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
         const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
         
-        const borderBuffer = 2;
+        const borderBuffer = isMobile ? 3 : 6; // Buffer accounts for border width
         const width = Math.max(rect.width, scrollWidth) + borderBuffer;
         const height = Math.max(rect.height, scrollHeight) + borderBuffer;
         
@@ -140,18 +141,20 @@ export default function TitleWithBorder({
   // Mobile: half thickness (2.5/2), Desktop: full thickness (5/4)
   const pathBorderWidth = isMobile ? 2.5 : 5;
   const displayBorderWidth = isMobile ? (isVisible ? 2.5 : 2) : (isVisible ? 5 : 4);
-  const halfBorder = pathBorderWidth / 2;
+  // Use full border width for offset to keep stroke within bounds
+  const borderOffset = displayBorderWidth;
   const w = dimensions.width;
   const h = dimensions.height;
   
   // Create path that goes clockwise: top → right → bottom → left
+  // Offset by full border width so stroke stays within content bounds
   const pathData = w > 0 && h > 0
-    ? `M ${halfBorder},${halfBorder} L ${w - halfBorder},${halfBorder} L ${w - halfBorder},${h - halfBorder} L ${halfBorder},${h - halfBorder} Z`
+    ? `M ${borderOffset},${borderOffset} L ${w - borderOffset},${borderOffset} L ${w - borderOffset},${h - borderOffset} L ${borderOffset},${h - borderOffset} Z`
     : '';
   
   // Calculate total path length using consistent border width
   const pathLength = w > 0 && h > 0 
-    ? (w - pathBorderWidth) + (h - pathBorderWidth) + (w - pathBorderWidth) + (h - pathBorderWidth)
+    ? (w - borderOffset * 2) + (h - borderOffset * 2) + (w - borderOffset * 2) + (h - borderOffset * 2)
     : 0;
 
   // Update path and SVG when dimensions change
@@ -196,7 +199,7 @@ export default function TitleWithBorder({
         const paddingTop = parseFloat(containerStyles.paddingTop) || 0;
         const paddingBottom = parseFloat(containerStyles.paddingBottom) || 0;
         
-        const borderBuffer = 2;
+        const borderBuffer = isMobile ? 3 : 6; // Buffer accounts for border width
         const textWidth = Math.max(textRect.width, textScrollWidth);
         const textHeight = Math.max(textRect.height, textScrollHeight);
         const width = textWidth + paddingLeft + paddingRight + borderBuffer;
@@ -213,7 +216,7 @@ export default function TitleWithBorder({
       const scrollWidth = contentRef.current.scrollWidth;
       const scrollHeight = contentRef.current.scrollHeight;
       
-      const borderBuffer = 2;
+      const borderBuffer = isMobile ? 3 : 6; // Buffer accounts for border width
       const width = Math.max(rect.width, scrollWidth) + borderBuffer;
       const height = Math.max(rect.height, scrollHeight) + borderBuffer;
       
