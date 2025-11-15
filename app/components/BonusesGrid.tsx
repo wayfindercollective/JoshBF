@@ -89,7 +89,7 @@ const bonusPrices: string[] = [
   "$297",   // The Purpose Paradox
   "$297",   // Set Fail-Resistant Goals
   "$297",   // Get Moving Make It Happen Now
-  "$297",   // Purpose Profile Personality Test
+  "$60",    // Purpose Profile Personality Test
 ];
 
 export function TotalValue() {
@@ -105,7 +105,7 @@ export function TotalValue() {
           style={{
             textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
           }}>
-            $2,945
+            $2,708
             <span
               style={{
                 position: 'absolute',
@@ -133,7 +133,7 @@ export function TotalValue() {
           style={{
             textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
           }}>
-            $2,945
+            $2,708
             <span
               style={{
                 position: 'absolute',
