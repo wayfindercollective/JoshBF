@@ -214,7 +214,7 @@ export default function Home() {
       </section>
 
       {/* Purpose Transformation - Diamond Branches */}
-      <section id="purpose-transformation" className="px-6 pt-24 pb-8 sm:pb-10 md:pb-12 relative z-10">
+      <section id="purpose-transformation" className="px-6 pt-24 pb-10 sm:pb-[3.125rem] md:pb-[3.75rem] relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex flex-col items-center -mb-8 sm:-mb-10 md:-mb-12 px-4 sm:px-0">
@@ -271,7 +271,7 @@ export default function Home() {
       </section>
 
       {/* About the Blueprint */}
-      <section className="px-6 pt-8 sm:pt-10 md:pt-12 pb-12 sm:pb-16 md:pb-20 relative z-10">
+      <section className="px-6 pt-10 sm:pt-[3.125rem] md:pt-[3.75rem] pb-[3.75rem] sm:pb-20 md:pb-[6.25rem] relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6 text-white">
@@ -289,7 +289,7 @@ export default function Home() {
       </section>
 
       {/* Bonuses Section */}
-      <section id="bonuses" className="px-6 pt-1 sm:pt-4 md:pt-3 pb-1 md:pb-3 relative z-10">
+      <section id="bonuses" className="px-6 pt-[0.3125rem] sm:pt-5 md:pt-[0.9375rem] pb-[0.3125rem] md:pb-[0.9375rem] relative z-10">
         <div className="max-w-4xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-0 px-4 sm:px-0">
@@ -367,7 +367,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="px-6 pt-32 sm:pt-40 md:pt-48 pb-12 relative z-10">
+      <section className="px-6 pt-[10rem] sm:pt-[12.5rem] md:pt-[15rem] pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
             <div className="flex justify-center mb-12 px-4 sm:px-0">
