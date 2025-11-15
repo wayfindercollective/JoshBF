@@ -511,11 +511,20 @@ export default function DiamondBranches() {
                       // Mobile: scaled by 1.3, Desktop: original
                       const scaleFactor = isMobile ? 1.3 : 1.0;
                       const logoRadius = isMobile ? 78 : 60;
+                      // Week 3 and Week 7 keep original spacing
                       const baseTextDistance = week.distance + logoRadius + (40 * scaleFactor);
-                      // Week 3 and Week 7 positioned closer to logo
-                      const textDistance = (week.angle === 0 || week.angle === 180) 
-                        ? baseTextDistance - (65 * scaleFactor) 
-                        : baseTextDistance;
+                      // Week 4, 5, 6 positioned even closer to logo
+                      let textDistance;
+                      if (week.angle === 0 || week.angle === 180) {
+                        // Week 3 and Week 7 - keep original spacing
+                        textDistance = baseTextDistance - (65 * scaleFactor);
+                      } else if (week.angle === 45 || week.angle === 90 || week.angle === 135) {
+                        // Week 4, 5, 6 - positioned even closer
+                        textDistance = week.distance + logoRadius + (5 * scaleFactor);
+                      } else {
+                        // Week 1, 2, 8 - standard closer spacing
+                        textDistance = week.distance + logoRadius + (20 * scaleFactor);
+                      }
                       const textRad = (week.angle * Math.PI) / 180;
                       let textX = 500 + Math.cos(textRad) * textDistance;
                       const textY = 500 + Math.sin(textRad) * textDistance;

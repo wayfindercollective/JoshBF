@@ -23,6 +23,19 @@ export default function TitleWithBorder({
   const [isReady, setIsReady] = useState(false);
   const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const dimensionsLockedRef = useRef(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -124,8 +137,9 @@ export default function TitleWithBorder({
   }, [children]);
 
   // Use consistent border width for path calculation (always use visible width)
-  const pathBorderWidth = 5;
-  const displayBorderWidth = isVisible ? 5 : 4;
+  // Mobile: half thickness (2.5/2), Desktop: full thickness (5/4)
+  const pathBorderWidth = isMobile ? 2.5 : 5;
+  const displayBorderWidth = isMobile ? (isVisible ? 2.5 : 2) : (isVisible ? 5 : 4);
   const halfBorder = pathBorderWidth / 2;
   const w = dimensions.width;
   const h = dimensions.height;

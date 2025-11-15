@@ -217,7 +217,7 @@ export default function Home() {
       <section id="purpose-transformation" className="px-6 pt-24 pb-8 sm:pb-10 md:pb-12 relative z-10">
         <div className="max-w-5xl mx-auto">
           <RandomScrollReveal delay={0} randomDelay={true}>
-            <div className="flex flex-col items-center mb-2 px-4 sm:px-0">
+            <div className="flex flex-col items-center -mb-8 sm:-mb-10 md:-mb-12 px-4 sm:px-0">
               <TitleWithBorder padding="px-3 sm:px-6 py-2 sm:py-4">
                 <div className="text-center">
                   <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white">
