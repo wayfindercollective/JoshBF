@@ -18,7 +18,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="overflow-x-hidden">
-       <html lang="en" className={`${inter.variable} ${orbitron.variable} ${plexMono.variable}`}>
       <head>
         {/* Referrer for cart */}
         <script
@@ -47,38 +46,48 @@ export default function RootLayout({
               $(document).ready(function () {
                 $('a').each(function () {
                   var url = $(this).attr('href');
-                  var host = $(this).prop('href', url).prop('hostname');
-                  if (
-                    host != 'www.facebook.com' &&
-                    host != 'www.instragram.com' &&
-                    host != 'www.youtube.com' &&
-                    /^http/.test(url)
-                  ) {
-                    var query_params = url.indexOf('?') != -1;
-                    var l = sessionStorage.getItem('l');
-                    if (l != null) {
-                      url += '&l=' + l;
+                  if (!url || !/^https?:/.test(url)) {
+                    return;
+                  }
+                  try {
+                    var urlObj = new URL(url);
+                    var host = urlObj.hostname;
+                    if (
+                      host != 'www.facebook.com' &&
+                      host != 'www.instragram.com' &&
+                      host != 'www.youtube.com'
+                    ) {
+                      var query_params = url.indexOf('?') != -1;
+                      var l = sessionStorage.getItem('l');
+                      if (l != null) {
+                        url += (query_params ? '&' : '?') + 'l=' + encodeURIComponent(l);
+                        query_params = true;
+                      }
+                      var s = sessionStorage.getItem('source');
+                      if (s != null) {
+                        s = s.replace(/^https?:\\/\\//, '');
+                        s = s.replace(/^\\//, '');
+                        url += (query_params ? '&' : '?') + 'source=' + encodeURIComponent(s);
+                        query_params = true;
+                      }
+                      var a = sessionStorage.getItem('AFID');
+                      if (a != null) {
+                        url += (query_params ? '&' : '?') + 'AFID=' + encodeURIComponent(a);
+                        query_params = true;
+                      }
+                      var c = sessionStorage.getItem('CID');
+                      if (c != null) {
+                        url += (query_params ? '&' : '?') + 'CID=' + encodeURIComponent(c);
+                        query_params = true;
+                      }
+                      var sid = sessionStorage.getItem('SID');
+                      if (sid != null) {
+                        url += (query_params ? '&' : '?') + 'SID=' + encodeURIComponent(sid);
+                      }
+                      $(this).attr('href', url);
                     }
-                    var s = sessionStorage.getItem('source');
-                    if (s != null) {
-                      s = s.replace('https://', '');
-                      s = s.replace('http://', '');
-                      s = s.replace('/', '');
-                      url += '&source=' + s;
-                    }
-                    var a = sessionStorage.getItem('AFID');
-                    if (a != null) {
-                      url += '&AFID=' + a;
-                    }
-                    var c = sessionStorage.getItem('CID');
-                    if (c != null) {
-                      url += '&CID=' + c;
-                    }
-                    var sid = sessionStorage.getItem('SID');
-                    if (sid != null) {
-                      url += '&SID=' + sid;
-                    }
-                    $(this).attr('href', query_params ? url : url.replace(/&/, '?'));
+                  } catch (e) {
+                    console.error('Error processing URL:', url, e);
                   }
                 });
               });
