@@ -238,7 +238,7 @@ export default function Home() {
                   strokeWidth="3" 
                   strokeLinecap="round" 
                   strokeLinejoin="round"
-                  className="mt-2 w-6 h-12 sm:w-8 sm:h-16 md:w-8 md:h-16 arrow-point-down"
+                  className="mt-1 w-6 h-12 sm:w-8 sm:h-16 md:w-8 md:h-16 arrow-point-down"
                   style={{ color: 'white' }}
                 >
                   <path d="M12 0v40M20 32l-8 8-8-8" />
@@ -247,9 +247,11 @@ export default function Home() {
             </div>
           </RandomScrollReveal>
           <RandomScrollReveal delay={200} randomDelay={true} duration={1.2}>
-            <Suspense fallback={<div className="min-h-[400px] sm:min-h-[500px] md:min-h-[640px]" />}>
-              <DiamondBranches />
-            </Suspense>
+            <div className="-mt-4 sm:-mt-6 md:-mt-16 lg:-mt-20">
+              <Suspense fallback={<div className="min-h-[400px] sm:min-h-[500px] md:min-h-[640px]" />}>
+                <DiamondBranches />
+              </Suspense>
+            </div>
           </RandomScrollReveal>
           {/* Get Started Button */}
           <RandomScrollReveal delay={400} randomDelay={true}>
