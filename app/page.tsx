@@ -255,7 +255,7 @@ export default function Home() {
           </RandomScrollReveal>
           {/* Get Started Button */}
           <RandomScrollReveal delay={400} randomDelay={true}>
-            <div className="flex flex-col items-center justify-center -mt-8 sm:mt-5 md:mt-6 mb-6 sm:mb-8 md:mb-10">
+            <div className="flex flex-col items-center justify-center -mt-8 sm:mt-5 md:-mt-12 lg:-mt-16 mb-10 sm:mb-12 md:mb-16 lg:mb-20">
               <div className="text-center w-full max-w-2xl mx-auto">
                 <a
                   href="https://bookmyeventnow.com/register?a=new&p=26"
@@ -271,7 +271,7 @@ export default function Home() {
           </RandomScrollReveal>
           {/* See all Bonuses link */}
           <RandomScrollReveal delay={300} randomDelay={true}>
-            <div className="flex flex-col items-center justify-center -mt-6 sm:mt-4 md:mt-5 mb-4 sm:mb-6 md:mb-8">
+            <div className="flex flex-col items-center justify-center -mt-6 sm:mt-4 md:-mt-10 lg:-mt-12 mb-4 sm:mb-6 md:mb-8">
               <a
                 href="#bonuses"
                 className="text-sm sm:text-base md:text-lg font-sans text-white/70 hover:text-white/90 transition-colors flex items-center gap-2"

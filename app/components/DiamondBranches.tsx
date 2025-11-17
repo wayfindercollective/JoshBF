@@ -186,15 +186,16 @@ export default function DiamondBranches() {
     // Adjust offset based on angle - weeks 1, 2, 3 (270, 315, 0) need more offset
     // Other angles need less to avoid going into the logo
     // Mobile: scaled by 1.3 (130%), Desktop: original sizes
+    // Increased by another 20% to match larger logo size
     const scaleFactor = isMobile ? 1.3 : 1.0;
-    let offset = 55 * scaleFactor;
+    let offset = 79 * scaleFactor;
     if (angle === 270) {
-      offset = 56 * scaleFactor; // Week One - top
+      offset = 80 * scaleFactor; // Week One - top
     } else if (angle === 315 || angle === 0) {
-      offset = 55 * scaleFactor; // Week Two and Three - top-right and right
+      offset = 79 * scaleFactor; // Week Two and Three - top-right and right
     } else {
       // Week Four through Eight - reduce offset to prevent overlap
-      offset = 50 * scaleFactor;
+      offset = 72 * scaleFactor;
     }
     const lineDistance = distance - logoRadius + offset;
     const x = Math.cos(rad) * lineDistance;
@@ -481,9 +482,9 @@ export default function DiamondBranches() {
           {/* Animated branches */}
           {weeks.map((week, index) => {
             const endPos = getPosition(week.angle, week.distance);
-            // Mobile: 156px (78 radius), Desktop: 120px (60 radius)
-            const logoSize = isMobile ? 156 : 120;
-            const logoRadius = isMobile ? 78 : 60;
+            // Mobile: 224px (113 radius), Desktop: 173px (86 radius) - increased by another 20%
+            const logoSize = isMobile ? 224 : 173;
+            const logoRadius = isMobile ? 113 : 86;
             const lineEndPos = getLineEndPosition(week.angle, week.distance, logoRadius, isMobile);
             const progress = branchProgress[index] || 0;
             const isHoveredDot = hoveredWeekIndex === index;
@@ -510,7 +511,7 @@ export default function DiamondBranches() {
                       // Position text at the end of the line, extending beyond the logo
                       // Mobile: scaled by 1.3, Desktop: original
                       const scaleFactor = isMobile ? 1.3 : 1.0;
-                      const logoRadius = isMobile ? 78 : 60;
+                      const logoRadius = isMobile ? 113 : 86;
                       // Week 3 and Week 7 keep original spacing
                       const baseTextDistance = week.distance + logoRadius + (40 * scaleFactor);
                       // Week 4, 5, 6 positioned even closer to logo
@@ -633,7 +634,7 @@ export default function DiamondBranches() {
                     <circle
                       cx={endPos.x}
                       cy={endPos.y}
-                      r={isMobile ? 91 : 70}
+                      r={isMobile ? 131 : 101}
                       fill="transparent"
                       className="cursor-pointer"
                       onMouseEnter={() => setHoveredWeekIndex(index)}

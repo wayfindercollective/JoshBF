@@ -27,44 +27,47 @@ interface BranchLine {
   endX: number;    // Ending X (branching to the right)
 }
 
-// 8 upward lines starting from left side
+// 7 upward lines starting from left side
 // Very tight spacing to fit everything on one page - columns tightly wrapped around text
 const upwardLinesDesktop: UpwardLine[] = [
   { startY: 500, endY: 200 },   // Top (Purpose Transformation - no subtitle)
-  { startY: 500, endY: 270 },   // Upper-top (Goal Setting Workbook - no subtitle)
-  { startY: 500, endY: 340 },   // Upper-mid (Instinctive Breathwork - no subtitle)
-  { startY: 500, endY: 410 },   // Mid-upper (Book On How To Make Progress)
-  { startY: 500, endY: 490 },   // Middle (The Purpose Paradox - HAS subtitle)
-  { startY: 500, endY: 570 },   // Mid-lower (Set Fail-Resistant Goals - HAS subtitle)
-  { startY: 500, endY: 650 },   // Lower-mid (Get Moving Make It Happen Now - HAS subtitle)
-  { startY: 500, endY: 730 },   // Bottom
+  { startY: 500, endY: 280 },   // Upper-top (Goal Setting Workbook & Book On How To Make Progress - no subtitle)
+  { startY: 500, endY: 360 },   // Upper-mid (Instinctive Breathwork - no subtitle)
+  { startY: 500, endY: 450 },   // Middle (The Purpose Paradox - HAS subtitle)
+  { startY: 500, endY: 540 },   // Mid-lower (Set Fail-Resistant Goals - HAS subtitle)
+  { startY: 500, endY: 630 },   // Lower-mid (Get Moving Make It Happen Now - HAS subtitle)
+  { startY: 500, endY: 720 },   // Bottom ($500 Credit Towards Josh's Mentoring - no subtitle)
 ];
 
-// Increased spacing for mobile - last three columns spread out more evenly
+// Increased spacing for mobile - columns spread out more evenly
 const upwardLinesMobile: UpwardLine[] = [
-  { startY: 500, endY: 60 },    // Top (new)
-  { startY: 500, endY: 120 },   // Upper-top
-  { startY: 500, endY: 246 },   // Upper-mid
-  { startY: 500, endY: 373 },   // Mid-upper
-  { startY: 500, endY: 500 },   // Middle
-  { startY: 500, endY: 635 },   // Mid-lower (spread out more)
-  { startY: 500, endY: 770 },   // Lower-mid (spread out more)
-  { startY: 500, endY: 905 },   // Bottom (spread out more)
+  { startY: 500, endY: 60 },    // Top (Purpose Transformation)
+  { startY: 500, endY: 150 },   // Upper-top (Goal Setting Workbook & Book On How To Make Progress)
+  { startY: 500, endY: 280 },   // Upper-mid (Instinctive Breathwork)
+  { startY: 500, endY: 410 },   // Middle (The Purpose Paradox)
+  { startY: 500, endY: 560 },   // Mid-lower (Set Fail-Resistant Goals)
+  { startY: 500, endY: 710 },   // Lower-mid (Get Moving Make It Happen Now)
+  { startY: 500, endY: 860 },   // Bottom ($500 Credit Towards Josh's Mentoring)
 ];
 
 // Bonus content text for each column - split into title and subtitle
 const bonusTexts: { title: string; subtitle?: string }[] = [
   { title: "Purpose Transformation" },  // New top column
-  { title: "Goal Setting Workbook" },
+  { title: "Goal Setting Workbook & Book On How To Make Progress" },
   { title: "Instinctive Breathwork" },
-  { title: "Book On How To Make Progress" },
   { title: "The Purpose Paradox", subtitle: "Understand The Truth Of Living With Purpose" },
   { title: "Set Fail-Resistant Goals", subtitle: "A Step-By-Step Framework" },
   { title: "Get Moving Make It Happen Now", subtitle: "Building The Life You Want" },
+  { title: "$500 Credit Towards Josh's Mentoring" },
 ];
 
 // Detailed descriptions for each bonus item
-const bonusDescriptions: { title: string; description: string[] }[] = [
+// Can have either a single description array or multiple sections
+const bonusDescriptions: { 
+  title: string; 
+  description?: string[];
+  sections?: { title: string; description: string[] }[];
+}[] = [
   {
     title: "Purpose Transformation",
     description: [
@@ -73,11 +76,24 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
     ]
   },
   {
-    title: "Goal Setting Workbook",
-    description: [
-      "Build goals that match how you live and think.",
-      "Pair vision with awareness so direction is realistic and repeatable.",
-      "Small steps. Clear metrics. A plan you can sustain tomorrow and next month."
+    title: "Goal Setting Workbook & Book On How To Make Progress",
+    sections: [
+      {
+        title: "Goal Setting Workbook",
+        description: [
+          "Build goals that match how you live and think.",
+          "Pair vision with awareness so direction is realistic and repeatable.",
+          "Small steps. Clear metrics. A plan you can sustain tomorrow and next month."
+        ]
+      },
+      {
+        title: "Book On How To Make Progress",
+        description: [
+          "Three mental models and three short exercises that break inertia fast.",
+          "Clarify what actually matters. Stop looping the same problems. Start moving today.",
+          "Designed for functionality, performance, and purpose."
+        ]
+      }
     ]
   },
   {
@@ -86,14 +102,6 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
       "Learn a simple discovery method that unlocks the full range of your breathing.",
       "Use it to reach the state you need in the moment. Calm. Focus. Endurance. Recovery.",
       "Not a single technique. A way to find the right technique on demand."
-    ]
-  },
-  {
-    title: "Book On How To Make Progress",
-    description: [
-      "Three mental models and three short exercises that break inertia fast.",
-      "Clarify what actually matters. Stop looping the same problems. Start moving today.",
-      "Designed for functionality, performance, and purpose."
     ]
   },
   {
@@ -117,18 +125,25 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
       "Discover the unfamiliar strategies you need to start taking action today (and every day) toward building the life you want.",
       "Based on the true fundamentals of how to change human behavior. (Probably the opposite of what you're trying now.)"
     ]
+  },
+  {
+    title: "$500 Credit Towards Josh's Mentoring",
+    description: [
+      "Includes a $500 credit you can apply to Josh's mentoring. Limited spots for group circles or 1 on 1's.",
+      "During our Clarity Call Josh's Head Coach will determine best fit with you."
+    ]
   }
 ];
 
 // Prices for each bonus item (matching order of bonusTexts)
 const bonusPrices: string[] = [
   "$1,000", // Purpose Transformation
-  "$200",   // Goal Setting Workbook
-  "$497",   // Instinctive Breathwork
-  "$60",    // How To Make Progress Book (10-minute workbook)
-  "$297",   // The Purpose Paradox
-  "$297",   // Set Fail-Resistant Goals
-  "$297",   // Get Moving Make It Happen Now
+  "$260",   // Goal Setting Workbook & Book On How To Make Progress
+  "$500",   // Instinctive Breathwork
+  "$350",   // The Purpose Paradox
+  "$300",   // Set Fail-Resistant Goals
+  "$300",   // Get Moving Make It Happen Now
+  "$500",   // $500 Credit Towards Josh's Mentoring
 ];
 
 // Branch lines going from left to right and right to left, meeting in the middle to create columns
@@ -168,14 +183,14 @@ export default function ExpandingLines() {
   );
   
   // Lines are always fully drawn when visible (no animation)
-  const upwardProgress = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
-  const upwardProgressRight = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
-  const branchProgress = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
-  const branchProgressRight = isVisible ? new Array(8).fill(1) : new Array(8).fill(0);
-  const [textVisible, setTextVisible] = useState<boolean[]>(new Array(8).fill(false));
-  const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(8).fill(false)); // Price for each column
+  const upwardProgress = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
+  const upwardProgressRight = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
+  const branchProgress = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
+  const branchProgressRight = isVisible ? new Array(7).fill(1) : new Array(7).fill(0);
+  const [textVisible, setTextVisible] = useState<boolean[]>(new Array(7).fill(false));
+  const [priceVisible, setPriceVisible] = useState<boolean[]>(new Array(7).fill(false)); // Price for each column
   const [scriptComplete, setScriptComplete] = useState(false); // Track when script animation is complete
-  const [popInProgress, setPopInProgress] = useState<number[]>(new Array(8).fill(0)); // Track pop-in animation for each item (0-1)
+  const [popInProgress, setPopInProgress] = useState<number[]>(new Array(7).fill(0)); // Track pop-in animation for each item (0-1)
   const [selectedBonus, setSelectedBonus] = useState<number | null>(null); // Track which bonus is clicked
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
@@ -237,10 +252,10 @@ export default function ExpandingLines() {
           } else {
             // Reset animation when out of view
             setIsVisible(false);
-            setTextVisible(new Array(8).fill(false));
-            setPriceVisible(new Array(8).fill(false));
+            setTextVisible(new Array(7).fill(false));
+            setPriceVisible(new Array(7).fill(false));
             setScriptComplete(false);
-            setPopInProgress(new Array(8).fill(0));
+            setPopInProgress(new Array(7).fill(0));
             // Clear any ongoing animations
             if (animationRef.current) {
               cancelAnimationFrame(animationRef.current);
@@ -277,10 +292,10 @@ export default function ExpandingLines() {
   useEffect(() => {
     if (!isVisible) {
       // Reset all states when not visible
-      setTextVisible(new Array(8).fill(false));
-      setPriceVisible(new Array(8).fill(false));
+      setTextVisible(new Array(7).fill(false));
+      setPriceVisible(new Array(7).fill(false));
       setScriptComplete(false);
-      setPopInProgress(new Array(8).fill(0));
+      setPopInProgress(new Array(7).fill(0));
       return;
     }
 
@@ -544,7 +559,7 @@ export default function ExpandingLines() {
             }}
           >
             <div className="bonus-title">
-              <div className="bonus-title-text" style={{ color: index === 0 ? '#bc4500' : '#ffffff' }}>
+              <div className="bonus-title-text" style={{ color: index === 0 ? '#bc4500' : index === 6 ? '#f9e5c1' : '#ffffff' }}>
                 {bonus.title}
               </div>
               {bonus.subtitle && (
@@ -1072,15 +1087,14 @@ export default function ExpandingLines() {
                             setSelectedBonus(index);
                           }
                         }}
-                        className={`text-white ${index === 4 ? 'text-xs sm:text-xs md:text-xs lg:text-sm xl:text-base' : (bonusTexts[index].subtitle ? 'text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg' : 'text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl')} leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative`}
+                        className={`${index === 0 ? 'text-orange-red' : index === 6 ? 'text-warm-beige' : 'text-white'} ${index === 4 ? 'text-xs sm:text-xs md:text-xs lg:text-sm xl:text-base' : (bonusTexts[index].subtitle ? 'text-xs sm:text-sm md:text-sm lg:text-base xl:text-lg' : 'text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl')} leading-tight whitespace-normal text-left flex-shrink-0 block cursor-pointer group relative`}
                         style={{
                           fontFamily: "'IBM Plex Sans', sans-serif",
                           textShadow: index === 0 
-                            ? '0 0 8px rgba(188,69,0,0.8), 0 0 12px rgba(188,69,0,0.6), 0 0 16px rgba(188,69,0,0.4)'
-                            : '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
-                          filter: index === 0
-                            ? 'drop-shadow(0 0 4px rgba(188,69,0,0.7))'
-                            : 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                            ? '0 0 2px rgba(188,69,0,0.6)'
+                            : index === 6
+                            ? '0 0 2px rgba(249,229,193,0.8), 0 0 3px rgba(249,229,193,0.6)'
+                            : '0 0 2px rgba(255,255,255,0.4)',
                           fontWeight: 900,
                           letterSpacing: '0.02em',
                           wordBreak: 'break-word',
@@ -1096,24 +1110,20 @@ export default function ExpandingLines() {
                         }}
                         onMouseEnter={(e) => {
                           const baseScale = 0.3 + popInProgress[index] * 0.7;
-                          if (index === 0) {
-                            e.currentTarget.style.textShadow = '0 0 16px rgba(188,69,0,1), 0 0 24px rgba(188,69,0,0.9), 0 0 32px rgba(188,69,0,0.7)';
-                            e.currentTarget.style.filter = 'drop-shadow(0 0 8px rgba(188,69,0,0.9))';
-                          } else {
-                            e.currentTarget.style.textShadow = '0 0 16px rgba(255,255,255,1), 0 0 24px rgba(99,157,240,0.8), 0 0 32px rgba(99,157,240,0.6)';
-                            e.currentTarget.style.filter = 'drop-shadow(0 0 8px rgba(255,255,255,0.8))';
-                          }
+                          e.currentTarget.style.textShadow = index === 0
+                            ? '0 0 3px rgba(188,69,0,0.8)'
+                            : index === 6
+                            ? '0 0 3px rgba(249,229,193,1), 0 0 4px rgba(249,229,193,0.8)'
+                            : '0 0 3px rgba(255,255,255,0.6)';
                           e.currentTarget.style.transform = `scale(${baseScale * 1.08}) translateY(${(1 - popInProgress[index]) * 20}px)`;
                         }}
                         onMouseLeave={(e) => {
                           const baseScale = 0.3 + popInProgress[index] * 0.7;
-                          if (index === 0) {
-                            e.currentTarget.style.textShadow = '0 0 8px rgba(188,69,0,0.8), 0 0 12px rgba(188,69,0,0.6), 0 0 16px rgba(188,69,0,0.4)';
-                            e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(188,69,0,0.7))';
-                          } else {
-                            e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)';
-                            e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(255,255,255,0.5))';
-                          }
+                          e.currentTarget.style.textShadow = index === 0
+                            ? '0 0 2px rgba(188,69,0,0.6)'
+                            : index === 6
+                            ? '0 0 2px rgba(249,229,193,0.8), 0 0 3px rgba(249,229,193,0.6)'
+                            : '0 0 2px rgba(255,255,255,0.4)';
                           e.currentTarget.style.transform = `scale(${baseScale}) translateY(${(1 - popInProgress[index]) * 20}px)`;
                         }}
                       >
@@ -1126,6 +1136,8 @@ export default function ExpandingLines() {
                               wordBreak: 'break-word',
                               borderBottom: index === 0 
                                 ? '2px solid rgba(188, 69, 0, 0.5)'
+                                : index === 6
+                                ? '2px solid rgba(249, 229, 193, 0.5)'
                                 : '2px solid rgba(255, 255, 255, 0.3)',
                               paddingBottom: '2px',
                               display: 'inline-block',
@@ -1136,6 +1148,8 @@ export default function ExpandingLines() {
                             onMouseEnter={(e) => {
                               e.currentTarget.style.borderBottomColor = index === 0 
                                 ? 'rgba(188, 69, 0, 0.9)'
+                                : index === 6
+                                ? 'rgba(249, 229, 193, 0.9)'
                                 : 'rgba(255, 255, 255, 0.8)';
                               e.currentTarget.style.borderBottomWidth = '3px';
                               e.currentTarget.style.paddingBottom = '3px';
@@ -1144,6 +1158,8 @@ export default function ExpandingLines() {
                             onMouseLeave={(e) => {
                               e.currentTarget.style.borderBottomColor = index === 0 
                                 ? 'rgba(188, 69, 0, 0.5)'
+                                : index === 6
+                                ? 'rgba(249, 229, 193, 0.5)'
                                 : 'rgba(255, 255, 255, 0.3)';
                               e.currentTarget.style.borderBottomWidth = '2px';
                               e.currentTarget.style.paddingBottom = '2px';
@@ -1162,7 +1178,7 @@ export default function ExpandingLines() {
                                 </span>
                               </>
                             ) : (
-                              <span style={{ color: index === 0 ? '#bc4500' : 'inherit' }}>
+                              <span style={{ color: index === 0 ? '#bc4500' : index === 6 ? '#f9e5c1' : 'inherit' }}>
                                 {bonusTexts[index].title}
                               </span>
                             )}
@@ -1172,32 +1188,27 @@ export default function ExpandingLines() {
                               style={{ 
                                 fontSize: '0.7em',
                                 animation: 'bonusArrowBounceDesktop 2s ease-in-out infinite',
-                                color: index === 0 ? '#bc4500' : 'inherit',
+                                color: index === 0 ? '#bc4500' : index === 6 ? '#f9e5c1' : 'inherit',
                                 textShadow: index === 0 
-                                  ? '0 0 4px rgba(188,69,0,0.8), 0 0 8px rgba(188,69,0,0.6)'
-                                  : '0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(99,157,240,0.4)',
-                                filter: index === 0
-                                  ? 'drop-shadow(0 0 2px rgba(188,69,0,0.7))'
-                                  : 'drop-shadow(0 0 2px rgba(255,255,255,0.5))',
+                                  ? '0 0 2px rgba(188,69,0,0.6)'
+                                  : index === 6
+                                  ? '0 0 2px rgba(249,229,193,0.8), 0 0 3px rgba(249,229,193,0.6)'
+                                  : '0 0 2px rgba(255,255,255,0.4)',
                                 verticalAlign: 'baseline',
                               }}
                               onMouseEnter={(e) => {
-                                if (index === 0) {
-                                  e.currentTarget.style.textShadow = '0 0 8px rgba(188,69,0,1), 0 0 12px rgba(188,69,0,0.8)';
-                                  e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(188,69,0,0.9))';
-                                } else {
-                                  e.currentTarget.style.textShadow = '0 0 8px rgba(255,255,255,1), 0 0 12px rgba(99,157,240,0.8)';
-                                  e.currentTarget.style.filter = 'drop-shadow(0 0 4px rgba(255,255,255,0.8))';
-                                }
+                                e.currentTarget.style.textShadow = index === 0
+                                  ? '0 0 3px rgba(188,69,0,0.8)'
+                                  : index === 6
+                                  ? '0 0 3px rgba(249,229,193,1), 0 0 4px rgba(249,229,193,0.8)'
+                                  : '0 0 3px rgba(255,255,255,0.6)';
                               }}
                               onMouseLeave={(e) => {
-                                if (index === 0) {
-                                  e.currentTarget.style.textShadow = '0 0 4px rgba(188,69,0,0.8), 0 0 8px rgba(188,69,0,0.6)';
-                                  e.currentTarget.style.filter = 'drop-shadow(0 0 2px rgba(188,69,0,0.7))';
-                                } else {
-                                  e.currentTarget.style.textShadow = '0 0 4px rgba(255,255,255,0.6), 0 0 8px rgba(99,157,240,0.4)';
-                                  e.currentTarget.style.filter = 'drop-shadow(0 0 2px rgba(255,255,255,0.5))';
-                                }
+                                e.currentTarget.style.textShadow = index === 0
+                                  ? '0 0 2px rgba(188,69,0,0.6)'
+                                  : index === 6
+                                  ? '0 0 2px rgba(249,229,193,0.8), 0 0 3px rgba(249,229,193,0.6)'
+                                  : '0 0 2px rgba(255,255,255,0.4)';
                               }}
                             >
                               →
@@ -1273,11 +1284,12 @@ export default function ExpandingLines() {
                 }}
               >
                       <span
-                  className="text-white font-mono text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap"
+                  className={`font-mono text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl font-bold inline-block relative flex-shrink-0 whitespace-nowrap ${index === 6 ? 'text-warm-beige' : 'text-white'}`}
                         style={{
                           fontFamily: "'IBM Plex Mono', monospace",
-                          textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
-                          filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.5))',
+                          textShadow: index === 6
+                            ? '0 0 2px rgba(249,229,193,0.8), 0 0 3px rgba(249,229,193,0.6)'
+                            : '0 0 2px rgba(255,255,255,0.4)',
                     opacity: popInProgress[index] > 0 ? 1 : 0,
                     transform: `scale(${0.3 + popInProgress[index] * 0.7}) translateY(${(1 - popInProgress[index]) * 20}px)`,
                     transition: popInProgress[index] === 0 ? 'none' : 'transform 0.1s ease-out',
@@ -1392,7 +1404,7 @@ export default function ExpandingLines() {
                       position: 'relative',
                       display: 'inline-block',
                     }}>
-                      $2,648
+                      $3,210
                       {/* Diagonal strikethrough line */}
                       <span
                         style={{
@@ -1453,14 +1465,34 @@ export default function ExpandingLines() {
               </button>
             </div>
              <div className="space-y-5 flex-1 relative z-10" style={{ paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
-               {bonusDescriptions[selectedBonus]?.description.map((paragraph, idx) => (
-                 <p 
-                   key={idx}
-                   className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed"
-                 >
-                   {paragraph}
-                 </p>
-               ))}
+               {bonusDescriptions[selectedBonus]?.sections ? (
+                 // Render multiple sections
+                 bonusDescriptions[selectedBonus].sections!.map((section, sectionIdx) => (
+                   <div key={sectionIdx} className="space-y-3">
+                     <h4 className="font-heading text-xl md:text-2xl font-semibold text-white">
+                       {section.title}
+                     </h4>
+                     {section.description.map((paragraph, idx) => (
+                       <p 
+                         key={idx}
+                         className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed"
+                       >
+                         {paragraph}
+                       </p>
+                     ))}
+                   </div>
+                 ))
+               ) : (
+                 // Render single description
+                 bonusDescriptions[selectedBonus]?.description?.map((paragraph, idx) => (
+                   <p 
+                     key={idx}
+                     className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed"
+                   >
+                     {paragraph}
+                   </p>
+                 ))
+               )}
              </div>
             
             {/* Tree logo in bottom-right corner */}

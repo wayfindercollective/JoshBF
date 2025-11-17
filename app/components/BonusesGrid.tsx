@@ -7,17 +7,22 @@ import RandomScrollReveal from './RandomScrollReveal';
 // Bonus content text for each column - split into title and subtitle
 const bonusTexts: { title: string; subtitle?: string }[] = [
   { title: "Purpose Transformation" },
-  { title: "Goal Setting Workbook" },
+  { title: "Goal Setting Workbook & Book On How To Make Progress" },
   { title: "Instinctive Breathwork" },
-  { title: "Book On How To Make Progress" },
   { title: "Purpose Profile Personality Test" },
   { title: "Set Fail-Resistant Goals", subtitle: "A Step-By-Step Framework" },
   { title: "Get Moving Make It Happen Now", subtitle: "Building The Life You Want" },
   { title: "The Purpose Paradox", subtitle: "Understand The Truth Of Living With Purpose" },
+  { title: "$500 Credit Towards Josh's Mentoring" },
 ];
 
 // Detailed descriptions for each bonus item
-const bonusDescriptions: { title: string; description: string[] }[] = [
+// Can have either a single description array or multiple sections
+const bonusDescriptions: { 
+  title: string; 
+  description?: string[];
+  sections?: { title: string; description: string[] }[];
+}[] = [
   {
     title: "Purpose Transformation",
     description: [
@@ -26,11 +31,24 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
     ]
   },
   {
-    title: "Goal Setting Workbook",
-    description: [
-      "Build goals that match how you live and think.",
-      "Pair vision with awareness so direction is realistic and repeatable.",
-      "Small steps. Clear metrics. A plan you can sustain tomorrow and next month."
+    title: "Goal Setting Workbook & Book On How To Make Progress",
+    sections: [
+      {
+        title: "Goal Setting Workbook",
+        description: [
+          "Build goals that match how you live and think.",
+          "Pair vision with awareness so direction is realistic and repeatable.",
+          "Small steps. Clear metrics. A plan you can sustain tomorrow and next month."
+        ]
+      },
+      {
+        title: "Book On How To Make Progress",
+        description: [
+          "Three mental models and three short exercises that break inertia fast.",
+          "Clarify what actually matters. Stop looping the same problems. Start moving today.",
+          "Designed for functionality, performance, and purpose."
+        ]
+      }
     ]
   },
   {
@@ -39,14 +57,6 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
       "Learn a simple discovery method that unlocks the full range of your breathing.",
       "Use it to reach the state you need in the moment. Calm. Focus. Endurance. Recovery.",
       "Not a single technique. A way to find the right technique on demand."
-    ]
-  },
-  {
-    title: "Book On How To Make Progress",
-    description: [
-      "Three mental models and three short exercises that break inertia fast.",
-      "Clarify what actually matters. Stop looping the same problems. Start moving today.",
-      "Designed for functionality, performance, and purpose."
     ]
   },
   {
@@ -77,19 +87,26 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
       "Understand the truth of living with purpose. (FYI: It isn't a discovery. It's a skill set.)",
       "So you can create on a larger scale in your life, and in the smallest moments every day."
     ]
+  },
+  {
+    title: "$500 Credit Towards Josh's Mentoring",
+    description: [
+      "Includes a $500 credit you can apply to Josh's mentoring. Limited spots for group circles or 1 on 1's.",
+      "During our Clarity Call Josh's Head Coach will determine best fit with you."
+    ]
   }
 ];
 
 // Prices for each bonus item (matching order of bonusTexts)
 const bonusPrices: string[] = [
   "$1,000", // Purpose Transformation
-  "$200",   // Goal Setting Workbook
-  "$497",   // Instinctive Breathwork
-  "$60",    // How To Make Progress Book (10-minute workbook)
+  "$260",   // Goal Setting Workbook & Book On How To Make Progress
+  "$500",   // Instinctive Breathwork
   "$60",    // Purpose Profile Personality Test
-  "$297",   // Set Fail-Resistant Goals
-  "$297",   // Get Moving Make It Happen Now
-  "$297",   // The Purpose Paradox
+  "$300",   // Set Fail-Resistant Goals
+  "$300",   // Get Moving Make It Happen Now
+  "$350",   // The Purpose Paradox
+  "$500",   // $500 Credit Towards Josh's Mentoring
 ];
 
 export function TotalValue() {
@@ -105,7 +122,7 @@ export function TotalValue() {
           style={{
             textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
           }}>
-            $2,708
+            $3,270
             <span
               style={{
                 position: 'absolute',
@@ -133,7 +150,7 @@ export function TotalValue() {
           style={{
             textShadow: '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
           }}>
-            $2,708
+            $3,270
             <span
               style={{
                 position: 'absolute',
@@ -174,20 +191,28 @@ export default function BonusesGrid() {
               <div className="flex-1 text-left min-w-0 pl-1.5 sm:pl-3 md:pl-4">
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   <h3 
-                    className={`font-heading ${index === 0 ? 'text-base sm:text-lg md:text-lg lg:text-xl' : 'text-sm sm:text-base md:text-base lg:text-lg'} font-bold group-hover:transition-all truncate ${index === 0 ? 'bonus-text-glow-enhanced' : 'bonus-text-glow'} ${
+                    className={`font-heading ${index === 0 ? 'text-base sm:text-lg md:text-lg lg:text-xl' : 'text-sm sm:text-base md:text-base lg:text-lg'} font-bold group-hover:transition-all truncate ${index === 0 ? 'bonus-text-glow-enhanced' : index === 7 ? 'bonus-text-glow-beige' : 'bonus-text-glow'} ${
                       index === 0 
-                        ? 'text-orange-red group-hover:text-orange-red/90' 
+                        ? 'text-orange-red group-hover:text-orange-red/90'
+                        : index === 7
+                        ? 'text-warm-beige group-hover:text-warm-beige/90'
                         : 'text-white group-hover:text-white/90'
                     }`}
                     style={{
                       '--glow-color-1': index === 0 
-                        ? 'rgba(188,69,0,1)' 
+                        ? 'rgba(188,69,0,1)'
+                        : index === 7
+                        ? 'rgba(249,229,193,1)'
                         : 'rgba(255,255,255,0.8)',
                       '--glow-color-2': index === 0 
-                        ? 'rgba(188,69,0,0.9)' 
+                        ? 'rgba(188,69,0,0.9)'
+                        : index === 7
+                        ? 'rgba(249,229,193,0.9)'
                         : 'rgba(99,157,240,0.6)',
                       '--glow-color-3': index === 0 
-                        ? 'rgba(188,69,0,0.8)' 
+                        ? 'rgba(188,69,0,0.8)'
+                        : index === 7
+                        ? 'rgba(249,229,193,0.8)'
                         : 'rgba(99,157,240,0.4)',
                       transformOrigin: 'center',
                       transition: 'all 0.3s ease',
@@ -197,26 +222,31 @@ export default function BonusesGrid() {
                       e.currentTarget.style.animation = 'none';
                       e.currentTarget.style.transform = 'scale(1.08)';
                       e.currentTarget.style.textShadow = index === 0
-                        ? '0 0 6px rgba(188,69,0,1), 0 0 8px rgba(188,69,0,1), 0 0 12px rgba(188,69,0,0.9)'
-                        : '0 0 6px rgba(255,255,255,1), 0 0 8px rgba(99,157,240,0.9), 0 0 12px rgba(99,157,240,0.7)';
-                      e.currentTarget.classList.remove(index === 0 ? 'bonus-text-glow-enhanced' : 'bonus-text-glow');
+                        ? '0 0 3px rgba(188,69,0,0.8)'
+                        : index === 7
+                        ? '0 0 3px rgba(249,229,193,1), 0 0 4px rgba(249,229,193,0.8)'
+                        : '0 0 3px rgba(255,255,255,0.6)';
+                      e.currentTarget.classList.remove(index === 0 ? 'bonus-text-glow-enhanced' : index === 7 ? 'bonus-text-glow-beige' : 'bonus-text-glow');
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.animation = '';
                       e.currentTarget.style.transform = '';
-                      e.currentTarget.classList.add(index === 0 ? 'bonus-text-glow-enhanced' : 'bonus-text-glow');
+                      e.currentTarget.style.textShadow = '';
+                      e.currentTarget.classList.add(index === 0 ? 'bonus-text-glow-enhanced' : index === 7 ? 'bonus-text-glow-beige' : 'bonus-text-glow');
                     }}
                   >
                     {bonus.title}
                   </h3>
                   <span 
                     className={`inline-block group-hover:translate-x-1 transition-all duration-200 flex-shrink-0 ${
-                      index === 0 ? 'text-orange-red/60 group-hover:text-orange-red/80' : 'text-white/50 group-hover:text-white/80'
+                      index === 0 ? 'text-orange-red/60 group-hover:text-orange-red/80' : index === 7 ? 'text-warm-beige/60 group-hover:text-warm-beige/80' : 'text-white/50 group-hover:text-white/80'
                     }`}
                     style={{
                       textShadow: index === 0 
-                        ? '0 0 8px rgba(188,69,0,0.7), 0 0 12px rgba(188,69,0,0.5)'
-                        : '0 0 8px rgba(255,255,255,0.5), 0 0 12px rgba(99,157,240,0.3)',
+                        ? '0 0 2px rgba(188,69,0,0.5)'
+                        : index === 7
+                        ? '0 0 2px rgba(249,229,193,0.8), 0 0 3px rgba(249,229,193,0.6)'
+                        : '0 0 2px rgba(255,255,255,0.3)',
                       animation: 'bonusTextGlow 3s ease-in-out infinite',
                     }}
                   >
@@ -234,12 +264,14 @@ export default function BonusesGrid() {
               <div className="ml-1.5 sm:ml-3 md:ml-2 pr-1.5 sm:pr-3 md:pr-4 flex-shrink-0">
                 <span 
                   className={`font-mono ${index === 0 ? 'text-base sm:text-lg md:text-lg lg:text-xl' : 'text-sm sm:text-base md:text-base lg:text-lg'} font-bold inline-block relative ${
-                    index === 0 ? 'text-orange-red' : 'text-white'
+                    index === 0 ? 'text-orange-red' : index === 7 ? 'text-warm-beige' : 'text-white'
                   }`}
                   style={{
                     textShadow: index === 0 
-                      ? '0 0 6px rgba(188,69,0,1), 0 0 8px rgba(188,69,0,0.9), 0 0 12px rgba(188,69,0,0.7)'
-                      : '0 0 8px rgba(255,255,255,0.6), 0 0 12px rgba(99,157,240,0.4)',
+                      ? '0 0 2px rgba(188,69,0,0.6)'
+                      : index === 7
+                      ? '0 0 2px rgba(249,229,193,0.8), 0 0 3px rgba(249,229,193,0.6)'
+                      : '0 0 2px rgba(255,255,255,0.4)',
                   }}
                 >
                   {bonusPrices[index] || "$297"}
@@ -294,14 +326,34 @@ export default function BonusesGrid() {
               </button>
             </div>
             <div className="space-y-5 overflow-y-auto flex-1 relative z-10" style={{ maxHeight: 'calc(90vh - 120px)', paddingRight: 'clamp(20px, 8vw, 100px)', paddingBottom: 'clamp(20px, 8vw, 100px)' }}>
-              {bonusDescriptions[selectedBonus]?.description.map((paragraph, idx) => (
-                <p 
-                  key={idx}
-                  className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed"
-                >
-                  {paragraph}
-                </p>
-              ))}
+              {bonusDescriptions[selectedBonus]?.sections ? (
+                // Render multiple sections
+                bonusDescriptions[selectedBonus].sections!.map((section, sectionIdx) => (
+                  <div key={sectionIdx} className="space-y-3">
+                    <h4 className="font-heading text-xl md:text-2xl font-semibold text-white">
+                      {section.title}
+                    </h4>
+                    {section.description.map((paragraph, idx) => (
+                      <p 
+                        key={idx}
+                        className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                ))
+              ) : (
+                // Render single description
+                bonusDescriptions[selectedBonus]?.description?.map((paragraph, idx) => (
+                  <p 
+                    key={idx}
+                    className="text-white/70 text-base md:text-lg lg:text-xl font-sans leading-relaxed"
+                  >
+                    {paragraph}
+                  </p>
+                ))
+              )}
             </div>
             
             {/* Tree logo in bottom-right corner */}
