@@ -303,8 +303,8 @@ export default function FloatingGeometry() {
     
     window.addEventListener('resize', resizeCanvas, { passive: true });
     
-    // Check document height periodically - increased interval for performance
-    const heightCheckInterval = setInterval(updateCanvasHeight, 2000); // Increased to 2 seconds
+    // Check document height more frequently to ensure canvas always covers full page
+    const heightCheckInterval = setInterval(updateCanvasHeight, 500); // Check every 500ms
 
     // Draw functions
     const drawTriangle = (shape: Shape) => {
@@ -407,19 +407,35 @@ export default function FloatingGeometry() {
     window.addEventListener('scroll', handleScrollUpdate, { passive: true });
     
     const animate = () => {
+      // Ensure canvas height always matches document height
+      const currentDocHeight = Math.max(
+        window.innerHeight,
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight
+      );
+      
+      if (currentDocHeight > canvas.height) {
+        const oldHeight = canvas.height;
+        canvas.height = currentDocHeight;
+        canvas.style.height = `${currentDocHeight}px`;
+        // Generate shapes for new area
+        const newShapes = generateShapesForRegion(oldHeight, currentDocHeight);
+        shapesRef.current.push(...newShapes);
+      }
+      
       // Read scroll position directly - it's fast and ensures smooth updates
       const scrollY = window.scrollY;
       lastScrollY = scrollY;
       const viewportHeight = window.innerHeight;
       const viewportTop = scrollY;
       const viewportBottom = scrollY + viewportHeight;
-      const viewportBuffer = viewportHeight * 0.5; // Buffer for smooth edges
+      const viewportBuffer = viewportHeight * 2; // Larger buffer to ensure shapes are always visible
 
-      // Calculate visible region
+      // Calculate visible region with larger buffer
       const visibleTop = Math.max(0, viewportTop - viewportBuffer);
       const visibleBottom = Math.min(canvas.height, viewportBottom + viewportBuffer);
       
-      // Always clear and redraw - animation never pauses
+      // Clear the entire visible area plus buffer
       ctx.clearRect(0, visibleTop, canvas.width, visibleBottom - visibleTop);
 
       // Always update shape positions - animation never pauses
@@ -433,7 +449,11 @@ export default function FloatingGeometry() {
         if (shape.x < -shape.size) shape.x = canvas.width + shape.size;
         if (shape.x > canvas.width + shape.size) shape.x = -shape.size;
 
-        // Draw shapes in the visible viewport (using absolute positions)
+        // Wrap around vertical edges to keep shapes animating throughout the page
+        if (shape.y < -shape.size) shape.y = canvas.height + shape.size;
+        if (shape.y > canvas.height + shape.size) shape.y = -shape.size;
+
+        // Draw shapes in the visible viewport with buffer (using absolute positions)
         if (shape.y >= visibleTop && shape.y <= visibleBottom) {
           // Draw shape at its absolute position on the canvas
           switch (shape.type) {
