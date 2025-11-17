@@ -122,10 +122,10 @@ function EnvelopeClickableWrapper() {
   const [animationComplete, setAnimationComplete] = useState(false);
 
   const handleScroll = () => {
-    const element = document.getElementById('bonuses');
+    const element = document.getElementById('purpose-transformation');
     if (element) {
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      // Center the Bonuses section in the viewport
+      // Center the Purpose Transformation section in the viewport
       const offsetPosition = elementPosition - (window.innerHeight / 2) + (element.offsetHeight / 2);
       window.scrollTo({
         top: offsetPosition,
@@ -137,7 +137,7 @@ function EnvelopeClickableWrapper() {
   return (
     <div className="text-xl md:text-2xl mb-12 text-white/90 flex flex-col items-center justify-center mt-[84px] md:mt-24 w-full">
       <a 
-        href="#bonuses"
+        href="#purpose-transformation"
         className="cursor-pointer hover:opacity-80 transition-opacity flex flex-col items-center w-full"
         onClick={(e) => {
           e.preventDefault();
@@ -238,7 +238,7 @@ export default function Home() {
                   strokeWidth="3" 
                   strokeLinecap="round" 
                   strokeLinejoin="round"
-                  className="mt-2 sm:w-10 sm:h-20 md:w-12 md:h-24 arrow-point-down"
+                  className="mt-2 w-6 h-12 sm:w-8 sm:h-16 md:w-8 md:h-16 arrow-point-down"
                   style={{ color: 'white' }}
                 >
                   <path d="M12 0v40M20 32l-8 8-8-8" />
@@ -253,7 +253,7 @@ export default function Home() {
           </RandomScrollReveal>
           {/* Get Started Button */}
           <RandomScrollReveal delay={400} randomDelay={true}>
-            <div className="flex flex-col items-center justify-center mt-8 sm:mt-10 md:mt-12 mb-6 sm:mb-8 md:mb-10">
+            <div className="flex flex-col items-center justify-center -mt-8 sm:mt-5 md:mt-6 mb-6 sm:mb-8 md:mb-10">
               <div className="text-center w-full max-w-2xl mx-auto">
                 <a
                   href="https://bookmyeventnow.com/register?a=new&p=26"
@@ -265,6 +265,18 @@ export default function Home() {
                   <span><CharacterPopIn delay={400}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
                 </a>
               </div>
+            </div>
+          </RandomScrollReveal>
+          {/* See all Bonuses link */}
+          <RandomScrollReveal delay={300} randomDelay={true}>
+            <div className="flex flex-col items-center justify-center -mt-6 sm:mt-4 md:mt-5 mb-4 sm:mb-6 md:mb-8">
+              <a
+                href="#bonuses"
+                className="text-sm sm:text-base md:text-lg font-sans text-white/70 hover:text-white/90 transition-colors flex items-center gap-2"
+              >
+                See all Bonuses
+                <span className="text-xs sm:text-sm md:text-base">↓</span>
+              </a>
             </div>
           </RandomScrollReveal>
         </div>

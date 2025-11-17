@@ -10,10 +10,10 @@ const bonusTexts: { title: string; subtitle?: string }[] = [
   { title: "Goal Setting Workbook" },
   { title: "Instinctive Breathwork" },
   { title: "Book On How To Make Progress" },
-  { title: "The Purpose Paradox", subtitle: "Understand The Truth Of Living With Purpose" },
+  { title: "Purpose Profile Personality Test" },
   { title: "Set Fail-Resistant Goals", subtitle: "A Step-By-Step Framework" },
   { title: "Get Moving Make It Happen Now", subtitle: "Building The Life You Want" },
-  { title: "Purpose Profile Personality Test" },
+  { title: "The Purpose Paradox", subtitle: "Understand The Truth Of Living With Purpose" },
 ];
 
 // Detailed descriptions for each bonus item
@@ -50,10 +50,10 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
     ]
   },
   {
-    title: "The Purpose Paradox",
+    title: "Purpose Profile Personality Test",
     description: [
-      "Understand the truth of living with purpose. (FYI: It isn't a discovery. It's a skill set.)",
-      "So you can create on a larger scale in your life, and in the smallest moments every day."
+      "Discover your unique purpose profile through a comprehensive personality assessment.",
+      "Understand how your natural tendencies align with purposeful living and get personalized insights for your journey."
     ]
   },
   {
@@ -72,10 +72,10 @@ const bonusDescriptions: { title: string; description: string[] }[] = [
     ]
   },
   {
-    title: "Purpose Profile Personality Test",
+    title: "The Purpose Paradox",
     description: [
-      "Discover your unique purpose profile through a comprehensive personality assessment.",
-      "Understand how your natural tendencies align with purposeful living and get personalized insights for your journey."
+      "Understand the truth of living with purpose. (FYI: It isn't a discovery. It's a skill set.)",
+      "So you can create on a larger scale in your life, and in the smallest moments every day."
     ]
   }
 ];
@@ -86,10 +86,10 @@ const bonusPrices: string[] = [
   "$200",   // Goal Setting Workbook
   "$497",   // Instinctive Breathwork
   "$60",    // How To Make Progress Book (10-minute workbook)
-  "$297",   // The Purpose Paradox
+  "$60",    // Purpose Profile Personality Test
   "$297",   // Set Fail-Resistant Goals
   "$297",   // Get Moving Make It Happen Now
-  "$60",    // Purpose Profile Personality Test
+  "$297",   // The Purpose Paradox
 ];
 
 export function TotalValue() {
@@ -166,15 +166,7 @@ export default function BonusesGrid() {
           <RandomScrollReveal key={`bonus-${index}`} delay={index * 100} randomDelay={true}>
             <button
               onClick={() => {
-                if (index === 0) {
-                  // Scroll to Purpose Transformation section
-                  const element = document.getElementById('purpose-transformation');
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                } else {
-                  setSelectedBonus(index);
-                }
+                setSelectedBonus(index);
               }}
               className="backdrop-blur-sm border rounded-lg p-2 sm:p-3.5 md:p-3 transition-all duration-300 w-full cursor-pointer group flex items-center justify-between bg-white/5 border-white/10 hover:bg-white/10 bonus-card-3d"
             >
