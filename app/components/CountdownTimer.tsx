@@ -28,6 +28,10 @@ const PHASES = [
     name: 'Phase III',
     targetDate: createCSTDate(2025, 11, 26, 9), // November 26, 2025, 9am CST
   },
+  {
+    name: 'Phase IV',
+    targetDate: createCSTDate(2025, 11, 28, 18), // November 28, 2025, 6pm CST
+  },
 ];
 
 // Determine current phase based on current time
@@ -165,7 +169,7 @@ export default function CountdownTimer() {
         {/* Text content */}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ textAlign: 'center', padding: 0, margin: 0, left: 0, right: 0 }}>
           <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
-            {currentPhase ? currentPhase.name : 'Phase III'}
+            {currentPhase ? currentPhase.name : 'Phase IV'}
           </div>
           <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
             Black Friday
