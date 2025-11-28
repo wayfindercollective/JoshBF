@@ -14,6 +14,18 @@ function createCSTDate(year: number, month: number, day: number, hour: number, m
   return utcDate.getTime();
 }
 
+// Helper function to create a date in PST (Pacific Standard Time, UTC-8)
+// PST is UTC-8, so 11:59pm PST = 7:59am UTC the next day
+// For November dates, we're in PST (not PDT) since DST ends in early November
+function createPSTDate(year: number, month: number, day: number, hour: number, minute: number = 0): number {
+  // Convert PST to UTC: PST is UTC-8, so we add 8 hours
+  // Date.UTC uses 0-indexed months (0=January, 10=November)
+  // Date.UTC automatically handles day/month overflow
+  const utcHour = hour + 8; // 11:59pm PST = 07:59 UTC next day
+  const utcDate = new Date(Date.UTC(year, month - 1, day, utcHour, minute));
+  return utcDate.getTime();
+}
+
 // Phase definitions
 const PHASES = [
   {
@@ -30,7 +42,7 @@ const PHASES = [
   },
   {
     name: 'Phase IV',
-    targetDate: createCSTDate(2025, 11, 28, 18), // November 28, 2025, 6pm CST
+    targetDate: createPSTDate(2025, 11, 28, 23, 59), // November 28, 2025, 11:59pm PST
   },
 ];
 
