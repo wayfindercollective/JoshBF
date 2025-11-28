@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/react";
+import IntercomProvider from "./components/IntercomProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -104,6 +105,7 @@ export default function RootLayout({
       <body className="overflow-x-hidden">
         {children}
         <Analytics />
+        <IntercomProvider />
       </body>
     </html>
   );
