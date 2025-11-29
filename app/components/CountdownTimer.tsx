@@ -15,8 +15,35 @@ function createPSTDate(year: number, month: number, day: number, hour: number, m
   return utcDate.getTime();
 }
 
-// Target date: Sunday, November 30, 2025, 11:59 PM PST
-const TARGET_DATE = createPSTDate(2025, 11, 30, 23, 59);
+// Phase definitions
+const FINAL_PHASE_DATE = createPSTDate(2025, 11, 30, 23, 59); // Sunday, November 30, 2025, 11:59 PM PST
+const CYBER_MONDAY_DATE = createPSTDate(2025, 12, 1, 23, 59); // Monday, December 1, 2025, 11:59 PM PST
+
+// Determine current phase and target date
+function getCurrentPhase(): { title: string; subtitle: string; targetDate: number } {
+  const now = Date.now();
+  
+  if (now < FINAL_PHASE_DATE) {
+    return {
+      title: 'Final Phase',
+      subtitle: 'Black Friday',
+      targetDate: FINAL_PHASE_DATE,
+    };
+  } else if (now < CYBER_MONDAY_DATE) {
+    return {
+      title: 'Cyber Monday',
+      subtitle: 'Cyber Monday',
+      targetDate: CYBER_MONDAY_DATE,
+    };
+  } else {
+    // Both phases have passed
+    return {
+      title: 'Cyber Monday',
+      subtitle: 'Cyber Monday',
+      targetDate: CYBER_MONDAY_DATE,
+    };
+  }
+}
 
 export default function CountdownTimer() {
   const [timeRemaining, setTimeRemaining] = useState({
@@ -25,6 +52,7 @@ export default function CountdownTimer() {
     seconds: 0,
   });
   
+  const [currentPhase, setCurrentPhase] = useState(getCurrentPhase());
   const [isDesktop, setIsDesktop] = useState(false);
   
   useEffect(() => {
@@ -40,8 +68,11 @@ export default function CountdownTimer() {
 
   useEffect(() => {
     const timer = setInterval(() => {
+      const phase = getCurrentPhase();
+      setCurrentPhase(phase);
+      
       const now = Date.now();
-      const remaining = TARGET_DATE - now;
+      const remaining = phase.targetDate - now;
 
       if (remaining <= 0) {
         // Target date has passed
@@ -57,8 +88,10 @@ export default function CountdownTimer() {
     }, 1000);
 
     // Initial calculation
+    const phase = getCurrentPhase();
+    setCurrentPhase(phase);
     const now = Date.now();
-    const remaining = TARGET_DATE - now;
+    const remaining = phase.targetDate - now;
     if (remaining > 0) {
       const hours = Math.floor(remaining / (1000 * 60 * 60));
       const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
@@ -135,10 +168,10 @@ export default function CountdownTimer() {
         {/* Text content */}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ textAlign: 'center', padding: 0, margin: 0, left: 0, right: 0 }}>
           <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
-            Final Phase
+            {currentPhase.title}
           </div>
           <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
-            Black Friday
+            {currentPhase.subtitle}
           </div>
           <div className={`font-handwritten font-bold ${timeTextSize} leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
             <span className="tabular-nums" style={{ display: 'inline-block', textAlign: 'center' }}>
