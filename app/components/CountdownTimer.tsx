@@ -3,52 +3,20 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-// Helper function to create a date in CST (Central Standard Time, UTC-6)
-// CST is UTC-6, so 9am CST = 3pm UTC (15:00 UTC)
-// For November dates, we're in CST (not CDT) since DST ends in early November
-function createCSTDate(year: number, month: number, day: number, hour: number, minute: number = 0): number {
-  // Convert CST to UTC: CST is UTC-6, so we add 6 hours
+// Helper function to create a date in PST (Pacific Standard Time, UTC-8)
+// PST is UTC-8, so 11:59pm PST = 7:59am UTC the next day
+// For November dates, we're in PST (not PDT) since DST ends in early November
+function createPSTDate(year: number, month: number, day: number, hour: number, minute: number = 0): number {
+  // Convert PST to UTC: PST is UTC-8, so we add 8 hours
   // Date.UTC uses 0-indexed months (0=January, 10=November)
-  const utcHour = hour + 6; // 9am CST = 15:00 UTC (3pm)
+  // Date.UTC automatically handles day/month overflow
+  const utcHour = hour + 8; // 11:59pm PST = 07:59 UTC next day
   const utcDate = new Date(Date.UTC(year, month - 1, day, utcHour, minute));
   return utcDate.getTime();
 }
 
-// Phase definitions
-const PHASES = [
-  {
-    name: 'Phase I',
-    targetDate: createCSTDate(2025, 11, 20, 9), // November 20, 2025, 9am CST
-  },
-  {
-    name: 'Phase II',
-    targetDate: createCSTDate(2025, 11, 23, 9), // November 23, 2025, 9am CST
-  },
-  {
-    name: 'Phase III',
-    targetDate: createCSTDate(2025, 11, 26, 9), // November 26, 2025, 9am CST
-  },
-  {
-    name: 'Phase IV',
-    targetDate: createCSTDate(2025, 11, 28, 18), // November 28, 2025, 6pm CST
-  },
-];
-
-// Determine current phase based on current time
-function getCurrentPhase(): { phase: typeof PHASES[number] | null; timeRemaining: number } {
-  const now = Date.now();
-  
-  // Check each phase in order
-  for (let i = 0; i < PHASES.length; i++) {
-    const phase = PHASES[i];
-    if (now < phase.targetDate) {
-      return { phase, timeRemaining: phase.targetDate - now };
-    }
-  }
-  
-  // All phases have passed
-  return { phase: null, timeRemaining: 0 };
-}
+// Target date: Sunday, November 30, 2025, 11:59 PM PST
+const TARGET_DATE = createPSTDate(2025, 11, 30, 23, 59);
 
 export default function CountdownTimer() {
   const [timeRemaining, setTimeRemaining] = useState({
@@ -57,7 +25,6 @@ export default function CountdownTimer() {
     seconds: 0,
   });
   
-  const [currentPhase, setCurrentPhase] = useState<typeof PHASES[number] | null>(PHASES[0]);
   const [isDesktop, setIsDesktop] = useState(false);
   
   useEffect(() => {
@@ -73,12 +40,11 @@ export default function CountdownTimer() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const { phase, timeRemaining: remaining } = getCurrentPhase();
-      
-      setCurrentPhase(phase);
+      const now = Date.now();
+      const remaining = TARGET_DATE - now;
 
-      if (remaining <= 0 || !phase) {
-        // All phases have passed
+      if (remaining <= 0) {
+        // Target date has passed
         setTimeRemaining({ hours: 0, minutes: 0, seconds: 0 });
         return;
       }
@@ -91,9 +57,9 @@ export default function CountdownTimer() {
     }, 1000);
 
     // Initial calculation
-    const { phase, timeRemaining: remaining } = getCurrentPhase();
-    setCurrentPhase(phase);
-    if (remaining > 0 && phase) {
+    const now = Date.now();
+    const remaining = TARGET_DATE - now;
+    if (remaining > 0) {
       const hours = Math.floor(remaining / (1000 * 60 * 60));
       const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
@@ -169,7 +135,7 @@ export default function CountdownTimer() {
         {/* Text content */}
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ textAlign: 'center', padding: 0, margin: 0, left: 0, right: 0 }}>
           <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
-            {currentPhase ? currentPhase.name : 'Phase IV'}
+            Final Phase
           </div>
           <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
             Black Friday
