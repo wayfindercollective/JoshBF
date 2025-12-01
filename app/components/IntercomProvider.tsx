@@ -40,16 +40,16 @@ export default function IntercomProvider({ user }: IntercomProviderProps) {
         position: fixed;
         bottom: 20px;
         right: 20px;
-        width: 60px;
-        height: 60px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         background-color: #033ba3;
-        border: 3px solid #bc4500;
+        border: 2px solid #bc4500;
         box-shadow: 
-          0 8px 16px rgba(0, 0, 0, 0.4),
-          0 4px 8px rgba(0, 0, 0, 0.3),
-          inset 0 2px 4px rgba(3, 59, 163, 0.4),
-          inset 0 -2px 4px rgba(3, 59, 163, 0.6),
+          0 4px 8px rgba(0, 0, 0, 0.4),
+          0 2px 4px rgba(0, 0, 0, 0.3),
+          inset 0 1px 2px rgba(3, 59, 163, 0.4),
+          inset 0 -1px 2px rgba(3, 59, 163, 0.6),
           0 0 0 1px rgba(188, 69, 0, 0.2);
         cursor: pointer;
         display: flex;
@@ -64,10 +64,10 @@ export default function IntercomProvider({ user }: IntercomProviderProps) {
       const svg = customButton.querySelector('svg');
       if (svg) {
         svg.style.cssText = `
-          width: 24px;
-          height: 24px;
+          width: 12px;
+          height: 12px;
           fill: #bc4500;
-          filter: drop-shadow(0 2px 4px rgba(188, 69, 0, 0.4));
+          filter: drop-shadow(0 1px 2px rgba(188, 69, 0, 0.4));
           transition: all 0.3s ease;
         `;
       }
@@ -77,23 +77,23 @@ export default function IntercomProvider({ user }: IntercomProviderProps) {
         customButton.style.backgroundColor = '#0448c4';
         customButton.style.borderColor = '#bc4500';
         customButton.style.boxShadow = `
-          0 12px 24px rgba(0, 0, 0, 0.5),
-          0 6px 12px rgba(0, 0, 0, 0.4),
-          inset 0 2px 4px rgba(3, 59, 163, 0.5),
-          inset 0 -2px 4px rgba(3, 59, 163, 0.7),
+          0 6px 12px rgba(0, 0, 0, 0.5),
+          0 3px 6px rgba(0, 0, 0, 0.4),
+          inset 0 1px 2px rgba(3, 59, 163, 0.5),
+          inset 0 -1px 2px rgba(3, 59, 163, 0.7),
           0 0 0 1px rgba(188, 69, 0, 0.3)
         `;
-        customButton.style.transform = 'perspective(1000px) translateY(-2px) translateZ(10px) scale(1.05)';
+        customButton.style.transform = 'perspective(1000px) translateY(-1px) translateZ(10px) scale(1.05)';
       });
 
       customButton.addEventListener('mouseleave', () => {
         customButton.style.backgroundColor = '#033ba3';
         customButton.style.borderColor = '#bc4500';
         customButton.style.boxShadow = `
-          0 8px 16px rgba(0, 0, 0, 0.4),
-          0 4px 8px rgba(0, 0, 0, 0.3),
-          inset 0 2px 4px rgba(3, 59, 163, 0.4),
-          inset 0 -2px 4px rgba(3, 59, 163, 0.6),
+          0 4px 8px rgba(0, 0, 0, 0.4),
+          0 2px 4px rgba(0, 0, 0, 0.3),
+          inset 0 1px 2px rgba(3, 59, 163, 0.4),
+          inset 0 -1px 2px rgba(3, 59, 163, 0.6),
           0 0 0 1px rgba(188, 69, 0, 0.2)
         `;
         customButton.style.transform = 'perspective(1000px) translateZ(0) scale(1)';
@@ -187,28 +187,28 @@ export default function IntercomProvider({ user }: IntercomProviderProps) {
           }
         }
 
-        /* Responsive sizing for custom Intercom button */
+        /* Responsive sizing for custom Intercom button - 50% of original size */
         #custom-intercom-launcher {
-          width: 60px !important;
-          height: 60px !important;
+          width: 30px !important;
+          height: 30px !important;
         }
+
+          #custom-intercom-launcher svg {
+            width: 12px !important;
+            height: 12px !important;
+            fill: #bc4500 !important;
+          }
+
+        /* Larger size on desktop/tablet - 50% of original size */
+        @media (min-width: 768px) {
+          #custom-intercom-launcher {
+            width: 60px !important;
+            height: 60px !important;
+          }
 
           #custom-intercom-launcher svg {
             width: 24px !important;
             height: 24px !important;
-            fill: #bc4500 !important;
-          }
-
-        /* Larger size on desktop/tablet */
-        @media (min-width: 768px) {
-          #custom-intercom-launcher {
-            width: 120px !important;
-            height: 120px !important;
-          }
-
-          #custom-intercom-launcher svg {
-            width: 48px !important;
-            height: 48px !important;
             fill: #bc4500 !important;
           }
         }

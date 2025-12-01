@@ -31,15 +31,15 @@ function getCurrentPhase(): { title: string; subtitle: string; targetDate: numbe
     };
   } else if (now < CYBER_MONDAY_DATE) {
     return {
-      title: 'Cyber Monday',
-      subtitle: 'Cyber Monday',
+      title: 'Cyber Monday discount',
+      subtitle: '',
       targetDate: CYBER_MONDAY_DATE,
     };
   } else {
     // Both phases have passed
     return {
-      title: 'Cyber Monday',
-      subtitle: 'Cyber Monday',
+      title: 'Cyber Monday discount',
+      subtitle: '',
       targetDate: CYBER_MONDAY_DATE,
     };
   }
@@ -103,22 +103,23 @@ export default function CountdownTimer() {
   }, []);
 
   // Button size: 120% increase on mobile, 150% on desktop, then 120% overall increase
+  // Desktop size reduced to 75% of original (208px * 0.75 = 156px)
   const buttonSizeMobile = 92; // 77px * 1.2 = 92.4px
-  const buttonSizeDesktop = 208; // 173px * 1.2 = 207.6px
+  const buttonSizeDesktop = 156; // 208px * 0.75 = 156px
   const currentButtonSize = isDesktop ? buttonSizeDesktop : buttonSizeMobile;
   
-  // Text sizes - larger for desktop
+  // Text sizes - larger for desktop, reduced to fit properly
   const phase1TextSize = isDesktop 
-    ? 'text-base md:text-lg lg:text-xl' 
+    ? 'text-xs md:text-sm lg:text-sm' 
     : 'text-xs sm:text-sm md:text-base lg:text-base';
   const blackFridayTextSize = isDesktop 
-    ? 'text-sm md:text-base lg:text-lg' 
+    ? 'text-xs md:text-sm lg:text-base' 
     : 'text-[11px] sm:text-xs md:text-sm lg:text-sm';
   const timeTextSize = isDesktop 
-    ? 'text-xl md:text-2xl lg:text-3xl' 
+    ? 'text-lg md:text-xl lg:text-2xl' 
     : 'text-base sm:text-lg md:text-xl lg:text-2xl';
   const remainingTextSize = isDesktop 
-    ? 'text-xl md:text-2xl lg:text-3xl' 
+    ? 'text-lg md:text-xl lg:text-2xl' 
     : 'text-base sm:text-lg md:text-xl lg:text-2xl';
 
   return (
@@ -166,13 +167,15 @@ export default function CountdownTimer() {
         </div>
         
         {/* Text content */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ textAlign: 'center', padding: 0, margin: 0, left: 0, right: 0 }}>
-          <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center" style={{ textAlign: 'center', padding: isDesktop ? '8px' : '4px', margin: 0, left: 0, right: 0 }}>
+          <div className={`${phase1TextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: '0 4px', display: 'block', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
             {currentPhase.title}
           </div>
-          <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
-            {currentPhase.subtitle}
-          </div>
+          {currentPhase.subtitle && (
+            <div className={`${blackFridayTextSize} font-bold uppercase tracking-tight mb-0.5 font-handwritten leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
+              {currentPhase.subtitle}
+            </div>
+          )}
           <div className={`font-handwritten font-bold ${timeTextSize} leading-tight`} style={{ textAlign: 'center', width: '100%', margin: '0 auto', padding: 0, display: 'block' }}>
             <span className="tabular-nums" style={{ display: 'inline-block', textAlign: 'center' }}>
               {String(timeRemaining.hours).padStart(2, '0')}:
