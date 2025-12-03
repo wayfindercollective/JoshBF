@@ -269,7 +269,7 @@ export default function Home() {
                   className="seal-button text-lg sm:text-xl md:text-2xl lg:text-3xl font-sans"
                   style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                 >
-                  <span><CharacterPopIn delay={400}>Get Started — <span className="font-mono">$594</span></CharacterPopIn></span>
+                  <span><CharacterPopIn delay={400}>Get Started — <span className="font-mono">$499</span></CharacterPopIn></span>
                 </a>
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function Home() {
                     className="seal-button text-lg font-sans"
                     style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                   >
-                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$594</span></CharacterPopIn></span>
+                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$499</span></CharacterPopIn></span>
                   </a>
                 </RandomScrollReveal>
               </div>
@@ -368,7 +368,7 @@ export default function Home() {
                     className="seal-button text-xl lg:text-2xl font-sans"
                     style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                   >
-                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$594</span></CharacterPopIn></span>
+                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$499</span></CharacterPopIn></span>
                   </a>
                 </RandomScrollReveal>
               </div>
