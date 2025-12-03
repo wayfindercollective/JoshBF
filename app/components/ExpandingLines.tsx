@@ -58,7 +58,7 @@ const bonusTexts: { title: string; subtitle?: string }[] = [
   { title: "The Purpose Paradox", subtitle: "Understand The Truth Of Living With Purpose" },
   { title: "Set Fail-Resistant Goals", subtitle: "A Step-By-Step Framework" },
   { title: "Get Moving Make It Happen Now", subtitle: "Building The Life You Want" },
-  { title: "$500 Credit Towards Josh's Mentoring" },
+  { title: "$300 Credit Towards Josh's Mentoring" },
 ];
 
 // Detailed descriptions for each bonus item
@@ -127,9 +127,9 @@ const bonusDescriptions: {
     ]
   },
   {
-    title: "$500 Credit Towards Josh's Mentoring",
+    title: "$300 Credit Towards Josh's Mentoring",
     description: [
-      "Includes a $500 credit you can apply to Josh's mentoring. Limited spots for group circles or 1 on 1's.",
+      "Includes a $300 credit you can apply to Josh's mentoring. Limited spots for group circles or 1 on 1's.",
       "During our Clarity Call Josh's Head Coach will determine best fit with you."
     ]
   }
@@ -143,7 +143,7 @@ const bonusPrices: string[] = [
   "$350",   // The Purpose Paradox
   "$300",   // Set Fail-Resistant Goals
   "$300",   // Get Moving Make It Happen Now
-  "$500",   // $500 Credit Towards Josh's Mentoring
+  "$300",   // $300 Credit Towards Josh's Mentoring
 ];
 
 // Branch lines going from left to right and right to left, meeting in the middle to create columns

@@ -17,32 +17,14 @@ function createPSTDate(year: number, month: number, day: number, hour: number, m
 
 // Phase definitions
 const FINAL_PHASE_DATE = createPSTDate(2025, 11, 30, 23, 59); // Sunday, November 30, 2025, 11:59 PM PST
-const CYBER_MONDAY_DATE = createPSTDate(2025, 12, 1, 23, 59); // Monday, December 1, 2025, 11:59 PM PST
 
 // Determine current phase and target date
 function getCurrentPhase(): { title: string; subtitle: string; targetDate: number } {
-  const now = Date.now();
-  
-  if (now < FINAL_PHASE_DATE) {
-    return {
-      title: 'Final Phase',
-      subtitle: 'Black Friday',
-      targetDate: FINAL_PHASE_DATE,
-    };
-  } else if (now < CYBER_MONDAY_DATE) {
-    return {
-      title: 'Cyber Monday discount',
-      subtitle: '',
-      targetDate: CYBER_MONDAY_DATE,
-    };
-  } else {
-    // Both phases have passed
-    return {
-      title: 'Cyber Monday discount',
-      subtitle: '',
-      targetDate: CYBER_MONDAY_DATE,
-    };
-  }
+  return {
+    title: 'Final Phase',
+    subtitle: 'Black Friday',
+    targetDate: FINAL_PHASE_DATE,
+  };
 }
 
 export default function CountdownTimer() {
@@ -52,10 +34,15 @@ export default function CountdownTimer() {
     seconds: 0,
   });
   
-  const [currentPhase, setCurrentPhase] = useState(getCurrentPhase());
+  const [currentPhase, setCurrentPhase] = useState(() => {
+    // Use a default phase to avoid hydration mismatch
+    return { title: 'Final Phase', subtitle: 'Black Friday', targetDate: FINAL_PHASE_DATE };
+  });
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   
   useEffect(() => {
+    setIsMounted(true);
     const checkDesktop = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
@@ -67,6 +54,8 @@ export default function CountdownTimer() {
   }, []);
 
   useEffect(() => {
+    if (!isMounted) return;
+    
     const timer = setInterval(() => {
       const phase = getCurrentPhase();
       setCurrentPhase(phase);
@@ -100,7 +89,7 @@ export default function CountdownTimer() {
     }
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isMounted]);
 
   // Button size: 120% increase on mobile, 150% on desktop, then 120% overall increase
   // Desktop size reduced to 75% of original (208px * 0.75 = 156px)

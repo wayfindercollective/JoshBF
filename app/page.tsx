@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import TypewriterText from './components/HandwritingText';
 import ScrollAnimatedIcon from './components/ScrollAnimatedIcon';
 import EnvelopeWithText from './components/EnvelopeWithText';
@@ -8,7 +8,6 @@ import RandomScrollReveal from './components/RandomScrollReveal';
 import CharacterPopIn from './components/CharacterPopIn';
 import FloatingGeometry from './components/FloatingGeometry';
 import TitleWithBorder from './components/TitleWithBorder';
-import CountdownTimer from './components/CountdownTimer';
 import Image from 'next/image';
 import { TotalValue } from './components/BonusesGrid';
 
@@ -120,8 +119,15 @@ function FAQItem({ faq, index }: FAQItemProps) {
 
 function EnvelopeClickableWrapper() {
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleScroll = () => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    
     const element = document.getElementById('purpose-transformation');
     if (element) {
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
@@ -176,7 +182,6 @@ function EnvelopeClickableWrapper() {
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-gradient-hero text-white relative overflow-x-hidden">
-      <CountdownTimer />
       <FloatingGeometry />
       {/* Hero Section */}
       <section className="px-6 pt-24 pb-24 md:pt-28 md:pb-32 lg:pt-28 lg:pb-40 max-w-4xl mx-auto text-center relative z-10">
@@ -258,13 +263,13 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center -mt-8 sm:mt-5 md:-mt-12 lg:-mt-16 mb-10 sm:mb-12 md:mb-16 lg:mb-20">
               <div className="text-center w-full max-w-2xl mx-auto">
                 <a
-                  href="https://bookmyeventnow.com/register?a=new&p=26"
+                  href="https://bookmyeventnow.com/register?a=new&p=37"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="seal-button text-lg sm:text-xl md:text-2xl lg:text-3xl font-sans"
                   style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                 >
-                  <span><CharacterPopIn delay={400}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
+                  <span><CharacterPopIn delay={400}>Get Started — <span className="font-mono">$594</span></CharacterPopIn></span>
                 </a>
               </div>
             </div>
@@ -336,13 +341,13 @@ export default function Home() {
               <div id="purchase" className="flex-shrink-0">
                 <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
                   <a
-                    href="https://bookmyeventnow.com/register?a=new&p=26"
+                    href="https://bookmyeventnow.com/register?a=new&p=37"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="seal-button text-lg font-sans"
                     style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                   >
-                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
+                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$594</span></CharacterPopIn></span>
                   </a>
                 </RandomScrollReveal>
               </div>
@@ -357,13 +362,13 @@ export default function Home() {
               <div id="purchase" className="flex-shrink-0">
                 <RandomScrollReveal delay={600} randomDelay={true} duration={1}>
                   <a
-                    href="https://bookmyeventnow.com/register?a=new&p=26"
+                    href="https://bookmyeventnow.com/register?a=new&p=37"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="seal-button text-xl lg:text-2xl font-sans"
                     style={{ fontFamily: "'Inter', 'Helvetica', 'system-ui', 'sans-serif'" }}
                   >
-                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$297</span></CharacterPopIn></span>
+                    <span><CharacterPopIn delay={600}>Get Started — <span className="font-mono">$594</span></CharacterPopIn></span>
                   </a>
                 </RandomScrollReveal>
               </div>

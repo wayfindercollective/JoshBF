@@ -52,13 +52,14 @@ export default function RandomScrollReveal({
   randomDelay = true,
   forceDirection,
 }: RandomScrollRevealProps) {
-  // Initialize with random values using useState function form
-  const initialDir = forceDirection || getRandomDirection();
-  const [direction, setDirection] = useState<RandomDirection>(initialDir);
-  const [transform, setTransform] = useState(() => getDirectionTransform(initialDir));
-  const [rotation, setRotation] = useState(() => (Math.random() - 0.5) * 20);
-  const [scale, setScale] = useState(() => 0.5 + Math.random() * 0.3);
+  // Initialize with default values to avoid hydration mismatch
+  // Random values will be set in useEffect on client side
+  const [direction, setDirection] = useState<RandomDirection>(forceDirection || 'bottom');
+  const [transform, setTransform] = useState(() => ({ x: 0, y: 100 }));
+  const [rotation, setRotation] = useState(() => 0);
+  const [scale, setScale] = useState(() => 0.65);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const hasAnimatedRef = useRef(false);
 
@@ -85,7 +86,21 @@ export default function RandomScrollReveal({
     }, animDelay);
   }, [delay, randomDelay, forceDirection]);
 
+  // Initialize random values on client side only
   useEffect(() => {
+    if (!isMounted) {
+      const initialDir = forceDirection || getRandomDirection();
+      setDirection(initialDir);
+      setTransform(getDirectionTransform(initialDir));
+      setRotation((Math.random() - 0.5) * 20);
+      setScale(0.5 + Math.random() * 0.3);
+      setIsMounted(true);
+    }
+  }, [isMounted, forceDirection]);
+
+  useEffect(() => {
+    if (!isMounted) return;
+    
     const checkVisibility = () => {
       if (!containerRef.current) return;
       
@@ -157,7 +172,7 @@ export default function RandomScrollReveal({
         observer.unobserve(currentContainer);
       }
     };
-  }, [triggerAnimation, forceDirection]);
+  }, [triggerAnimation, forceDirection, isMounted]);
 
   return (
     <div
@@ -169,11 +184,13 @@ export default function RandomScrollReveal({
         '--translate-y': `${transform.y}px`,
         '--rotation': `${rotation}deg`,
         '--scale': scale,
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible 
+        opacity: isVisible || !isMounted ? 1 : 0,
+        transform: isVisible || !isMounted
           ? 'translate(0, 0) rotate(0deg) scale(1)' 
           : `translate(${transform.x}px, ${transform.y}px) rotate(${rotation}deg) scale(${scale})`,
-        transition: `opacity var(--animation-duration) cubic-bezier(0.34, 1.56, 0.64, 1), transform var(--animation-duration) cubic-bezier(0.34, 1.56, 0.64, 1)`,
+        transition: isMounted 
+          ? `opacity var(--animation-duration) cubic-bezier(0.34, 1.56, 0.64, 1), transform var(--animation-duration) cubic-bezier(0.34, 1.56, 0.64, 1)`
+          : 'none',
       } as React.CSSProperties}
     >
       {children}
